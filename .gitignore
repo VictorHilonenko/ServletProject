@@ -1,0 +1,24 @@
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.7z
+*.tar.gz
+*.rar
+
+*.log
+
+# Compiled class file
+*.class
+
+.idea
+*.iml
+
+/.settings/
+/target/
+/.classpath
+/.project
+/.idea/
+*.iml

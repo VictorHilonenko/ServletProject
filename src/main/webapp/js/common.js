@@ -1,0 +1,19 @@
+function showStatus(status, code, message) {
+
+    toastr.options = {
+      "positionClass": "toast-bottom-center",
+      "showDuration": "300",
+      "hideDuration": "1000",
+      "timeOut": "5000",
+      "extendedTimeOut": "1000",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    }
+
+    toastr[status](message, "response");
+
+    //(!!!) всі методи повинні в разі помилки відкотити стан назад
+    //тобто в аяксі і перечитати його, в адмінці, наприклад
+}
