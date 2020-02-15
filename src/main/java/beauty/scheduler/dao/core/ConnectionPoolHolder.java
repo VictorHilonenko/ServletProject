@@ -1,30 +1,31 @@
 package beauty.scheduler.dao.core;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import beauty.scheduler.web.myspring.ClassFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-//NOTE: partly ready for review
+//NOTE: ready for review
 public class ConnectionPoolHolder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassFactory.class);
     private static volatile DataSource dataSource;
 
     private static DataSource getDataSource() {
         if (dataSource == null) {
             synchronized (ConnectionPoolHolder.class) {
                 if (dataSource == null) {
-
-                    //TODO take from xml
-                    BasicDataSource ds = new BasicDataSource();
-                    ds.setUrl("jdbc:mysql://localhost:3306/ss3?serverTimezone=UTC");
-                    ds.setUsername("root");
-                    ds.setPassword("root");
-                    ds.setMinIdle(5);
-                    ds.setMaxIdle(10);
-                    ds.setMaxWait(3);
-                    ds.setMaxOpenPreparedStatements(100);
-                    dataSource = ds;
+                    try {
+                        Context initContext = new InitialContext();
+                        dataSource = (DataSource) initContext.lookup("java:/comp/env/jdbc/beauty_scheduler");
+                    } catch (NamingException e) {
+                        LOGGER.error("Could not find DataSource JNDI", e);
+                    }
                 }
             }
         }

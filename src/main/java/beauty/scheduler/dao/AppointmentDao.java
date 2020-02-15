@@ -8,7 +8,6 @@ import beauty.scheduler.web.myspring.annotations.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -71,8 +70,12 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
     public List<Appointment> findByPeriod(LocalDate start, LocalDate end) throws SQLException, ExtendedException {
         List<Appointment> list = super.getAllWhere(ps -> {
-                    ps.setDate(1, Date.valueOf(start));
-                    ps.setDate(2, Date.valueOf(end));
+                    //real ISSUE here: Date.valueOf(start) converts 2020-02-10 to 2020-02-09
+                    //ps.setDate(1, Date.valueOf(start));
+                    //ps.setDate(2, Date.valueOf(end));
+                    //so:
+                    ps.setString(1, start.toString());
+                    ps.setString(2, end.toString());
                 },
                 APPOINTMENT_ENTITY_MAPPER,
                 "WHERE " + TABLENAME + ".appointment_date between ? and ?");
