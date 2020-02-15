@@ -24,6 +24,8 @@ public class AppointmentService {
 
     @InjectDependency
     private AppointmentDao appointmentDao;
+    @InjectDependency
+    private UserService userService;
     //TODO maybe create cross-service Bridge and not inject dependency here:
     @InjectDependency
     private EmailMessageService emailMessageService;
@@ -48,18 +50,19 @@ public class AppointmentService {
 
     public AppointmentDTO appointmentToDTO(Appointment appointment, UserPrincipal userPrincipal) {
         AppointmentDTO appointmentDTO = new AppointmentDTO();
-        HashMap<String, String> fieldsMap = appointmentDTO.getMap();
 
-        setFieldsAndRightsToDTOAccordingToPolicy(fieldsMap, appointment, userPrincipal);
+        setFieldsAndRightsToDTOAccordingToPolicy(appointmentDTO, appointment, userPrincipal);
 
         return appointmentDTO;
     }
 
     //fields with prefixes "rights_" are used in frontend to provide rights for separate roles
     //values can be: "H" - hidden, "R" - read only, "W" - write
-    private void setFieldsAndRightsToDTOAccordingToPolicy(HashMap<String, String> fieldsMap, Appointment appointment, UserPrincipal userPrincipal) {
+    private void setFieldsAndRightsToDTOAccordingToPolicy(AppointmentDTO appointmentDTO, Appointment appointment, UserPrincipal userPrincipal) {
         String email = userPrincipal.getEmail();
         Role role = userPrincipal.getRole();
+        String lang = userPrincipal.getCurrentLang();
+        HashMap<String, String> fieldsMap = appointmentDTO.getMap();
 
         //common fields:
         fieldsMap.put("id", appointment.getId().toString());
@@ -73,18 +76,17 @@ public class AppointmentService {
         //
 
         if (role.equals(Role.ROLE_USER)) {
-            addFieldsForUser(fieldsMap, appointment, email, "en"); //TODO i18n -"-
+            addFieldsForUser(fieldsMap, appointment, email, lang);
         } else if (role.equals(Role.ROLE_MASTER)) {
-            addFieldsForMaster(fieldsMap, appointment, email, "en"); //TODO i18n -"-
+            addFieldsForMaster(fieldsMap, appointment, email, lang);
         } else if (role.equals(Role.ROLE_ADMIN)) {
-            addFieldsForAdmin(fieldsMap, appointment);
+            addFieldsForAdmin(fieldsMap, appointment, lang);
         }
     }
 
     private void addFieldsForUser(HashMap<String, String> fieldsMap, Appointment appointment, String email, String lang) {
-        //TODO i18n depending on String lang passed
         if (email.equals(appointment.getCustomer().getEmail())) {
-            fieldsMap.put("customer_name", appointment.getCustomer().getFirstNameEn());
+            fieldsMap.put("customer_name", userService.getLocalizedName(appointment.getCustomer(), lang));
             fieldsMap.put("rights_customer_name", "R");
 
             if (appointment.getServiceProvided()) {
@@ -95,11 +97,10 @@ public class AppointmentService {
     }
 
     private void addFieldsForMaster(HashMap<String, String> fieldsMap, Appointment appointment, String email, String lang) {
-        //TODO i18n -"-
         if (email.equals(appointment.getMaster().getEmail())) {
-            fieldsMap.put("customer_name", appointment.getCustomer().getFirstNameEn());
+            fieldsMap.put("customer_name", userService.getLocalizedName(appointment.getCustomer(), lang));
             fieldsMap.put("rights_customer_name", "R");
-            fieldsMap.put("master_name", appointment.getMaster().getFirstNameEn());
+            fieldsMap.put("master_name", userService.getLocalizedName(appointment.getMaster(), lang));
             fieldsMap.put("rights_master_name", "R");
 
             fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
@@ -117,18 +118,17 @@ public class AppointmentService {
         }
     }
 
-    private void addFieldsForAdmin(HashMap<String, String> fieldsMap, Appointment appointment) {
-        //TODO i18n -"-
+    private void addFieldsForAdmin(HashMap<String, String> fieldsMap, Appointment appointment, String lang) {
         fieldsMap.put("customer_email", appointment.getCustomer().getEmail());
         fieldsMap.put("rights_customer_email", "H");
 
-        fieldsMap.put("customer_name", appointment.getCustomer().getFirstNameEn() + "\n" + appointment.getCustomer().getTelNumber());
+        fieldsMap.put("customer_name", userService.getLocalizedName(appointment.getCustomer(), lang) + " \n" + appointment.getCustomer().getTelNumber());
         fieldsMap.put("rights_customer_name", "R");
 
         fieldsMap.put("master_email", appointment.getMaster().getEmail());
         fieldsMap.put("rights_master_email", "H");
 
-        fieldsMap.put("master_name", appointment.getMaster().getFirstNameEn() + "\n" + appointment.getMaster().getTelNumber());
+        fieldsMap.put("master_name", userService.getLocalizedName(appointment.getMaster(), lang) + " \n" + appointment.getMaster().getTelNumber());
         fieldsMap.put("rights_master_name", "R");
 
         fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
@@ -141,5 +141,13 @@ public class AppointmentService {
 
     public void setAppointmentDao(AppointmentDao appointmentDao) {
         this.appointmentDao = appointmentDao;
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

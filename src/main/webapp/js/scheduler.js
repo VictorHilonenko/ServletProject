@@ -115,13 +115,13 @@ function cellContent(appointmentData) {
 	var elementHTML = "";
 	
 	if(appointmentData.hasOwnProperty("master_name")) {
-		elementHTML += "<strong>Master: </strong>"+appointmentData["master_name"]+"<br>";
+		elementHTML += "<strong>" + $("#i18n_MASTER")[0].innerText + " </strong>"+appointmentData["master_name"]+"<br>";
 	}		
 	if(appointmentData.hasOwnProperty("customer_name")) {
-		elementHTML += "<strong>Customer: </strong>"+appointmentData["customer_name"]+"<br>";
+		elementHTML += "<strong>" + $("#i18n_USER")[0].innerText + " </strong>"+appointmentData["customer_name"]+"<br>";
 	}		
 	if(appointmentData.hasOwnProperty("serviceType")) {
-		elementHTML += "<strong>Service: </strong>"+appointmentData["serviceType"]+"<br>";
+		elementHTML += "<strong>" + $("#i18n_service")[0].innerText + " </strong>"+$("#serviceType_"+appointmentData["serviceType"])[0].innerText+"<br>";
 	}		
 	
 	return elementHTML;
@@ -317,8 +317,8 @@ function showAppointmentDialog() {
 			}
 		};
 	}
-	
-	var btnCloseTitle = "Close";
+
+	var btnCloseTitle = $("#i18n_close").val();
 	if(Object.keys(setButtons).length > 0) {
 		btnCloseTitle = "Cancel";
 	}

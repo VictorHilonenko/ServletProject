@@ -36,7 +36,6 @@ public class AppointmentsController {
             throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
         }
 
-        //TODO i18n of AppointmentDTO
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
         List<AppointmentDTO> list = appointmentService.getAllAppointmentsDTO(start, end, userPrincipal);
@@ -49,6 +48,7 @@ public class AppointmentsController {
     @Restriction(role = Role.staff, exception = ExceptionKind.ACCESS_DENIED)
     @DefaultTemplate(template = "/scheduler.jsp")
     public String apiAppointmentCreateAttempt(HttpServletRequest req, HttpServletResponse resp) {
+        //(!!!)
         return DEFAULT_TEMPLATE;
     }
 
@@ -57,6 +57,7 @@ public class AppointmentsController {
     @Restriction(role = Role.ROLE_ADMIN, exception = ExceptionKind.ACCESS_DENIED)
     @DefaultTemplate(template = "/scheduler.jsp")
     public String apiAppointmentUpdateAttempt(HttpServletRequest req, HttpServletResponse resp) {
+        //(!!!)
         return DEFAULT_TEMPLATE;
     }
 

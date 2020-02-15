@@ -70,7 +70,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
     public List<Appointment> findByPeriod(LocalDate start, LocalDate end) throws SQLException, ExtendedException {
         List<Appointment> list = super.getAllWhere(ps -> {
-                    //real ISSUE here: Date.valueOf(start) converts 2020-02-10 to 2020-02-09
+                    //real ISSUE here: Date.valueOf(start) converts 2020-02-10 to 2020-02-09 in setDate...
                     //ps.setDate(1, Date.valueOf(start));
                     //ps.setDate(2, Date.valueOf(end));
                     //so:

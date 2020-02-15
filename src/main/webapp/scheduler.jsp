@@ -7,7 +7,7 @@
 <jsp:include page="/header.jsp" />
 
 	<section>
-		<h1><span><fmt:message key="i18n.appointments" /></span> <span id="headerDates" class="dates">06.01 - 12.01</span></h1>
+		<h1><span><fmt:message key="i18n.appointments"/></span> <span id="headerDates" class="dates">06.01 - 12.01</span></h1>
         <c:if test = "${userPrincipal.hasRoleTag('nonstaff')}">
             <div class="add_new">
                 <c:choose>
@@ -70,7 +70,7 @@
     <br>
     <br>
     <br>
-    
+
 	<div id="dialog-login" title="You have to be logged in" class="dialogs">
 		<p>Dear Guest!</p>
 		<p>You can make an appointment as soon <br>
@@ -79,19 +79,19 @@
 		Registration procedure will take less than a minute...</p>
 	</div>
     
-	<div id="dialog-appointment" title="Appointment" class="dialogs">
+	<div id="dialog-appointment" title="<fmt:message key="i18n.Appointment"/>" class="dialogs">
 		<div id="div_id" class="form-block">
 			<span class="popup_label">Id:</span>
 			<input type="text" id="id" class="popup_input field">
 		</div>
 		
 		<div id="div_date" class="form-block">
-			<span class="popup_label">Date:</span>
+			<span id="i18n_date" class="popup_label"><fmt:message key="i18n.date"/>:</span>
 			<input type="text" id="date" class="popup_input field">
 		</div>
 		
 		<div id="div_time" class="form-block">
-			<span class="popup_label">Time:</span>
+			<span id="i18n_time" class="popup_label"><fmt:message key="i18n.time"/>:</span>
 			<select id="time" class="popup_select field">
 				<c:forEach var="hour" begin="${WORK_TIME_STARTS}" end="${WORK_TIME_ENDS}">
 					<option value="${hour}">${hour}:00</option>
@@ -100,30 +100,31 @@
 		</div>
 		
 		<div id="div_serviceType" class="form-block">
-			<span class="popup_label">Service type:</span>
+			<span id="i18n_service" class="popup_label"><fmt:message key="i18n.service"/>:</span>
 			<select id="serviceType" class="popup_select field">
 				<c:forEach items="${serviceTypes}" var="serviceType">
-				    <option value="${serviceType}">${serviceType}</option>
+				    <option id="serviceType_${serviceType}" value="${serviceType}"><fmt:message key="${serviceType.i18n}"/></option>
 				</c:forEach>			    
 			</select>
 		</div>
 		
 		<div id="div_customer_name" class="form-block">
-			<span class="popup_label">Customer:</span>
+			<span id="i18n_USER" class="popup_label"><fmt:message key="i18n.USER"/>:</span>
 			<input type="text" id="customer_name" class="popup_input field">
 		</div>
 		
 		<div id="div_master_name" class="form-block">
-			<span class="popup_label">Master:</span>
+			<span id="i18n_MASTER" class="popup_label"><fmt:message key="i18n.MASTER"/>:</span>
 			<input type="text" id="master_name" class="popup_input field">
 		</div>
 		
 		<div id="div_serviceProvided" class="form-block">
 			<div class="flex-container">		
 				<input type="checkbox" id="serviceProvided" class="checkbox field">
-				<span class="popup_label4s">Service provided</span>
+                <span id="i18n_serviceProvided" class="popup_label4s"><fmt:message key="i18n.serviceProvided"/></span>
 			</div>
 		</div>
+		<input type="hidden" id="i18n_close" value="<fmt:message key="i18n.close"/>">
 	</div>
 
 	<script src="/js/datepicker-en.js"></script>
