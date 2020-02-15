@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+    <Resource
+        name="jdbc/beauty_scheduler"
+        auth="Container"
+        type="javax.sql.DataSource"
+        maxActive="100"
+        maxIdle="30"
+        maxWait="10000"
+        driverClassName="com.mysql.cj.jdbc.Driver"
+        url="jdbc:mysql://localhost:3306/beauty_scheduler?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=UTF-8"
+        username="root"
+        password="7zXpnqVF7MVUj6pa"
+    />
+</Context>

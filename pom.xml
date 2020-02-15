@@ -125,6 +125,7 @@
                 <configuration>
                     <port>8989</port>
                     <path>/</path>
+                    <contextFile>src/main/webapp/META-INF/context.xml</contextFile>
                 </configuration>
             </plugin>
 	        <plugin>
