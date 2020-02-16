@@ -1,5 +1,4 @@
 function showStatus(status, code, message) {
-
     toastr.options = {
       "positionClass": "toast-bottom-center",
       "showDuration": "300",
@@ -12,8 +11,5 @@ function showStatus(status, code, message) {
       "hideMethod": "fadeOut"
     }
 
-    toastr[status](message, "response");
-
-    //(!!!) всі методи повинні в разі помилки відкотити стан назад
-    //тобто в аяксі і перечитати його, в адмінці, наприклад
+    toastr[status](message, "");
 }

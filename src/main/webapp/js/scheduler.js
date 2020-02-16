@@ -7,7 +7,7 @@ function init() {
 
 	$("#date").datepicker();
 	$("#date").datepicker("option", $.datepicker.regional[$("html").attr("lang")]);
-	
+
 	drawThisWeek();
 }
 
@@ -28,7 +28,7 @@ function drawNextWeek() {
 
 //NOTE: js Date.toISOString() returns time in GMT zone, so made this short fix to prevent long games with dates, they are out of scope now
 function getISOFormattedLocalDate(date) {
-	return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2); 
+	return dateFormat(date, "yyyy-mm-dd");
 }
 
 function getISOFormattedFromLocalFormattedDate(date) {
@@ -40,13 +40,15 @@ function getLocalFormattedLocalDate(date) {
 }
 
 function getShortFormattedLocalDate(date) {
-	return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2); 
+	return dateFormat(date, $("#date_format_short").val());
 }
 
 //NOTE: in our case first day is monday
 //didn't want to use special js libraries to work with dates, so made simple transformation:
 function dayOfWeek(date) {
-	var day = new Date(date).getDay() - 1;
+	var weekStartShift = parseInt($("#week_shift").val());
+
+	var day = new Date(date).getDay() - 1 - weekStartShift;
 	if(day == -1) {
 		day = 6;
 	}
@@ -100,7 +102,7 @@ function drawWeek() {
 			drawAppointment(appointmentRecord.map);
 		});
 	}).fail(function (data) {
-		showStatus("error", data.responseJSON.error, data.responseJSON.message);
+		showStatus("error", 410, $("#error_serviceUnavailable").val());
 	});
 }
 
@@ -154,10 +156,21 @@ function drawAppointment(appointmentData) {
 
 function openAppointment(appointmentData) {
 	if(appointmentData == null) {
+        var workDayStarts = parseInt($("#WORK_TIME_STARTS").val());
+        var workDayEnds = parseInt($("#WORK_TIME_ENDS").val());
+
+        var appointmentDate = Date.now();
+
+        var intTimeValue = parseInt(dateFormat(appointmentDate, "HH")) + 1;
+        if(intTimeValue > workDayEnds) {
+            intTimeValue = workDayStarts;
+            appointmentDate += 24*3600*1000;
+        }
+
 		appointmentData = {
-			date: "",
+			date: appointmentDate,
 			rights_date: "W",
-			time: 12,
+			time: intTimeValue,
 			rights_time: "W",
 			serviceType: "HAIRDRESSING",
 			rights_serviceType: "W"
@@ -201,6 +214,9 @@ function setValueToElement(elementId, value) {
 		if($(this)[0].type == "checkbox") {
 			$(this).prop('checked', value == "true");
 		} else {
+			if(elementId == "date") {
+			    value = dateFormat(value, $("#date_format_long").val())
+			}
 			$(this).val(value);
 		}
 	});
@@ -233,6 +249,7 @@ function reserveTime(dlg) {
 	var inputDate = $("#date").val();
 	var inputTime = $("#time").val();
 	
+    //(!!!)
 	//TODO proccess all this on server side
 	if(!dateAndTimeIsValid(inputDate, inputTime)) {
 		showStatus("error", 403, "Specify correct date and time");
@@ -260,6 +277,7 @@ function reserveTime(dlg) {
         	drawWeek();
         },
         error: function (data) {
+            //(!!!)
             showStatus("error", data.responseJSON.error, data.responseJSON.message);
         },
         data: JSON.stringify(appointmentDTO)
@@ -287,6 +305,7 @@ function updateServiceProvided(appointmentId, serviceProvidedNewValue, dlg) {
         	drawWeek();
         },
         error: function (data) {
+            //(!!!)
             showStatus("error", data.responseJSON.error, data.responseJSON.message);
 			dlg.dialog("close");
         	drawWeek();
@@ -299,7 +318,7 @@ function showAppointmentDialog() {
 	var setButtons = {};
 	
 	if($("input#id").val() == "") {
-		setButtons["Reserve time"] = function() {
+		setButtons[$("#i18n_reserve").val()] = function() {
 			reserveTime($(this));
 		};
 	}
@@ -320,7 +339,7 @@ function showAppointmentDialog() {
 
 	var btnCloseTitle = $("#i18n_close").val();
 	if(Object.keys(setButtons).length > 0) {
-		btnCloseTitle = "Cancel";
+		btnCloseTitle = $("#i18n_cancel").val();
 	}
 	setButtons[btnCloseTitle] = function() {
 		$(this).dialog("close");
@@ -338,23 +357,25 @@ function showAppointmentDialog() {
 }
 
 function suggestRegistration() {
+	var setButtons = {};
+
+    setButtons[$("#i18n_login").text()] = function() {
+        $(location).attr('href', '/login');
+    };
+    setButtons[$("#i18n_register").text()] = function() {
+        $(location).attr('href', '/registration');
+    };
+    setButtons[$("#i18n_close").val()] = function() {
+        $(this).dialog("close");
+    };
+
 	$(function() {
 		$("#dialog-login").dialog({
 			resizable: false,
 			height: "auto",
 			width: 400,
 			modal: true,
-			buttons: {
-				"Log in": function() {
-					$(location).attr('href', '/login');
-				},
-				"Register": function() {
-					$(location).attr('href', '/registration');
-				},
-				Cancel: function() {
-					$(this).dialog("close");
-				}
-			}
+			buttons: setButtons
 		});
 	});
 }

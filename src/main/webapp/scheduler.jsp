@@ -71,12 +71,8 @@
     <br>
     <br>
 
-	<div id="dialog-login" title="You have to be logged in" class="dialogs">
-		<p>Dear Guest!</p>
-		<p>You can make an appointment as soon <br>
-		as you are logged in to our BeautyScheduler</p>
-		<p>Don't have an account? <br>
-		Registration procedure will take less than a minute...</p>
+	<div id="dialog-login" title="<fmt:message key="i18n.newAppointmentTitle"/>" class="dialogs">
+		<fmt:message key="i18n.newAppointmentText"/>
 	</div>
     
 	<div id="dialog-appointment" title="<fmt:message key="i18n.Appointment"/>" class="dialogs">
@@ -127,8 +123,17 @@
 		<input type="hidden" id="i18n_close" value="<fmt:message key="i18n.close"/>">
 	</div>
 
+    <input type="hidden" id="week_shift" value="<fmt:message key="week.shift"/>">
+    <input type="hidden" id="date_format_short" value="<fmt:message key="date.format.short"/>">
+    <input type="hidden" id="date_format_long" value="<fmt:message key="date.format.long"/>">
+    <input type="hidden" id="i18n_reserve" value="<fmt:message key="i18n.reserve"/>">
+    <input type="hidden" id="i18n_cancel" value="<fmt:message key="i18n.cancel"/>">
+    <input type="hidden" id="WORK_TIME_STARTS" value="${WORK_TIME_STARTS}">
+    <input type="hidden" id="WORK_TIME_ENDS" value="${WORK_TIME_ENDS}">
+
 	<script src="/js/datepicker-en.js"></script>
 	<script src="/js/datepicker-uk.js"></script>
+	<script src="/js/date.format.js"></script>
 	<script src="/js/scheduler.js"></script>
 
 <jsp:include page="/footer.jsp" />
