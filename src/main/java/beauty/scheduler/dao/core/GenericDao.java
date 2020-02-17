@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 
-import static beauty.scheduler.util.AppConstants.ID_FIELD;
-import static beauty.scheduler.util.AppConstants.TABLENAME;
+import static beauty.scheduler.util.AppConstants.*;
 
 public abstract class GenericDao<T> implements EntityDao<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericDao.class);
@@ -36,11 +35,11 @@ public abstract class GenericDao<T> implements EntityDao<T> {
                 }
             } catch (SQLException e) {
                 LOGGER.error("SQLException " + preparedStatement);
-                throw new SQLException();
+                throw e;
             }
         } catch (SQLException e) {
             LOGGER.error("SQLException connection");
-            throw new SQLException();
+            throw e;
         }
 
         return result;
@@ -102,7 +101,7 @@ public abstract class GenericDao<T> implements EntityDao<T> {
                     }
                 } catch (SQLException e) {
                     LOGGER.error("SQLException " + preparedStatementCount.toString());
-                    throw new SQLException();
+                    throw e;
                 }
             }
 
@@ -113,11 +112,11 @@ public abstract class GenericDao<T> implements EntityDao<T> {
                 }
             } catch (SQLException e) {
                 LOGGER.error("SQLException " + preparedStatementSelect.toString());
-                throw new SQLException();
+                throw e;
             }
         } catch (SQLException e) {
             LOGGER.error("SQLException with connection");
-            throw new SQLException();
+            throw e;
         }
 
         if (pagination != null) {
@@ -191,11 +190,11 @@ public abstract class GenericDao<T> implements EntityDao<T> {
                 }
             } catch (SQLException e) {
                 LOGGER.error("SQLException " + preparedStatement.toString());
-                throw new SQLException();
+                throw e;
             }
         } catch (SQLException e) {
             LOGGER.error("SQLException connection");
-            throw new SQLException();
+            throw e;
         }
 
         return count;
@@ -229,8 +228,10 @@ public abstract class GenericDao<T> implements EntityDao<T> {
 
             return result > 0;
         } catch (SQLException e) {
-            LOGGER.error("SQLException " + query);
-            throw new SQLException();
+            if (!DONT_LOG_FOR_MESSAGES_LIST.contains(e.getMessage())) {
+                LOGGER.error("SQLException " + query);
+            }
+            throw e;
         }
     }
 

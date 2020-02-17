@@ -1,4 +1,4 @@
-function showStatus(status, code, message) {
+function showStatus(status, message) {
     toastr.options = {
       "positionClass": "toast-bottom-center",
       "showDuration": "300",

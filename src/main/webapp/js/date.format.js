@@ -34,7 +34,13 @@ var dateFormat = function () {
 		}
 
 		// Passing date through Date applies Date.parse, if necessary
+		date1 = date;
 		date = date ? new Date(date) : new Date;
+		if (isNaN(date)) {
+		    if($("#date_format_long").val() == "dd.mm.yyyy") { //this lib is to simple to do everything needed, so:
+		        date = new Date(date1.substring(6,10) + '-' + date1.substring(3,5) + '-' + date1.substring(0,2));
+		    }
+		}
 		if (isNaN(date)) throw SyntaxError("invalid date");
 
 		mask = String(dF.masks[mask] || mask || dF.masks["default"]);

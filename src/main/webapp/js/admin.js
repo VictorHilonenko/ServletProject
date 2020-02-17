@@ -34,13 +34,16 @@ function sendRowDataToServer(aRow, requestMethod) {
 	        type: requestMethod,
 	        dataType: "json",
 	        contentType: "application/json",
-	        success: function (data) {
-	            //(!!!) i18n
-	            showStatus(data, 200, "saved");
+	        success: function (responseJSON) {
+                responseArray = responseJSON.split(":");
+                if(responseArray[0] == "success") {
+                    showStatus("success", "saved"); //(!!!) i18n
+                } else {
+                    showStatus("error", responseArray[1]); //(!!!) i18n
+                }
 	        },
-	        error: function (data) {
-	            //(!!!) у таких випадках потрібно відкочуватись назад
-	            showStatus("error", data.responseJSON.error, data.responseJSON.message);
+	        error: function (responseJSON) {
+                showStatus("error", $("#error_serviceUnavailable").val());
 	        },
 	        data: JSON.stringify(userData)
 	    });

@@ -1,6 +1,7 @@
 package beauty.scheduler.dao;
 
 import beauty.scheduler.dao.core.GenericDao;
+import beauty.scheduler.dao.core.StatementMapper;
 import beauty.scheduler.entity.Appointment;
 import beauty.scheduler.entity.User;
 import beauty.scheduler.util.ExtendedException;
@@ -16,57 +17,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static beauty.scheduler.dao.MappersStorage.APPOINTMENT_ENTITY_MAPPER;
+import static beauty.scheduler.util.AppConstants.NO_IDLE_MASTER_SQL_MESSAGE;
 import static beauty.scheduler.util.AppConstants.TABLENAME;
 
 //NOTE: partly ready for review
 @ServiceComponent
 public class AppointmentDao extends GenericDao<Appointment> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentDao.class);
-
-
-//    @Query(value =
-//    		"INSERT INTO `appointments` (\n" +
-//    		"	`appointment_date`,\n" +
-//    		"	`appointment_time`,\n" +
-//    		"	`service_type`,\n" +
-//    		"	`customer_id`,\n" +
-//    		"	`master_id`\n" +
-//    		") VALUES (\n" +
-//    		"	:date,\n" +
-//    		"	:time,\n" +
-//    		"	:service_type,\n" +
-//    		"	(SELECT\n" +
-//    		"		Min(`id`)\n" +
-//    		"	FROM\n" +
-//    		"		`users`\n" +
-//    		"	WHERE\n" +
-//    		"		`email` = :customers_email\n" +
-//    		"    ),\n" +
-//    		"	(SELECT\n" +
-//    		"		`a`.`id`\n" +
-//    		"	FROM\n" +
-//    		"		(SELECT\n" +
-//    		"			MIN(`users`.`id`) AS `id`\n" +
-//    		"		FROM\n" +
-//    		"			`users`\n" +
-//    		"		WHERE\n" +
-//    		"			`users`.`role` = 'ROLE_MASTER'\n" +
-//    		"			AND `users`.`service_type` = :service_type\n" +
-//    		"			AND `users`.`id` NOT IN (\n" +
-//    		"				SELECT\n" +
-//    		"					`appointments`.`master_id` AS `id`\n" +
-//    		"				FROM\n" +
-//    		"					`appointments`\n" +
-//    		"				WHERE\n" +
-//    		"					`appointments`.`appointment_date` = :date\n" +
-//    		"					AND `appointments`.`appointment_time` = :time\n" +
-//    		"			)\n" +
-//    		"		) AS `a`\n" +
-//    		"	)\n" +
-//    		")",
-//    		nativeQuery = true)
-    //Integer reserveTime(String customers_email, String date, String time, String service_type);
-
 
     public List<Appointment> findByPeriod(LocalDate start, LocalDate end) throws SQLException, ExtendedException {
         List<Appointment> list = super.getAllWhere(ps -> {
@@ -115,22 +72,88 @@ public class AppointmentDao extends GenericDao<Appointment> {
     }
 
     @Override
-    public boolean create(Appointment entity) throws SQLException, ExtendedException {
-        LOGGER.debug("Create user: + " + entity.toString());
-
-        return create(ps -> {
-            ps.setString(1, entity.getAppointmentDate().toString());
-            ps.setByte(2, entity.getAppointmentTime());
-            ps.setString(3, entity.getServiceType().name());
-            ps.setLong(4, entity.getCustomer().getId());
-            ps.setLong(5, entity.getMaster().getId());
-            ps.setBoolean(6, entity.getServiceProvided());
-        });
+    public boolean create(Appointment entity) throws SQLException {
+        LOGGER.debug("we don't use this function to create new Appointments");
+        throw new SQLException("we don't use this function to create new Appointments");
+        //otherwise it would be:
+        //return create(ps -> {
+        //    ps.setString(1, entity.getAppointmentDate().toString());
+        //    ps.setByte(2, entity.getAppointmentTime());
+        //    ps.setString(3, entity.getServiceType().name());
+        //    ps.setLong(4, entity.getCustomer().getId());
+        //    ps.setLong(5, entity.getMaster().getId());
+        //    ps.setBoolean(6, entity.getServiceProvided());
+        //});
     }
+
+    public String reserveTime(Long customerId, String strDate, String strTime, String strServiceType) {
+        //NOTE: this insert statement solves the next task:
+        //it finds an idle Master who can provide the requested ServiceType.
+        //if there is no one, there will be an exception.
+        //this allows us to make "two actions at one time" (select and insert) or "rollback" (do nothing otherwise)
+        //without using transactions at all
+
+        //COMMENT: There is a "wrapper" (outer select for master_id value) in sql-statement.
+        //It solves a sql-syntax problem:
+        //"Error Code: 1093 You can't specify target table 'appointments' for update in FROM clause"
+        //Error occurs when we don't use that "wrapper", but it starts work when we wrap it with that simple select.
+
+        String query =
+                "INSERT INTO appointments (\n" +
+                        "	appointment_date, appointment_time, service_type, customer_id,\n" +
+                        "	master_id\n" +
+                        ") VALUES (\n" +
+                        "	?, ?, ?, ?,\n" +
+                        "	(SELECT\n" +
+                        "		a.id\n" +
+                        "	FROM\n" +
+                        "		(SELECT\n" +
+                        "			MIN(users.id) AS id\n" +
+                        "		FROM\n" +
+                        "			users\n" +
+                        "		WHERE\n" +
+                        "			users.role = 'ROLE_MASTER'\n" +
+                        "			AND users.service_type = ?\n" +
+                        "			AND users.id NOT IN (\n" +
+                        "				SELECT\n" +
+                        "					appointments.master_id AS id\n" +
+                        "				FROM\n" +
+                        "					appointments\n" +
+                        "				WHERE\n" +
+                        "					appointments.appointment_date = ?\n" +
+                        "					AND appointments.appointment_time = ?\n" +
+                        "			)\n" +
+                        "		) AS a\n" +
+                        "	)\n" +
+                        ")";
+
+        StatementMapper statementMapper = ps -> {
+            ps.setString(1, strDate);
+            ps.setString(2, strTime);
+            ps.setString(3, strServiceType);
+            ps.setLong(4, customerId);
+            ps.setString(5, strServiceType);
+            ps.setString(6, strDate);
+            ps.setString(7, strTime);
+        };
+
+        try {
+            create(statementMapper, query);
+        } catch (SQLException e) {
+            if (e.getMessage().equals(NO_IDLE_MASTER_SQL_MESSAGE)) {
+                return "error:no idle master for that time"; //(!!!) resource bundle or i18n
+            } else {
+                return "error:REPOSITORY_ISSUE"; //(!!!) resource bundle
+            }
+        }
+
+        return "";
+    }
+
 
     @Override
     public boolean update(Appointment entity) throws SQLException, ExtendedException {
-        LOGGER.debug("Update user: " + entity.toString());
+        LOGGER.debug("Update appointment: " + entity.toString());
 
         return update(ps -> {
             ps.setString(1, entity.getAppointmentDate().toString());
@@ -145,8 +168,9 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
     @Override
     public boolean delete(Appointment entity) throws SQLException, ExtendedException {
-        LOGGER.debug("Delete user: " + entity.toString());
+        LOGGER.debug("Delete appointment: " + entity.toString());
 
         return delete(ps -> ps.setLong(1, entity.getId()));
     }
+
 }

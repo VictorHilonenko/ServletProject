@@ -15,13 +15,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static beauty.scheduler.util.AppConstants.DEFAULT_TEMPLATE;
-
-//NOTE: partly ready for review
+//NOTE: ready for review
 @ServiceComponent
 public class AppointmentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentsController.class);
@@ -44,21 +44,33 @@ public class AppointmentsController {
     }
 
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/api/appointments")
-    @Restriction(role = Role.notAuthenticated, redirection = "/login")
+    @Restriction(role = Role.notAuthenticated, exception = ExceptionKind.ACCESS_DENIED)
     @Restriction(role = Role.staff, exception = ExceptionKind.ACCESS_DENIED)
-    @DefaultTemplate(template = "/scheduler.jsp")
-    public String apiAppointmentCreateAttempt(HttpServletRequest req, HttpServletResponse resp) {
-        //(!!!)
-        return DEFAULT_TEMPLATE;
+    public String apiAppointmentCreateAttempt(HttpServletRequest req, HttpServletResponse resp) throws IOException, ExtendedException {
+        String jsonData = req.getReader()
+                .lines()
+                .collect(Collectors.joining());
+
+        UserPrincipal userPrincipal = Security.getUserPrincipal(req);
+
+        String message = appointmentService.addAppointmentByJSON(jsonData, userPrincipal);
+
+        return Router.sendRESTData(message, resp);
     }
 
     @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/appointments")
-    @Restriction(role = Role.nonstaff, exception = ExceptionKind.PAGE_NOT_FOUND)
+    @Restriction(role = Role.nonstaff, exception = ExceptionKind.ACCESS_DENIED)
     @Restriction(role = Role.ROLE_ADMIN, exception = ExceptionKind.ACCESS_DENIED)
-    @DefaultTemplate(template = "/scheduler.jsp")
-    public String apiAppointmentUpdateAttempt(HttpServletRequest req, HttpServletResponse resp) {
-        //(!!!)
-        return DEFAULT_TEMPLATE;
+    public String apiSetServiceProvidedAttempt(HttpServletRequest req, HttpServletResponse resp) throws IOException, ExtendedException {
+        String jsonData = req.getReader()
+                .lines()
+                .collect(Collectors.joining());
+
+        UserPrincipal userPrincipal = Security.getUserPrincipal(req);
+
+        String message = appointmentService.setServiceProvidedByJSON(jsonData, userPrincipal);
+
+        return Router.sendRESTData(message, resp);
     }
 
     public AppointmentService getAppointmentService() {
