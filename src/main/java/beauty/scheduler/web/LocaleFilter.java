@@ -1,5 +1,6 @@
 package beauty.scheduler.web;
 
+import beauty.scheduler.util.LocaleUtils;
 import beauty.scheduler.web.myspring.Security;
 import beauty.scheduler.web.myspring.UserPrincipal;
 
@@ -8,10 +9,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Optional;
 
-import static beauty.scheduler.util.AppConstants.*;
+import static beauty.scheduler.util.AppConstants.ATTR_LANG;
+import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 
 //NOTE: mostly ready for review
 @WebFilter(servletNames = MAIN_PACKAGE + ".web.Servlet")
@@ -36,7 +37,7 @@ public class LocaleFilter implements Filter {
 
         String requestLang = Optional.ofNullable(req.getParameter(ATTR_LANG)).orElse("").toLowerCase();
 
-        if (!ENABLED_LANGS.contains(requestLang) || "".equals(Locale.forLanguageTag(requestLang).getLanguage())) {
+        if (!LocaleUtils.getLangIsEnabled(requestLang)) {
             requestLang = "";
         }
 

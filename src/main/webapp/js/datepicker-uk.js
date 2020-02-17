@@ -26,7 +26,7 @@ datepicker.regional.uk = {
 	dayNamesShort: [ "нед","пнд","вів","срд","чтв","птн","сбт" ],
 	dayNamesMin: [ "Нд","Пн","Вт","Ср","Чт","Пт","Сб" ],
 	weekHeader: "Тиж",
-	dateFormat: "dd.mm.yy",
+	dateFormat: $("#date_format_long").val().replace("yyyy", "yy"), //compatibility between libs... "dd.mm.yy",
 	firstDay: 1,
 	isRTL: false,
 	showMonthAfterYear: false,

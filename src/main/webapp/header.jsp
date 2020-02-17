@@ -37,9 +37,9 @@
                     <c:choose>
                         <c:when test = "${!userPrincipal.isAuthenticated()}">
                             <div>
-                                <a href="/login" class="auth_link"><fmt:message key="i18n.login"/></a>
+                                <a id="i18n_login" href="/login" class="auth_link"><fmt:message key="i18n.login"/></a>
                                 <span style="color:#ffffff;"> | </span>
-                                <a href="/registration" class="auth_link"><fmt:message key="i18n.register"/></a>
+                                <a id="i18n_register" href="/registration" class="auth_link"><fmt:message key="i18n.register"/></a>
                             </div>
                         </c:when>
 

@@ -7,7 +7,7 @@ function init() {
 
 	$("#date").datepicker();
 	$("#date").datepicker("option", $.datepicker.regional[$("html").attr("lang")]);
-	
+
 	drawThisWeek();
 }
 
@@ -26,27 +26,20 @@ function drawNextWeek() {
 	drawWeek();
 }
 
-//NOTE: js Date.toISOString() returns time in GMT zone, so made this short fix to prevent long games with dates, they are out of scope now
 function getISOFormattedLocalDate(date) {
-	return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2); 
-}
-
-function getISOFormattedFromLocalFormattedDate(date) {
-	return date.substring(6,10) + '-' + date.substring(3,5) + '-' + date.substring(0,2); 
-}
-
-function getLocalFormattedLocalDate(date) {
-	return date.toLocalDate(); 
+	return dateFormat(date, "yyyy-mm-dd");
 }
 
 function getShortFormattedLocalDate(date) {
-	return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2); 
+	return dateFormat(date, $("#date_format_short").val());
 }
 
 //NOTE: in our case first day is monday
 //didn't want to use special js libraries to work with dates, so made simple transformation:
 function dayOfWeek(date) {
-	var day = new Date(date).getDay() - 1;
+	var weekStartShift = parseInt($("#week_shift").val());
+
+	var day = new Date(date).getDay() - 1 - weekStartShift;
 	if(day == -1) {
 		day = 6;
 	}
@@ -95,12 +88,12 @@ function drawWeek() {
 	cleanSchedulerTable();
 	
 	var apiUrl = "/api/appointments/"+startDate+"/"+endDate;
-	$.getJSON(apiUrl, function(data) {
-		$.each(data, function(i, appointmentRecord) {
+	$.getJSON(apiUrl, function(responseJSON) {
+		$.each(responseJSON, function(i, appointmentRecord) {
 			drawAppointment(appointmentRecord.map);
 		});
-	}).fail(function (data) {
-		showStatus("error", data.responseJSON.error, data.responseJSON.message);
+	}).fail(function (responseJSON) {
+		showStatus("error", $("#error_serviceUnavailable").val());
 	});
 }
 
@@ -115,13 +108,13 @@ function cellContent(appointmentData) {
 	var elementHTML = "";
 	
 	if(appointmentData.hasOwnProperty("master_name")) {
-		elementHTML += "<strong>Master: </strong>"+appointmentData["master_name"]+"<br>";
+		elementHTML += $("#i18n_MASTER")[0].innerText + " <strong>"+appointmentData["master_name"] + "</strong><br>";
 	}		
 	if(appointmentData.hasOwnProperty("customer_name")) {
-		elementHTML += "<strong>Customer: </strong>"+appointmentData["customer_name"]+"<br>";
+		elementHTML += $("#i18n_USER")[0].innerText + " <strong>"+appointmentData["customer_name"] + "</strong><br>";
 	}		
 	if(appointmentData.hasOwnProperty("serviceType")) {
-		elementHTML += "<strong>Service: </strong>"+appointmentData["serviceType"]+"<br>";
+		elementHTML += $("#i18n_service")[0].innerText + " <strong>" + $("#serviceType_"+appointmentData["serviceType"])[0].innerText + "</strong><br>";
 	}		
 	
 	return elementHTML;
@@ -154,10 +147,23 @@ function drawAppointment(appointmentData) {
 
 function openAppointment(appointmentData) {
 	if(appointmentData == null) {
+        var workDayStarts = parseInt($("#WORK_TIME_STARTS").val());
+        var workDayEnds = parseInt($("#WORK_TIME_ENDS").val());
+
+        var appointmentDate = Date.now();
+
+        var intTimeValue = parseInt(dateFormat(appointmentDate, "HH")) + 1;
+        if(intTimeValue > workDayEnds) {
+            intTimeValue = workDayStarts;
+            appointmentDate += 24*3600*1000;
+        } else if (intTimeValue < workDayStarts) {
+            intTimeValue = workDayStarts;
+        }
+
 		appointmentData = {
-			date: "",
+			date: appointmentDate,
 			rights_date: "W",
-			time: 12,
+			time: intTimeValue,
 			rights_time: "W",
 			serviceType: "HAIRDRESSING",
 			rights_serviceType: "W"
@@ -201,6 +207,9 @@ function setValueToElement(elementId, value) {
 		if($(this)[0].type == "checkbox") {
 			$(this).prop('checked', value == "true");
 		} else {
+			if(elementId == "date") {
+			    value = dateFormat(value, $("#date_format_long").val())
+			}
 			$(this).val(value);
 		}
 	});
@@ -211,42 +220,11 @@ function setAccesibilityToElement(elementId, visible, enabled) {
 	$("#"+elementId).prop("disabled", !enabled);
 }
 
-function dateAndTimeIsValid(inputDate, inputTime) {
-	var allValid = true;
-	var locDate;
-	
-	if(inputDate == "") {
-		allValid = false;
-	} else {
-		locDate = getISOFormattedFromLocalFormattedDate(inputDate);
-		var locDateTime = Date.parse(locDate) + (inputTime - new Date(Date.now()).getTimezoneOffset()/60)*3600*1000;
-		
-		if(locDateTime < Date.now()) {
-			allValid = false;
-		}
-	}
-	
-	return allValid;
-} 
-
 function reserveTime(dlg) {
-	var inputDate = $("#date").val();
-	var inputTime = $("#time").val();
-	
-	//TODO proccess all this on server side
-	if(!dateAndTimeIsValid(inputDate, inputTime)) {
-		showStatus("error", 403, "Specify correct date and time");
-		return false;
-	}
-	
-	locDate = getISOFormattedFromLocalFormattedDate(inputDate);
-	
 	var appointmentDTO = {
-		map: {
-		    date: locDate,
-		    time: inputTime,
-			serviceType: $("#serviceType").val()
-	    }
+        date: getISOFormattedLocalDate($("#date").val()),
+        time: $("#time").val(),
+        serviceType: $("#serviceType").val()
     }
 	
 	$.ajax({
@@ -254,13 +232,18 @@ function reserveTime(dlg) {
         type: "POST",
         dataType: "json",
         contentType: "application/json",
-        success: function (appointmentRecord) {
-        	//showStatus("success", 200, "saved");
-			dlg.dialog("close");
-        	drawWeek();
+        success: function (responseJSON) {
+        	responseArray = responseJSON.split(":");
+        	if(responseArray[0] == "success") {
+        	    showStatus("success", $("#success_reserved").val());
+                dlg.dialog("close");
+                drawWeek();
+        	} else {
+        	    showStatus("error", responseArray[1]);
+        	}
         },
-        error: function (data) {
-            showStatus("error", data.responseJSON.error, data.responseJSON.message);
+        error: function (responseJSON) {
+            showStatus("error", $("#error_serviceUnavailable").val());
         },
         data: JSON.stringify(appointmentDTO)
     });
@@ -270,10 +253,8 @@ function reserveTime(dlg) {
 
 function updateServiceProvided(appointmentId, serviceProvidedNewValue, dlg) {
 	var appointmentDTO = {
-			map: {
-				id: appointmentId,
-				serviceProvided: serviceProvidedNewValue
-		    }
+            id: appointmentId,
+            serviceProvided: "" + serviceProvidedNewValue
 	    }
 	
 	$.ajax({
@@ -281,13 +262,18 @@ function updateServiceProvided(appointmentId, serviceProvidedNewValue, dlg) {
         type: "PUT",
         dataType: "json",
         contentType: "application/json",
-        success: function (appointmentDTO) {
-        	showStatus("success", 200, "saved");
-			dlg.dialog("close");
-        	drawWeek();
+        success: function (responseJSON) {
+        	responseArray = responseJSON.split(":");
+        	if(responseArray[0] == "success") {
+        	    showStatus("success", $("#success_saved").val());
+                dlg.dialog("close");
+                drawWeek();
+        	} else {
+        	    showStatus("error", responseArray[1]);
+        	}
         },
-        error: function (data) {
-            showStatus("error", data.responseJSON.error, data.responseJSON.message);
+        error: function (responseJSON) {
+            showStatus("error", $("#error_serviceUnavailable").val());
 			dlg.dialog("close");
         	drawWeek();
         },
@@ -299,7 +285,7 @@ function showAppointmentDialog() {
 	var setButtons = {};
 	
 	if($("input#id").val() == "") {
-		setButtons["Reserve time"] = function() {
+		setButtons[$("#i18n_reserve").val()] = function() {
 			reserveTime($(this));
 		};
 	}
@@ -309,7 +295,7 @@ function showAppointmentDialog() {
 	var serviceProvidedCurrentValue = $("input#serviceProvided").prop("checked");
 	
 	if(serviceProvidedVisible&&serviceProvidedEnabled) {
-		setButtons["Save"] = function() {
+		setButtons[$("#i18n_save").val()] = function() {
 			var serviceProvidedNewValue = $("input#serviceProvided").prop("checked");
 			
 			if(serviceProvidedNewValue != serviceProvidedCurrentValue) {
@@ -317,11 +303,8 @@ function showAppointmentDialog() {
 			}
 		};
 	}
-	
-	var btnCloseTitle = "Close";
-	if(Object.keys(setButtons).length > 0) {
-		btnCloseTitle = "Cancel";
-	}
+
+	var btnCloseTitle = $("#i18n_close").val();
 	setButtons[btnCloseTitle] = function() {
 		$(this).dialog("close");
 	};
@@ -338,23 +321,25 @@ function showAppointmentDialog() {
 }
 
 function suggestRegistration() {
+	var setButtons = {};
+
+    setButtons[$("#i18n_login").text()] = function() {
+        $(location).attr('href', '/login');
+    };
+    setButtons[$("#i18n_register").text()] = function() {
+        $(location).attr('href', '/registration');
+    };
+    setButtons[$("#i18n_close").val()] = function() {
+        $(this).dialog("close");
+    };
+
 	$(function() {
 		$("#dialog-login").dialog({
 			resizable: false,
 			height: "auto",
 			width: 400,
 			modal: true,
-			buttons: {
-				"Log in": function() {
-					$(location).attr('href', '/login');
-				},
-				"Register": function() {
-					$(location).attr('href', '/registration');
-				},
-				Cancel: function() {
-					$(this).dialog("close");
-				}
-			}
+			buttons: setButtons
 		});
 	});
 }

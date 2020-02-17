@@ -1,6 +1,7 @@
 package beauty.scheduler.service;
 
 import beauty.scheduler.dao.EmailMessageRepository;
+import beauty.scheduler.entity.Appointment;
 import beauty.scheduler.web.myspring.annotations.InjectDependency;
 import beauty.scheduler.web.myspring.annotations.ServiceComponent;
 import org.slf4j.Logger;
@@ -15,6 +16,9 @@ public class EmailMessageService {
     private EmailMessageRepository emailMessageRepository;
 
     //TODO rewrite from Spring project
+    public void sendRequestForFeedbackToCustomer(Appointment appointment) {
+        //TODO
+    }
 
     public EmailMessageRepository getEmailMessageRepository() {
         return emailMessageRepository;
@@ -23,4 +27,5 @@ public class EmailMessageService {
     public void setEmailMessageRepository(EmailMessageRepository emailMessageRepository) {
         this.emailMessageRepository = emailMessageRepository;
     }
+
 }

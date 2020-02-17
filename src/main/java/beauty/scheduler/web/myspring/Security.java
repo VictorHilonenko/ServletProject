@@ -2,6 +2,7 @@ package beauty.scheduler.web.myspring;
 
 import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
+import beauty.scheduler.util.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class Security {
     public static void makeSessionInitialized(HttpSession session) {
         String sessionLang = (String) session.getAttribute(ATTR_LANG);
         if (!Optional.ofNullable(sessionLang).isPresent()) {
-            session.setAttribute(ATTR_LANG, DEFAULT_LOCALE_LANG);
+            session.setAttribute(ATTR_LANG, LocaleUtils.getDefaultLocale().getLanguage());
         }
 
         UserPrincipal userPrincipal = getUserPrincipal(session);
@@ -54,7 +55,7 @@ public class Security {
         HttpSession session = getActualSession(req);
         Set<UserPrincipal> activeUsers = (Set<UserPrincipal>) context.getAttribute(ATTR_ACTIVE_USERS);
 
-        String sessionLang = Optional.ofNullable((String) session.getAttribute(ATTR_LANG)).orElse(DEFAULT_LOCALE_LANG);
+        String sessionLang = Optional.ofNullable((String) session.getAttribute(ATTR_LANG)).orElse(LocaleUtils.getDefaultLocale().getLanguage());
         UserPrincipal userPrincipal = new UserPrincipal(Optional.of(user.getId()), user.getEmail(), user.getRole(), sessionLang);
 
         activeUsers.add(userPrincipal);

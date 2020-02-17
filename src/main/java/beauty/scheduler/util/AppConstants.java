@@ -1,8 +1,8 @@
 package beauty.scheduler.util;
 
-import java.util.Arrays;
+import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public interface AppConstants {
 
@@ -14,10 +14,9 @@ public interface AppConstants {
     byte WORK_TIME_STARTS = 8;
     byte WORK_TIME_ENDS = 20;
 
-    int DEFAULT_PAGE_SIZE = 10;
+    ZoneId ZONE_ID = ZoneId.of("Europe/Kiev");
 
-    String DEFAULT_LOCALE_LANG = Locale.ENGLISH.getLanguage();
-    List<String> ENABLED_LANGS = Arrays.asList(Locale.ENGLISH.getLanguage(), "uk"); //there is no "uk" in
+    int DEFAULT_PAGE_SIZE = 10;
 
     String REGEX_NOT_EMPTY_GENERAL = "^[A-Za-zА-Яа-яІіЇїЄє.,:;%!?\\-+0-9 \\s]+$";
     String REGEX_NOT_EMPTY_ENGLISH = "^[A-Za-z]+$";
@@ -32,6 +31,11 @@ public interface AppConstants {
 
     String REST_ERROR = "error";
     String REST_SUCCESS = "success";
+
+    String NO_IDLE_MASTER_SQL_MESSAGE = "Column 'master_id' cannot be null";
+    List<String> DONT_LOG_FOR_MESSAGES_LIST = Collections.singletonList(NO_IDLE_MASTER_SQL_MESSAGE);
+
+    String MESSAGES_BUNDLE_NAME = "messages";
 
     //algorithmic, no sense to change:
     String DEFAULT_TEMPLATE = "default";
