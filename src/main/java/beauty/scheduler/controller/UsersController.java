@@ -39,7 +39,7 @@ public class UsersController {
 
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/registration")
     @Restriction(role = Role.authenticated, redirection = "/logout")
-    @DefaultTemplate(template = "/registration.jsp")
+    @DefaultTemplate(template = "/WEB-INF/registration.jsp")
     public String registrationPage() {
         LOGGER.info("registrationPage is shown");
         return DEFAULT_TEMPLATE;
@@ -47,7 +47,7 @@ public class UsersController {
 
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/registration")
     @Restriction(role = Role.authenticated, redirection = "/logout")
-    @DefaultTemplate(template = "/registration.jsp")
+    @DefaultTemplate(template = "/WEB-INF/registration.jsp")
     public String registrationAttempt(RegistrationForm form, HttpServletRequest req) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, InstantiationException, ExtendedException {
 
         Map<String, String> errors = new HashMap<>();
@@ -68,19 +68,19 @@ public class UsersController {
 
         userService.createUser(form);
 
-        return "/reg_success.jsp";
+        return "/WEB-INF/reg_success.jsp";
     }
 
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/login")
     @Restriction(role = Role.authenticated, redirection = "/logout")
-    @DefaultTemplate(template = "/login.jsp")
+    @DefaultTemplate(template = "/WEB-INF/login.jsp")
     public String loginPage() {
         return DEFAULT_TEMPLATE;
     }
 
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/login")
     @Restriction(role = Role.authenticated, redirection = "/logout")
-    @DefaultTemplate(template = "/login.jsp")
+    @DefaultTemplate(template = "/WEB-INF/login.jsp")
     public String loginAttempt(LoginForm form, HttpServletRequest req) throws SQLException, ExtendedException {
 
         Map<String, String> errors = new HashMap<>();
@@ -123,7 +123,7 @@ public class UsersController {
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/admin")
     @Restriction(role = Role.nonstaff, exception = ExceptionKind.PAGE_NOT_FOUND)
     @Restriction(role = Role.ROLE_MASTER, exception = ExceptionKind.ACCESS_DENIED)
-    @DefaultTemplate(role = Role.ROLE_ADMIN, template = "/admin.jsp")
+    @DefaultTemplate(role = Role.ROLE_ADMIN, template = "/WEB-INF/admin.jsp")
     public String apiUserListForAdmin(HttpServletRequest req, HttpServletResponse resp) throws SQLException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, ExtendedException {
 
         req.setAttribute(ATTR_USERS, userService.getAllUserDTO());

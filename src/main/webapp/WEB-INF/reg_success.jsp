@@ -4,7 +4,7 @@
 <fmt:setLocale value="${lang}"/>
 <fmt:setBundle basename="messages"/>
 
-<jsp:include page="/header.jsp" />
+<jsp:include page="/WEB-INF/header.jsp" />
 
 	<section>
 		<h1 style="color: green"><fmt:message key="i18n.congrats"/></h1>
@@ -12,4 +12,4 @@
 		<h1><a href="/login"><input type="submit" class="send" value="<fmt:message key="i18n.login"/>" /></a></h1>
 	</section>
 
-<jsp:include page="/footer.jsp" />
+<jsp:include page="/WEB-INF/footer.jsp" />
