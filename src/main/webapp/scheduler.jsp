@@ -127,7 +127,7 @@
     <input type="hidden" id="date_format_short" value="<fmt:message key="date.format.short"/>">
     <input type="hidden" id="date_format_long" value="<fmt:message key="date.format.long"/>">
     <input type="hidden" id="i18n_reserve" value="<fmt:message key="i18n.reserve"/>">
-    <input type="hidden" id="i18n_cancel" value="<fmt:message key="i18n.cancel"/>">
+    <input type="hidden" id="i18n_save" value="<fmt:message key="i18n.save"/>">
     <input type="hidden" id="WORK_TIME_STARTS" value="${WORK_TIME_STARTS}">
     <input type="hidden" id="WORK_TIME_ENDS" value="${WORK_TIME_ENDS}">
 

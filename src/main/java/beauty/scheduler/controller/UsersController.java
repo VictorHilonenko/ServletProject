@@ -12,6 +12,7 @@ import beauty.scheduler.web.form.RegistrationForm;
 import beauty.scheduler.web.myspring.RequestMethod;
 import beauty.scheduler.web.myspring.Router;
 import beauty.scheduler.web.myspring.Security;
+import beauty.scheduler.web.myspring.UserPrincipal;
 import beauty.scheduler.web.myspring.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +141,9 @@ public class UsersController {
                 .lines()
                 .collect(Collectors.joining());
 
-        String status = userService.updateUserByJSON(jsonData);
+        UserPrincipal userPrincipal = Security.getUserPrincipal(req);
+
+        String status = userService.updateUserByJSON(jsonData, userPrincipal);
 
         return Router.sendRESTData(status, resp);
     }

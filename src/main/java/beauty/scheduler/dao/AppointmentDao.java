@@ -5,6 +5,7 @@ import beauty.scheduler.dao.core.StatementMapper;
 import beauty.scheduler.entity.Appointment;
 import beauty.scheduler.entity.User;
 import beauty.scheduler.util.ExtendedException;
+import beauty.scheduler.util.LocaleUtils;
 import beauty.scheduler.web.myspring.annotations.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static beauty.scheduler.dao.MappersStorage.APPOINTMENT_ENTITY_MAPPER;
-import static beauty.scheduler.util.AppConstants.NO_IDLE_MASTER_SQL_MESSAGE;
-import static beauty.scheduler.util.AppConstants.TABLENAME;
+import static beauty.scheduler.util.AppConstants.*;
 
 //NOTE: partly ready for review
 @ServiceComponent
@@ -86,7 +86,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
         //});
     }
 
-    public String reserveTime(Long customerId, String strDate, String strTime, String strServiceType) {
+    public String reserveTime(Long customerId, String strDate, String strTime, String strServiceType, String lang) {
         //NOTE: this insert statement solves the next task:
         //it finds an idle Master who can provide the requested ServiceType.
         //if there is no one, there will be an exception.
@@ -141,9 +141,9 @@ public class AppointmentDao extends GenericDao<Appointment> {
             create(statementMapper, query);
         } catch (SQLException e) {
             if (e.getMessage().equals(NO_IDLE_MASTER_SQL_MESSAGE)) {
-                return "error:no idle master for that time"; //(!!!) resource bundle or i18n
+                return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("warning.noIdleMaster", lang);
             } else {
-                return "error:REPOSITORY_ISSUE"; //(!!!) resource bundle
+                return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", lang);
             }
         }
 

@@ -37,9 +37,9 @@ function sendRowDataToServer(aRow, requestMethod) {
 	        success: function (responseJSON) {
                 responseArray = responseJSON.split(":");
                 if(responseArray[0] == "success") {
-                    showStatus("success", "saved"); //(!!!) i18n
+                    showStatus("success", $("#success_saved").val());
                 } else {
-                    showStatus("error", responseArray[1]); //(!!!) i18n
+                    showStatus("error", responseArray[1]);
                 }
 	        },
 	        error: function (responseJSON) {

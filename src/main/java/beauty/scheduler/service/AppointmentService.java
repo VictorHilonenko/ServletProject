@@ -6,6 +6,7 @@ import beauty.scheduler.entity.Appointment;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.util.ExtendedException;
+import beauty.scheduler.util.LocaleUtils;
 import beauty.scheduler.web.myspring.UserPrincipal;
 import beauty.scheduler.web.myspring.annotations.InjectDependency;
 import beauty.scheduler.web.myspring.annotations.ServiceComponent;
@@ -55,7 +56,7 @@ public class AppointmentService {
         String strServiceType = map.getOrDefault("serviceType", "");
 
         //validate incoming data
-        String message = validateAppointmentDataForAdd(strDate, strTime, strServiceType);
+        String message = validateAppointmentDataForAdd(strDate, strTime, strServiceType, userPrincipal);
 
         if (!"".equals(message)) {
             //not valid
@@ -63,7 +64,7 @@ public class AppointmentService {
         }
 
         //try to reserve Master for the date and time, if any is available for that ServiceType
-        message = appointmentDao.reserveTime(userPrincipal.getId().get(), strDate, strTime, strServiceType);
+        message = appointmentDao.reserveTime(userPrincipal.getId().get(), strDate, strTime, strServiceType, userPrincipal.getCurrentLang());
 
         if (!"".equals(message)) {
             //db issue or no idle master
@@ -73,7 +74,7 @@ public class AppointmentService {
         return REST_SUCCESS;
     }
 
-    public String validateAppointmentDataForAdd(String strDate, String strTime, String strServiceType) {
+    public String validateAppointmentDataForAdd(String strDate, String strTime, String strServiceType, UserPrincipal userPrincipal) {
         strTime = (strTime.length() == 1 ? "0" : "") + strTime;
         String strDateTime = strDate + "T" + strTime + ":00:00.000";
 
@@ -85,19 +86,21 @@ public class AppointmentService {
             reserveDateTime = LocalDateTime.parse(strDateTime);
         } catch (DateTimeParseException e) {
             LOGGER.error("wrong data format of " + strDateTime);
-            return "error:wrong data format"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
         }
 
         //check past time
         LocalDateTime nowDateTime = LocalDateTime.now(ZONE_ID);
+        //TODO
+        //strange work...
         if (reserveDateTime.isBefore(nowDateTime)) {
-            return "error:date in the past"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.dateIsInThePast", userPrincipal.getCurrentLang());
         }
 
         //check work time
         if ((time < WORK_TIME_STARTS) || (time > WORK_TIME_ENDS)) {
             LOGGER.error("not working time " + strDateTime);
-            return "error:not working time"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.notWorkingTime", userPrincipal.getCurrentLang());
         }
 
         //check service type
@@ -105,7 +108,7 @@ public class AppointmentService {
             strServiceType = ServiceType.valueOf(strServiceType).name();
         } catch (IllegalArgumentException e) {
             LOGGER.error("wrong service type " + strServiceType);
-            return "error:wrong service type"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
         }
 
         return ""; //if OK
@@ -117,8 +120,7 @@ public class AppointmentService {
         String strServiceProvided = map.getOrDefault("serviceProvided", "");
 
         //validate incoming data
-        String message = validateIncomingDataForServiceProvided(strId, strServiceProvided);
-
+        String message = validateIncomingDataForServiceProvided(strId, strServiceProvided, userPrincipal);
         if (!"".equals(message)) {
             //not valid
             return message;
@@ -129,18 +131,15 @@ public class AppointmentService {
         try {
             optionalAppointment = appointmentDao.getById(Long.parseLong(strId));
         } catch (SQLException | ExtendedException e) {
-            return "error:REPOSITORY_ISSUE"; //(!!!) hardcode "error" to const
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", userPrincipal.getCurrentLang());
         }
-
         if (!optionalAppointment.isPresent()) {
-            return "error:appointment not found"; //(!!!) hardcode "error" to const
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.appointmentNotFound", userPrincipal.getCurrentLang());
         }
-
         Appointment appointment = optionalAppointment.get();
 
         //check politics for set "service provided"
         message = validateAppointmentForSetServiceProvided(appointment, userPrincipal);
-
         if (!"".equals(message)) {
             //not valid
             return message;
@@ -149,16 +148,16 @@ public class AppointmentService {
         //action itself
         appointment.setServiceProvided(true);
 
+        //try to update
         boolean updated = false;
         try {
             updated = appointmentDao.update(appointment);
         } catch (SQLException | ExtendedException e) {
             LOGGER.error("SQLException updateServiceProvidedByJSON");
-            return "error:REPOSITORY_ISSUE"; //(!!!) hardcode "error" to const
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", userPrincipal.getCurrentLang());
         }
-
         if (!updated) {
-            return "error:REPOSITORY_ISSUE"; //(!!!) hardcode "error" to const
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", userPrincipal.getCurrentLang());
         }
 
         emailMessageService.sendRequestForFeedbackToCustomer(appointment);
@@ -166,10 +165,27 @@ public class AppointmentService {
         return REST_SUCCESS;
     }
 
+    public String validateIncomingDataForServiceProvided(String strId, String strServiceProvided, UserPrincipal userPrincipal) {
+        //check format
+        try {
+            Long id = Long.parseLong(strId);
+        } catch (DateTimeParseException e) {
+            LOGGER.error("wrong data format of " + strId);
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
+        }
+
+        if (!Boolean.parseBoolean(strServiceProvided)) {
+            LOGGER.info("attempt to set service provided unchecked");
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.youCanOnlySetItChecked", userPrincipal.getCurrentLang());
+        }
+
+        return ""; //if OK
+    }
+
     private String validateAppointmentForSetServiceProvided(Appointment appointment, UserPrincipal userPrincipal) {
         //is it not set yet?
         if (appointment.getServiceProvided()) {
-            return "error:already set"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.alreadySet", userPrincipal.getCurrentLang());
         }
 
         //maybe it is in future?
@@ -177,39 +193,22 @@ public class AppointmentService {
         LocalDateTime appointmentDateTime = LocalDateTime.of(appointment.getAppointmentDate(), LocalTime.of(appointment.getAppointmentTime(), 0));
 
         if (appointmentDateTime.isAfter(nowDateTime)) {
-            return "error:date is in future"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.dateIsInFuture", userPrincipal.getCurrentLang());
         }
 
         //is user authenticated?
         if (!userPrincipal.getId().isPresent()) {
-            return "error:not authenticated"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.notAuthenticated", userPrincipal.getCurrentLang());
         }
 
         //does he has authority?
         if (!userPrincipal.getRole().equals(Role.ROLE_MASTER)) {
-            return "error:has no authority"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.hasNoAuthority", userPrincipal.getCurrentLang());
         }
 
         //is it his/her appointment?
         if (!appointment.getMaster().getId().equals(userPrincipal.getId().get())) {
-            return "error:only master can set this"; //(!!!) resource bundle
-        }
-
-        return ""; //if OK
-    }
-
-    public String validateIncomingDataForServiceProvided(String strId, String strServiceProvided) {
-        //check format
-        try {
-            Long id = Long.parseLong(strId);
-        } catch (DateTimeParseException e) {
-            LOGGER.error("wrong data format of " + strId);
-            return "error:wrong data format"; //(!!!) resource bundle
-        }
-
-        if (!Boolean.parseBoolean(strServiceProvided)) {
-            LOGGER.info("attempt to set service provided unchecked");
-            return "error:you can only set it checked"; //(!!!) resource bundle
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.onlyMasterCanSetThis", userPrincipal.getCurrentLang());
         }
 
         return ""; //if OK

@@ -5,6 +5,8 @@
 <fmt:setBundle basename="messages"/>
 
     <input type="hidden" id="error_serviceUnavailable" value="<fmt:message key="error.serviceUnavailable"/>">
+    <input type="hidden" id="success_saved" value="<fmt:message key="success.saved"/>">
+    <input type="hidden" id="success_reserved" value="<fmt:message key="success.reserved"/>">
 
     <br>
     <br>

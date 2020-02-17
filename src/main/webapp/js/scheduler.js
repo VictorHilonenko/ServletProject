@@ -235,11 +235,11 @@ function reserveTime(dlg) {
         success: function (responseJSON) {
         	responseArray = responseJSON.split(":");
         	if(responseArray[0] == "success") {
-        	    showStatus("success", "time is reserved"); //(!!!) i18n
+        	    showStatus("success", $("#success_reserved").val());
                 dlg.dialog("close");
                 drawWeek();
         	} else {
-        	    showStatus("error", responseArray[1]); //(!!!) i18n
+        	    showStatus("error", responseArray[1]);
         	}
         },
         error: function (responseJSON) {
@@ -265,11 +265,11 @@ function updateServiceProvided(appointmentId, serviceProvidedNewValue, dlg) {
         success: function (responseJSON) {
         	responseArray = responseJSON.split(":");
         	if(responseArray[0] == "success") {
-        	    showStatus("success", "saved"); //(!!!) i18n
+        	    showStatus("success", $("#success_saved").val());
                 dlg.dialog("close");
                 drawWeek();
         	} else {
-        	    showStatus("error", responseArray[1]); //(!!!) i18n
+        	    showStatus("error", responseArray[1]);
         	}
         },
         error: function (responseJSON) {
@@ -295,7 +295,7 @@ function showAppointmentDialog() {
 	var serviceProvidedCurrentValue = $("input#serviceProvided").prop("checked");
 	
 	if(serviceProvidedVisible&&serviceProvidedEnabled) {
-		setButtons["Save"] = function() {
+		setButtons[$("#i18n_save").val()] = function() {
 			var serviceProvidedNewValue = $("input#serviceProvided").prop("checked");
 			
 			if(serviceProvidedNewValue != serviceProvidedCurrentValue) {
@@ -305,9 +305,6 @@ function showAppointmentDialog() {
 	}
 
 	var btnCloseTitle = $("#i18n_close").val();
-	if(Object.keys(setButtons).length > 0) {
-		btnCloseTitle = $("#i18n_cancel").val();
-	}
 	setButtons[btnCloseTitle] = function() {
 		$(this).dialog("close");
 	};
