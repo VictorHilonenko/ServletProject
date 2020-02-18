@@ -4,8 +4,13 @@
 </div>
 <hr>
 <div align="center">
-	<img src="src/main/webapp/images/logo_en.png">
+	<img src="https://github.com/VictorHilonenko/ServletProject/raw/master/src/main/webapp/images/logo_en.png">
 </div>
+<hr>
+<div align="center">
+	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README.md"><code><strong>NOTE: see also "MySpring"</strong></code></a>
+</div>
+
 
 # Beauty Salon Scheduler system
 A web page should be created, which allows to view the work schedule of salon employees,

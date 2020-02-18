@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import static beauty.scheduler.util.AppConstants.*;
 
 //NOTE: ready for review
+
 @ServiceComponent
 public class WelcomeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WelcomeController.class);
