@@ -57,3 +57,4 @@ _**NOTE**: todo - describe **other injecting parameters possibilities** and **fo
 <div align="center">
 	<img src="https://raw.githubusercontent.com/VictorHilonenko/ServletProject/master/src/main/webapp/images/example5.png">
 </div>
+
