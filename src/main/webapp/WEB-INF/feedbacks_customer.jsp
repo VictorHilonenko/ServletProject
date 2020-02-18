@@ -4,7 +4,7 @@
 <fmt:setLocale value="${lang}"/>
 <fmt:setBundle basename="messages"/>
 
-<jsp:include page="/header.jsp" />
+<jsp:include page="/WEB-INF/header.jsp" />
 	<section>
 		<h1>Feedbacks</h1>
 		<c:if test = "${listFeedbacksDTOToLeave != null && !listFeedbacksDTOToLeave.isEmpty()}">
@@ -121,4 +121,4 @@
 
     </section>
 
-<jsp:include page="/footer.jsp" />
+<jsp:include page="/WEB-INF/footer.jsp" />

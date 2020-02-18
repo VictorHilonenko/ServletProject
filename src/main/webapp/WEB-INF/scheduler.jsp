@@ -4,7 +4,7 @@
 <fmt:setLocale value="${lang}"/>
 <fmt:setBundle basename="messages"/>
 
-<jsp:include page="/header.jsp" />
+<jsp:include page="/WEB-INF/header.jsp" />
 
 	<section>
 		<h1><span><fmt:message key="i18n.appointments"/></span> <span id="headerDates" class="dates">06.01 - 12.01</span></h1>
@@ -136,4 +136,4 @@
 	<script src="/js/date.format.js"></script>
 	<script src="/js/scheduler.js"></script>
 
-<jsp:include page="/footer.jsp" />
+<jsp:include page="/WEB-INF/footer.jsp" />

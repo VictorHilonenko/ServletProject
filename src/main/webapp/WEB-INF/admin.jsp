@@ -4,7 +4,7 @@
 <fmt:setLocale value="${lang}"/>
 <fmt:setBundle basename="messages"/>
 
-<jsp:include page="/header.jsp" />
+<jsp:include page="/WEB-INF/header.jsp" />
 
 	<section>
 		<h1><fmt:message key="i18n.adminPage"/></h1>
@@ -63,4 +63,4 @@
 
 	<script src="/js/admin.js"></script>
 
-<jsp:include page="/footer.jsp" />
+<jsp:include page="/WEB-INF/footer.jsp" />

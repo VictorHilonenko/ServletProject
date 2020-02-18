@@ -36,8 +36,8 @@ public class FeedbacksController {
 
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/feedbacks")
     @Restriction(role = Role.notAuthenticated, redirection = "/login")
-    @DefaultTemplate(role = Role.ROLE_USER, template = "/feedbacks_customer.jsp")
-    @DefaultTemplate(role = Role.staff, template = "/feedbacks_staff.jsp")
+    @DefaultTemplate(role = Role.ROLE_USER, template = "/WEB-INF/feedbacks_customer.jsp")
+    @DefaultTemplate(role = Role.staff, template = "/WEB-INF/feedbacks_staff.jsp")
     public String feedbacksList(HttpServletRequest req, Pagination pagination) throws ExtendedException, SQLException {
 
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
@@ -55,7 +55,7 @@ public class FeedbacksController {
 
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/feedbacks/{appointmentId}/{quickAccessCode}")
     @Restriction(role = Role.staff, exception = ExceptionKind.ACCESS_DENIED)
-    @DefaultTemplate(template = "/feedbacks_customer.jsp")
+    @DefaultTemplate(template = "/WEB-INF/feedbacks_customer.jsp")
     public String feedbacksListByQuickLink(HttpServletRequest req, HttpServletResponse resp) {
 
         //TODO rewrite from Spring
@@ -66,7 +66,7 @@ public class FeedbacksController {
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/feedbacks")
     @Restriction(role = Role.notAuthenticated, redirection = "/login")
     @Restriction(role = Role.staff, exception = ExceptionKind.ACCESS_DENIED)
-    @DefaultTemplate(template = "/feedbacks_customer.jsp")
+    @DefaultTemplate(template = "/WEB-INF/feedbacks_customer.jsp")
     public String feedbackUpdateAttempt(FeedbackForm form, HttpServletRequest req) throws SQLException, ExtendedException {
 
         Map<String, String> errors = new HashMap<>();

@@ -58,7 +58,7 @@ public enum Role {
         try {
             return Role.valueOf(name);
         } catch (IllegalArgumentException e) {
-            LOGGER.debug("Role " + name + " not found");
+            LOGGER.warn("Role " + name + " not found");
             return Role.ROLE_ANONYMOUS;
         }
     }
@@ -67,7 +67,7 @@ public enum Role {
         try {
             return Optional.of(Role.valueOf(name));
         } catch (IllegalArgumentException e) {
-            LOGGER.debug("Role " + name + " not found");
+            LOGGER.warn("Role " + name + " not found");
             return Optional.empty();
         }
     }

@@ -19,7 +19,7 @@ public class WelcomeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(WelcomeController.class);
 
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/")
-    @DefaultTemplate(template = "/scheduler.jsp", role = Role.all)
+    @DefaultTemplate(template = "/WEB-INF/scheduler.jsp", role = Role.all)
     public String welcome(HttpServletRequest req) {
         req.setAttribute("WORK_TIME_STARTS", WORK_TIME_STARTS);
         req.setAttribute("WORK_TIME_ENDS", WORK_TIME_ENDS);

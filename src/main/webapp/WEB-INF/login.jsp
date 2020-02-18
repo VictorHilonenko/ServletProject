@@ -4,7 +4,7 @@
 <fmt:setLocale value="${lang}"/>
 <fmt:setBundle basename="messages"/>
 
-<jsp:include page="/header.jsp" />
+<jsp:include page="/WEB-INF/header.jsp" />
 
 	<section>
 		<h1>Login page</h1>
@@ -43,4 +43,4 @@
 		</div>
     </section>
 
-<jsp:include page="/footer.jsp" />
+<jsp:include page="/WEB-INF/footer.jsp" />

@@ -28,7 +28,6 @@ public enum ServiceType {
         try {
             return ServiceType.valueOf(name);
         } catch (IllegalArgumentException e) {
-            LOGGER.debug("ServiceType with " + name + " not found");
             return ServiceType.NULL;
         }
     }
@@ -37,7 +36,6 @@ public enum ServiceType {
         try {
             return Optional.of(ServiceType.valueOf(name));
         } catch (IllegalArgumentException e) {
-            LOGGER.debug("ServiceType with " + name + " not found");
             return Optional.empty();
         }
     }

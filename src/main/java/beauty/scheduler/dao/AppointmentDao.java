@@ -73,7 +73,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
     @Override
     public boolean create(Appointment entity) throws SQLException {
-        LOGGER.debug("we don't use this function to create new Appointments");
+        LOGGER.info("we don't use this function to create new Appointments");
         throw new SQLException("we don't use this function to create new Appointments");
         //otherwise it would be:
         //return create(ps -> {
@@ -153,7 +153,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
     @Override
     public boolean update(Appointment entity) throws SQLException, ExtendedException {
-        LOGGER.debug("Update appointment: " + entity.toString());
+        LOGGER.info("Update appointment: " + entity.toString());
 
         return update(ps -> {
             ps.setString(1, entity.getAppointmentDate().toString());
@@ -168,7 +168,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
     @Override
     public boolean delete(Appointment entity) throws SQLException, ExtendedException {
-        LOGGER.debug("Delete appointment: " + entity.toString());
+        LOGGER.info("Delete appointment: " + entity.toString());
 
         return delete(ps -> ps.setLong(1, entity.getId()));
     }
