@@ -4,7 +4,11 @@
 </div>
 <hr>
 <div align="center">
-	<img src="src/main/webapp/images/logo_uk.png">
+	<img src="https://github.com/VictorHilonenko/ServletProject/raw/master/src/main/webapp/images/logo_uk.png">
+</div>
+<hr>
+<div align="center">
+	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README_uk.md"><code><strong>NOTE: див. також опис "MySpring"</strong></code></a>
 </div>
 
 <div align="center">
