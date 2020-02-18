@@ -5,6 +5,9 @@ import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.web.myspring.annotations.DefaultTemplate;
 import beauty.scheduler.web.myspring.annotations.EndpointMethod;
 import beauty.scheduler.web.myspring.annotations.Restriction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 //NOTE: partly ready for review
 public class Endpoint {
@@ -23,6 +27,13 @@ public class Endpoint {
     private RoleMap<ExceptionKind> exceptions;
     private RoleMap<String> redirections;
     private RoleMap<String> templates;
+
+    public static String endpointKey(RequestMethod requestMethod, String urlPattern) {
+        StringJoiner sj = new StringJoiner("->");
+        sj.add(requestMethod.name());
+        sj.add(urlPattern);
+        return sj.toString();
+    }
 
     public Endpoint(Method routableMethod) {
         if (routableMethod == null) {
@@ -83,6 +94,10 @@ public class Endpoint {
         }
     }
 
+    public String getEndpointKey() {
+        return endpointKey(this.requestMethod, this.urlPattern);
+    }
+
     public boolean hasExceptionForRole(Role role) {
         if (exceptions == null) {
             return false;
@@ -129,28 +144,6 @@ public class Endpoint {
         }
 
         return templates.getForRole(role);
-    }
-
-    public static int keyHashCode(RequestMethod requestMethod, String urlPattern) {
-        int result = 1;
-        final int PRIME = 59;
-        result = result * PRIME + (requestMethod == null ? 43 : requestMethod.hashCode());
-        result = result * PRIME + (urlPattern == null ? 79 : urlPattern.hashCode());
-        return result;
-    }
-
-    @Override
-    public int hashCode() {
-        final RequestMethod requestMethod = this.getRequestMethod();
-        final String urlPattern = this.getUrlPattern();
-
-        return keyHashCode(requestMethod, urlPattern);
-    }
-
-    @Override
-    public String toString() {
-        //TODO
-        return super.toString();
     }
 
     public RequestMethod getRequestMethod() {
@@ -201,4 +194,39 @@ public class Endpoint {
         this.templates = templates;
     }
 
+    //NOTE: two Endpoints that have equal requestMethod and urlPattern has to be equal,
+    //that is why these equals and hashCode methods use only two fields
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(requestMethod)
+                .append(urlPattern)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Endpoint endpoint = (Endpoint) o;
+
+        return new EqualsBuilder()
+                .append(requestMethod, endpoint.requestMethod)
+                .append(urlPattern, endpoint.urlPattern)
+                .isEquals();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("requestMethod", requestMethod)
+                .append("urlPattern", urlPattern)
+                .append("controllerMethod", controllerMethod)
+                .append("exceptions", exceptions)
+                .append("redirections", redirections)
+                .append("templates", templates)
+                .toString();
+    }
 }

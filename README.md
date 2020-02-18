@@ -29,6 +29,10 @@ Administrators see **detailed** information.
 1. All registered users can read feedbacks, but only **Administrator** can see **all the feedbacks**.
 Masters and Customer **can see** the feedbacks they **are related** to.
 
+<div align="center">
+	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/src/main/java/beauty/scheduler/web/myspring/README.md"><code><strong>NOTE: see also "MySpring" description</strong></code></a>
+</div>
+
 ## Technologies
 1. DB - MySql
 1. Java 8

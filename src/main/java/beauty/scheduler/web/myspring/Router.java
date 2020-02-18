@@ -35,35 +35,39 @@ public class Router {
     private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
 
     private ClassFactory classFactory;
-    private Map<Integer, Endpoint> routingMap;
+    private Map<String, Endpoint> endpoints;
     private Endpoint notFoundEdnpoint;
 
-    public Router(Map<Integer, Endpoint> routingMap, ClassFactory classFactory) {
-        this.setRoutingMap(routingMap);
+    public Router(Map<String, Endpoint> endpoints, ClassFactory classFactory) {
+        this.setEndpoints(endpoints);
         this.classFactory = classFactory;
         this.notFoundEdnpoint = null;
 
         gatherRoutingData();
     }
 
-    public Map<Integer, Endpoint> getRoutingMap() {
-        return routingMap;
+    public Map<String, Endpoint> getEndpoints() {
+        return endpoints;
     }
 
-    public void setRoutingMap(Map<Integer, Endpoint> routingMap) {
-        this.routingMap = routingMap;
+    public void setEndpoints(Map<String, Endpoint> endpoints) {
+        this.endpoints = endpoints;
     }
 
     public void gatherRoutingData() {
-        routingMap.clear();
+        endpoints.clear();
 
         Reflections refMethods = new Reflections(MAIN_PACKAGE, new MethodAnnotationsScanner());
         refMethods.getMethodsAnnotatedWith(EndpointMethod.class).forEach(aMethod -> {
             Endpoint endpoint = new Endpoint(aMethod);
-            routingMap.put(endpoint.hashCode(), endpoint); //TODO maybe make this key as string
+            String endpointKey = endpoint.getEndpointKey();
 
-            //TODO here to check whether there is such endpoint already in map
-            //and maybe log that or maybe throw exception
+            if (endpoints.containsKey(endpointKey)) {
+                LOGGER.warn("wrong endpoints configuration, check: " + endpointKey);
+                return;
+            }
+
+            endpoints.put(endpointKey, endpoint);
 
             if ("".equals(endpoint.getUrlPattern())) {
                 notFoundEdnpoint = endpoint;
@@ -80,7 +84,7 @@ public class Router {
     }
 
     public Endpoint getEndpoint(RequestMethod requestMethod, String urlPattern) {
-        return routingMap.getOrDefault(Endpoint.keyHashCode(requestMethod, urlPattern), notFoundEdnpoint);
+        return endpoints.getOrDefault(Endpoint.endpointKey(requestMethod, urlPattern), notFoundEdnpoint);
     }
 
     private void processRedirect(HttpServletRequest req, HttpServletResponse resp, String redirectTo) {

@@ -1,5 +1,7 @@
 package beauty.scheduler.dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class UserDTO {
     private String firstNameEn;
 
@@ -84,5 +86,17 @@ public class UserDTO {
         this.serviceType = serviceType;
     }
 
-    //TODO toString()
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("firstNameEn", firstNameEn)
+                .append("lastNameEn", lastNameEn)
+                .append("firstNameUk", firstNameUk)
+                .append("lastNameUk", lastNameUk)
+                .append("email", email)
+                .append("telNumber", telNumber)
+                .append("role", role)
+                .append("serviceType", serviceType)
+                .toString();
+    }
 }
