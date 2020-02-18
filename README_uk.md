@@ -11,6 +11,10 @@
 	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README_uk.md"><code><strong>NOTE: див. також опис "MySpring"</strong></code></a>
 </div>
 
+<div align="center">
+	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/src/main/java/beauty/scheduler/web/myspring/README_uk.md"><code><strong>NOTE: див. також опис "MySpring"</strong></code></a>
+</div>
+
 # Система **Розклад Салону Краси**  
 Потрібно створити сторінку, 
 яка дозволяє переглянути розклад роботи співробітників салону,
