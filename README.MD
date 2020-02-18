@@ -34,7 +34,7 @@ Administrators see **detailed** information.
 Masters and Customer **can see** the feedbacks they **are related** to.
 
 <div align="center">
-	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/src/main/java/beauty/scheduler/web/myspring/README.MD"><code><strong>NOTE: see also "MySpring" description</strong></code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README.MD"><code><strong>NOTE: see also "MySpring" part description of this Servlet-based project</strong></code></a>
 </div>
 
 ## Technologies
@@ -42,12 +42,15 @@ Masters and Customer **can see** the feedbacks they **are related** to.
 1. Java 8
 1. Maven
 
-## Installation  
+## Install 
 
 1. Clone project (git clone git://github.com/VictorHilonenko/ServletProject.git BeautyScheduler)
 1. Install MySQL if necessary 
 1. Run: schema.sql from folder DUMP_DB
 1. Run: populate.sql from folder DUMP_DB
 1. Configure `/src/main/webapp/META-INF/context.xml` according to your DB settings
+
+## Run
+
 1. Run in terminal: ```mvn clean tomcat7:run``` or add configuration and run in IDE  
 1. Go to: [```localhost:8989```](http://localhost:8989/)
