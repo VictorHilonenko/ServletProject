@@ -1,4 +1,6 @@
-package beauty.scheduler.web.form;
+package beauty.scheduler.web.myspring.form;
+
+import beauty.scheduler.web.myspring.annotation.Regex;
 
 import static beauty.scheduler.util.AppConstants.REGEX_EMAIL;
 import static beauty.scheduler.util.AppConstants.REGEX_NOT_LT_2_ENGLISH;

@@ -4,8 +4,6 @@ import beauty.scheduler.entity.enums.Role;
 
 import java.util.Optional;
 
-//QUESTION:
-//is it normal name?
 public class UserPrincipal {
     private Optional<Long> id;
     private String email;

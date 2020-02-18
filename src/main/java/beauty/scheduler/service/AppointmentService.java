@@ -8,8 +8,8 @@ import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.LocaleUtils;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.InjectDependency;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.InjectDependency;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.*;
 
-//NOTE: partly ready for review
 @ServiceComponent
 public class AppointmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentService.class);

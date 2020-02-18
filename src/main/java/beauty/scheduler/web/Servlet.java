@@ -1,7 +1,7 @@
 package beauty.scheduler.web;
 
-import beauty.scheduler.web.myspring.Router;
-import beauty.scheduler.web.myspring.ServletContextInitializer;
+import beauty.scheduler.web.myspring.core.Router;
+import beauty.scheduler.web.myspring.core.ServletContextInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

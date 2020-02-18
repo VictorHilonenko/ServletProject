@@ -3,17 +3,15 @@ package beauty.scheduler.controller;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.web.myspring.RequestMethod;
-import beauty.scheduler.web.myspring.annotations.DefaultTemplate;
-import beauty.scheduler.web.myspring.annotations.EndpointMethod;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.DefaultTemplate;
+import beauty.scheduler.web.myspring.annotation.EndpointMethod;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static beauty.scheduler.util.AppConstants.*;
-
-//NOTE: ready for review
 
 @ServiceComponent
 public class WelcomeController {

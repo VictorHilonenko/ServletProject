@@ -1,4 +1,4 @@
-package beauty.scheduler.web.myspring.annotations;
+package beauty.scheduler.web.myspring.annotation;
 
 import beauty.scheduler.entity.enums.Role;
 

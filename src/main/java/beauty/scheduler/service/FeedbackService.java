@@ -7,10 +7,10 @@ import beauty.scheduler.entity.Feedback;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.web.form.FeedbackForm;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.InjectDependency;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.InjectDependency;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
+import beauty.scheduler.web.myspring.form.FeedbackForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//NOTE: ready for review
 @ServiceComponent
 public class FeedbackService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackService.class);

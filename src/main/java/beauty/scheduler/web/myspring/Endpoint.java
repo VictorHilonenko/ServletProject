@@ -2,9 +2,9 @@ package beauty.scheduler.web.myspring;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
-import beauty.scheduler.web.myspring.annotations.DefaultTemplate;
-import beauty.scheduler.web.myspring.annotations.EndpointMethod;
-import beauty.scheduler.web.myspring.annotations.Restriction;
+import beauty.scheduler.web.myspring.annotation.DefaultTemplate;
+import beauty.scheduler.web.myspring.annotation.EndpointMethod;
+import beauty.scheduler.web.myspring.annotation.Restriction;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
-//NOTE: partly ready for review
 public class Endpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(Endpoint.class);
 

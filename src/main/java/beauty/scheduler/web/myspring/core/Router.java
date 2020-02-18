@@ -1,11 +1,11 @@
-package beauty.scheduler.web.myspring;
+package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.util.ReflectUtils;
 import beauty.scheduler.util.StringUtils;
-import beauty.scheduler.web.myspring.annotations.ParamName;
+import beauty.scheduler.web.myspring.Endpoint;
+import beauty.scheduler.web.myspring.RequestMethod;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,24 +14,19 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import static beauty.scheduler.util.AppConstants.*;
+import static beauty.scheduler.web.myspring.core.ParamHelper.getAllParameters;
 
-//NOTE: not ready for review
-//need a bit time to refactor this "god class"
 public class Router {
     private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
 
-    private ClassFactory classFactory;
+    private BeanFactory beanFactory;
     private Map<String, Endpoint> endpoints;
     private Endpoint notFoundEdnpoint;
 
@@ -41,9 +36,9 @@ public class Router {
         router.process(req, resp);
     }
 
-    public Router(ClassFactory classFactory, Map<String, Endpoint> endpoints, Endpoint notFoundEdnpoint) {
+    public Router(BeanFactory beanFactory, Map<String, Endpoint> endpoints, Endpoint notFoundEdnpoint) {
         this.endpoints = endpoints;
-        this.classFactory = classFactory;
+        this.beanFactory = beanFactory;
         this.notFoundEdnpoint = notFoundEdnpoint;
     }
 
@@ -72,7 +67,7 @@ public class Router {
         return false;
     }
 
-    public String process(HttpServletRequest req, HttpServletResponse resp) {
+    private String process(HttpServletRequest req, HttpServletResponse resp) {
         Endpoint endpoint = (Endpoint) req.getAttribute(ATTR_ENDPOINT);
 
         String resultPage;
@@ -85,20 +80,28 @@ public class Router {
             return "exception"; //for debug purposes
         }
 
-        //(!!!) тут може просто метод процедурно запускати, або продумати, що буде для тестів
         return processResultPage(resultPage, req, resp, endpoint);
     }
 
     private String processController(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) throws InvocationTargetException, IllegalAccessException {
         Method method = endpoint.getMethod();
 
-        if (method == null) { //it's possible for "notFoundEdnpoint"
+        //it's almost impossible, but for reliability and with keeping in ming that "notFoundEdnpoint" has such value of method, lets's do this check
+        if (method == null) {
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
             return "exception"; //for debug purposes
         }
 
-        Object[] args;
+        if (endpoint.getUrlPattern().contains("{")) {
+            try {
+                addURIParametersToRequest(endpoint.getUrlPattern(), req);
+            } catch (NoSuchFieldException e) {
+                processException(req, resp, ExceptionKind.WRONG_DATA_PASSED);
+                return "exception"; //for debug purposes
+            }
+        }
 
+        Object[] args;
         try {
             args = getAllParameters(endpoint, req, resp);
         } catch (Exception e) {
@@ -106,7 +109,7 @@ public class Router {
             return "exception"; //for debug purposes
         }
 
-        Object classInstance = classFactory.getInstantiatedClass(method.getDeclaringClass().getSimpleName());
+        Object classInstance = beanFactory.getInstantiatedClass(method.getDeclaringClass().getSimpleName());
 
         return (String) method.invoke(classInstance, args);
     }
@@ -152,7 +155,7 @@ public class Router {
         }
     }
 
-    public void processRedirect(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
+    private void processRedirect(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
         String redirectTo = endpoint.getRedirectionForRole(role);
 
         if (StringUtils.isEmpty(redirectTo)) {
@@ -163,7 +166,7 @@ public class Router {
         processRedirect(req, resp, redirectTo);
     }
 
-    public void processException(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
+    private void processException(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
         processException(req, resp, endpoint.getExceptionForRole(role));
     }
 
@@ -184,33 +187,7 @@ public class Router {
         }
     }
 
-    private Object[] getAllParameters(Endpoint endpoint, HttpServletRequest req, HttpServletResponse resp) throws NoSuchMethodException, NoSuchFieldException, ExtendedException {
-        Method method = endpoint.getMethod();
-        Parameter[] parameters = method.getParameters();
-        Object[] args = new Object[parameters.length];
-
-        if (endpoint.getUrlPattern().contains("{")) {
-            addURIParametersToRequest(endpoint.getUrlPattern(), req);
-        }
-
-        boolean allParametersSet = true;
-
-        for (int i = 0; i <= parameters.length - 1; i++) {
-            try {
-                args[i] = getParameter(parameters[i], req, resp);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-                allParametersSet = false;
-            }
-        }
-
-        if (!allParametersSet) {
-            throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
-        }
-
-        return args;
-    }
-
-    public static void addURIParametersToRequest(String urlPattern, HttpServletRequest req) throws NoSuchFieldException {
+    private static void addURIParametersToRequest(String urlPattern, HttpServletRequest req) throws NoSuchFieldException {
         String[] patternParts = urlPattern.split("/");
         String[] uriParts = req.getRequestURI().split("/");
 
@@ -229,101 +206,8 @@ public class Router {
         }
     }
 
-    private Object getParameter(Parameter parameter, HttpServletRequest req, HttpServletResponse resp) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, NoSuchFieldException, ExtendedException {
-        if (parameter.isAnnotationPresent(ParamName.class)) {
-            return getAnnotatedParameter(parameter, req, resp);
-        } else {
-            return getNonAnnotatedParameter(parameter.getParameterizedType(), req, resp);
-        }
-    }
-
-    private Object getAnnotatedParameter(Parameter parameter, HttpServletRequest req, HttpServletResponse resp) throws NoSuchFieldException, ExtendedException {
-        Object result = null;
-
-        Type type = parameter.getParameterizedType();
-
-        ParamName paramName = parameter.getDeclaredAnnotation(ParamName.class);
-        String name = paramName.name();
-
-        if (type == String.class) {
-            result = getRequestValue(req, name);
-        } else if (type == LocalDate.class) {
-            try {
-                result = LocalDate.parse(getRequestValue(req, name));
-            } catch (DateTimeParseException e) {
-                throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
-            }
-        } else if (type == Long.class) {
-            try {
-                result = Long.parseLong(getRequestValue(req, name));
-            } catch (DateTimeParseException e) {
-                throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
-            }
-        } else {
-            //... other types ...
-        }
-
-        return result;
-    }
-
-    private Object getNonAnnotatedParameter(Type type, HttpServletRequest req, HttpServletResponse resp) throws InvocationTargetException, NoSuchMethodException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        Object result;
-
-        if (type == HttpServletRequest.class) {
-            result = req;
-        } else if (type == HttpServletResponse.class) {
-            result = resp;
-        } else {
-            result = makeInstance((Class) type, req);
-        }
-
-        return result;
-    }
-
-    private Object makeInstance(Class aClass, HttpServletRequest req) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
-        Object instance = aClass.newInstance();
-
-        for (Field field : aClass.getDeclaredFields()) {
-            String value = getRequestValue(req, field.getName());
-            if (value == null) {
-                continue;
-            }
-            ReflectUtils.set(instance, field.getName(), field.getType(), value);
-        }
-
-        return instance;
-    }
-
-    private String getRequestValue(HttpServletRequest req, String name) throws NoSuchFieldException {
-        //try to find in request:
-        if (req.getParameterMap().containsKey(name)) {
-            return req.getParameter(name);
-        }
-
-        //try to find among URI attributes, they are already in req with URI_PREFIX prefix:
-        if (hasAttribute(req.getAttributeNames(), URI_PREFIX + name)) {
-            return (String) req.getAttribute(URI_PREFIX + name);
-        }
-
-        //try to find among session attributes
-        HttpSession session = Security.getActualSession(req);
-        if (hasAttribute(session.getAttributeNames(), name)) {
-            return (String) session.getAttribute(name);
-        }
-
-        //there is a "feature" with radio buttons in JSP: if user did not select any, req.getParameterMap() has no such parameter then,
-        //so, if we didn't found a value, we simply return null:
-
-        return null;
-    }
-
-    private boolean hasAttribute(Enumeration<String> attributes, String name) {
-        return Collections.list(attributes)
-                .stream().anyMatch(s -> s.equals(name));
-    }
-
     //NOTE: now this method is hardcoded, need to make proper solution
-    public String getPatternForURI(String requestURI) {
+    private String getPatternForURI(String requestURI) {
         String urlPattern = requestURI;
 
         if (urlPattern.contains("/feedbacks/")) {

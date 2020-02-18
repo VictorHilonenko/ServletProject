@@ -1,8 +1,8 @@
-package beauty.scheduler.web.myspring;
+package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.util.ReflectUtils;
-import beauty.scheduler.web.myspring.annotations.InjectDependency;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.InjectDependency;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -15,13 +15,12 @@ import java.util.Map;
 
 import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 
-//NOTE: mostly ready for review
-public class ClassFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassFactory.class);
+public class BeanFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanFactory.class);
 
     private Map<String, Object> instancesContainer;
 
-    public ClassFactory(Map<String, Object> instancesContainer) {
+    public BeanFactory(Map<String, Object> instancesContainer) {
         this.instancesContainer = instancesContainer;
 
         makeInstances();

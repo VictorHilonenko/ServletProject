@@ -1,6 +1,4 @@
-package beauty.scheduler.web.myspring.annotations;
-
-import beauty.scheduler.web.myspring.RequestMethod;
+package beauty.scheduler.web.myspring.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,8 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface EndpointMethod {
-    RequestMethod requestMethod();
-
-    String urlPattern();
+public @interface RepeatedTemplate {
+    DefaultTemplate[] value();
 }

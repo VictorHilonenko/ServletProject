@@ -1,7 +1,7 @@
 package beauty.scheduler.dao.core;
 
-import beauty.scheduler.dao.core.annotations.DBColumn;
-import beauty.scheduler.dao.core.annotations.DBTable;
+import beauty.scheduler.dao.annotation.DBColumn;
+import beauty.scheduler.dao.annotation.DBTable;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.StringUtils;
@@ -16,7 +16,6 @@ import java.util.StringJoiner;
 import static beauty.scheduler.util.AppConstants.ID_FIELD;
 import static beauty.scheduler.util.AppConstants.TABLENAME;
 
-//NOTE: partly ready for review, but need some refactoring
 public class SQLStatementsGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLStatementsGenerator.class);
 

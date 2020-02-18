@@ -6,10 +6,10 @@ import beauty.scheduler.service.AppointmentService;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.web.myspring.RequestMethod;
-import beauty.scheduler.web.myspring.Router;
-import beauty.scheduler.web.myspring.Security;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.*;
+import beauty.scheduler.web.myspring.annotation.*;
+import beauty.scheduler.web.myspring.core.Router;
+import beauty.scheduler.web.myspring.core.Security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//NOTE: ready for review
 @ServiceComponent
 public class AppointmentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentsController.class);

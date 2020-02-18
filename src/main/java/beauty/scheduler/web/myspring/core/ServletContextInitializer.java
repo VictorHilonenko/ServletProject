@@ -1,8 +1,10 @@
-package beauty.scheduler.web.myspring;
+package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
-import beauty.scheduler.web.myspring.annotations.EndpointMethod;
+import beauty.scheduler.web.myspring.Endpoint;
+import beauty.scheduler.web.myspring.RequestMethod;
+import beauty.scheduler.web.myspring.annotation.EndpointMethod;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
@@ -19,12 +21,12 @@ public class ServletContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServletContextInitializer.class);
 
     public static void init(ServletContext context) {
-        ClassFactory classFactory = new ClassFactory(new HashMap<>());
+        BeanFactory beanFactory = new BeanFactory(new HashMap<>());
 
         Map<String, Endpoint> endpoints = gatherRoutingData();
         Endpoint notFoundEdnpoint = determineNotFoundEdnpoint(endpoints);
 
-        context.setAttribute(ATTR_ROUTER, new Router(classFactory, endpoints, notFoundEdnpoint));
+        context.setAttribute(ATTR_ROUTER, new Router(beanFactory, endpoints, notFoundEdnpoint));
 
         context.setAttribute(ATTR_ACTIVE_USERS, new HashSet<String>());
     }
@@ -63,6 +65,4 @@ public class ServletContextInitializer {
 
         return endpoint;
     }
-
-
 }

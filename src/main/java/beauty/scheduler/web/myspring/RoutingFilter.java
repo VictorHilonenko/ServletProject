@@ -1,5 +1,6 @@
 package beauty.scheduler.web.myspring;
 
+import beauty.scheduler.web.myspring.core.Router;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,6 @@ import java.io.IOException;
 import static beauty.scheduler.util.AppConstants.ATTR_ROUTER;
 import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 
-//NOTE: ready for review
 @WebFilter(servletNames = MAIN_PACKAGE + ".web.Servlet")
 public class RoutingFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoutingFilter.class);

@@ -2,7 +2,6 @@ package beauty.scheduler.dto;
 
 import java.time.LocalDate;
 
-//NOTE: ready for review
 public class FeedbackDTO {
     private Long id;
 

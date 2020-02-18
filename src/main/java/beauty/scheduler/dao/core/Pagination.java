@@ -4,7 +4,6 @@ import java.util.List;
 
 import static beauty.scheduler.util.AppConstants.DEFAULT_PAGE_SIZE;
 
-//NOTE: ready for review
 public class Pagination<T> {
     private int page;
     private int pageSize;

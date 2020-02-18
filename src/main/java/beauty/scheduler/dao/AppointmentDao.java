@@ -6,7 +6,7 @@ import beauty.scheduler.entity.Appointment;
 import beauty.scheduler.entity.User;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.LocaleUtils;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,6 @@ import java.util.Optional;
 import static beauty.scheduler.dao.MappersStorage.APPOINTMENT_ENTITY_MAPPER;
 import static beauty.scheduler.util.AppConstants.*;
 
-//NOTE: partly ready for review
 @ServiceComponent
 public class AppointmentDao extends GenericDao<Appointment> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentDao.class);

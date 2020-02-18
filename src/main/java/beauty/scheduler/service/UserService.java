@@ -6,10 +6,10 @@ import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.util.*;
-import beauty.scheduler.web.form.RegistrationForm;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.InjectDependency;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.InjectDependency;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
+import beauty.scheduler.web.myspring.form.RegistrationForm;
 import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -22,7 +22,6 @@ import java.util.*;
 import static beauty.scheduler.util.AppConstants.REST_ERROR;
 import static beauty.scheduler.util.AppConstants.REST_SUCCESS;
 
-//NOTE: ready for review
 @ServiceComponent
 public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);

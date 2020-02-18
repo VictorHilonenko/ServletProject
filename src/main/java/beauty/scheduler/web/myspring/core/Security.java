@@ -1,8 +1,9 @@
-package beauty.scheduler.web.myspring;
+package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.LocaleUtils;
+import beauty.scheduler.web.myspring.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-//NOTE: ready for review
 public class StringUtils {
 
     public static boolean isEmpty(String str) {

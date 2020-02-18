@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 
-//NOTE: ready for review
 @WebFilter(servletNames = MAIN_PACKAGE + ".web.Servlet")
 public class CacheFilter implements Filter {
     @Override

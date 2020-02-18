@@ -6,14 +6,14 @@ import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.service.UserService;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.web.form.FormValidator;
-import beauty.scheduler.web.form.LoginForm;
-import beauty.scheduler.web.form.RegistrationForm;
 import beauty.scheduler.web.myspring.RequestMethod;
-import beauty.scheduler.web.myspring.Router;
-import beauty.scheduler.web.myspring.Security;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.*;
+import beauty.scheduler.web.myspring.annotation.*;
+import beauty.scheduler.web.myspring.core.FormValidator;
+import beauty.scheduler.web.myspring.core.Router;
+import beauty.scheduler.web.myspring.core.Security;
+import beauty.scheduler.web.myspring.form.LoginForm;
+import beauty.scheduler.web.myspring.form.RegistrationForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.*;
 
-//NOTE: ready for review
 @ServiceComponent
 public class UsersController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
