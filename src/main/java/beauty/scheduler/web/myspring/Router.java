@@ -5,14 +5,12 @@ import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.ReflectUtils;
 import beauty.scheduler.util.StringUtils;
-import beauty.scheduler.web.myspring.annotations.EndpointMethod;
 import beauty.scheduler.web.myspring.annotations.ParamName;
 import com.google.gson.Gson;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +22,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 import static beauty.scheduler.util.AppConstants.*;
@@ -38,96 +35,44 @@ public class Router {
     private Map<String, Endpoint> endpoints;
     private Endpoint notFoundEdnpoint;
 
-    public Router(Map<String, Endpoint> endpoints, ClassFactory classFactory) {
-        this.setEndpoints(endpoints);
-        this.classFactory = classFactory;
-        this.notFoundEdnpoint = null;
-
-        gatherRoutingData();
+    public static void route(HttpServletRequest req, HttpServletResponse resp) {
+        ServletContext context = req.getServletContext();
+        Router router = (Router) context.getAttribute(ATTR_ROUTER);
+        router.process(req, resp);
     }
 
-    public Map<String, Endpoint> getEndpoints() {
-        return endpoints;
-    }
-
-    public void setEndpoints(Map<String, Endpoint> endpoints) {
+    public Router(ClassFactory classFactory, Map<String, Endpoint> endpoints, Endpoint notFoundEdnpoint) {
         this.endpoints = endpoints;
+        this.classFactory = classFactory;
+        this.notFoundEdnpoint = notFoundEdnpoint;
     }
 
-    public void gatherRoutingData() {
-        endpoints.clear();
-
-        Reflections refMethods = new Reflections(MAIN_PACKAGE, new MethodAnnotationsScanner());
-        refMethods.getMethodsAnnotatedWith(EndpointMethod.class).forEach(aMethod -> {
-            Endpoint endpoint = new Endpoint(aMethod);
-            String endpointKey = endpoint.getEndpointKey();
-
-            if (endpoints.containsKey(endpointKey)) {
-                LOGGER.warn("wrong endpoints configuration, check: " + endpointKey);
-                return;
-            }
-
-            endpoints.put(endpointKey, endpoint);
-
-            if ("".equals(endpoint.getUrlPattern())) {
-                notFoundEdnpoint = endpoint;
-            }
-        });
-
-        if (notFoundEdnpoint == null) {
-            Endpoint endpoint = new Endpoint(null);
-            RoleMap<ExceptionKind> exceptions = new RoleMap<>(new HashMap<>());
-            exceptions.addValueForRole(Role.all, ExceptionKind.PAGE_NOT_FOUND);
-            endpoint.setExceptions(exceptions);
-            notFoundEdnpoint = endpoint;
-        }
-    }
-
-    public Endpoint getEndpoint(RequestMethod requestMethod, String urlPattern) {
+    private Endpoint getEndpointFor(RequestMethod requestMethod, String urlPattern) {
         return endpoints.getOrDefault(Endpoint.endpointKey(requestMethod, urlPattern), notFoundEdnpoint);
     }
 
-    private void processRedirect(HttpServletRequest req, HttpServletResponse resp, String redirectTo) {
-        try {
-            resp.sendRedirect(redirectTo);
-        } catch (IOException e) {
-            processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
+    //returns true if request has to be filtered and not go further
+    public boolean restricted(HttpServletRequest req, HttpServletResponse resp) {
+        Role sessionRole = Security.getUserPrincipal(req).getRole();
+
+        RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod());
+        String urlPattern = getPatternForURI(req.getRequestURI());
+        Endpoint endpoint = getEndpointFor(requestMethod, urlPattern);
+
+        req.setAttribute(ATTR_ENDPOINT, endpoint);
+
+        if (endpoint.hasExceptionForRole(sessionRole)) {
+            processException(req, resp, endpoint, sessionRole);
+            return true;
+        } else if (endpoint.hasRedirectionForRole(sessionRole)) {
+            processRedirect(req, resp, endpoint, sessionRole);
+            return true;
         }
+
+        return false;
     }
 
-    public void processRedirect(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
-        String redirectTo = endpoint.getRedirectionForRole(role);
-
-        if (StringUtils.isEmpty(redirectTo)) {
-            processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
-            return;
-        }
-
-        processRedirect(req, resp, redirectTo);
-    }
-
-    public void processException(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
-        processException(req, resp, endpoint.getExceptionForRole(role));
-    }
-
-    private void processException(HttpServletRequest req, HttpServletResponse resp, ExceptionKind exceptionKind) {
-        if (exceptionKind == null) {
-            exceptionKind = ExceptionKind.PAGE_NOT_FOUND;
-        }
-
-        if (exceptionKind.equals(ExceptionKind.ACCESS_DENIED)) {
-            Security.logOut(req);
-        }
-
-        try {
-            req.setAttribute("exception", exceptionKind); //TODO maybe find better solution, if any
-            resp.sendError(exceptionKind.getStatusCode(), exceptionKind.getErrorMessage());
-        } catch (IOException e) {
-            LOGGER.error("Curious: exceptionn during sending an error");
-        }
-    }
-
-    public String route(HttpServletRequest req, HttpServletResponse resp) {
+    public String process(HttpServletRequest req, HttpServletResponse resp) {
         Endpoint endpoint = (Endpoint) req.getAttribute(ATTR_ENDPOINT);
 
         String resultPage;
@@ -140,13 +85,14 @@ public class Router {
             return "exception"; //for debug purposes
         }
 
+        //(!!!) тут може просто метод процедурно запускати, або продумати, що буде для тестів
         return processResultPage(resultPage, req, resp, endpoint);
     }
 
     private String processController(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) throws InvocationTargetException, IllegalAccessException {
-        Method method = endpoint.getControllerMethod();
+        Method method = endpoint.getMethod();
 
-        if (method == null) { //it's possible and normal for "notFoundEdnpoint"
+        if (method == null) { //it's possible for "notFoundEdnpoint"
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
             return "exception"; //for debug purposes
         }
@@ -198,8 +144,48 @@ public class Router {
         return resultPage;
     }
 
+    private void processRedirect(HttpServletRequest req, HttpServletResponse resp, String redirectTo) {
+        try {
+            resp.sendRedirect(redirectTo);
+        } catch (IOException e) {
+            processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
+        }
+    }
+
+    public void processRedirect(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
+        String redirectTo = endpoint.getRedirectionForRole(role);
+
+        if (StringUtils.isEmpty(redirectTo)) {
+            processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
+            return;
+        }
+
+        processRedirect(req, resp, redirectTo);
+    }
+
+    public void processException(HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint, Role role) {
+        processException(req, resp, endpoint.getExceptionForRole(role));
+    }
+
+    private void processException(HttpServletRequest req, HttpServletResponse resp, ExceptionKind exceptionKind) {
+        if (exceptionKind == null) {
+            exceptionKind = ExceptionKind.PAGE_NOT_FOUND;
+        }
+
+        if (exceptionKind.equals(ExceptionKind.ACCESS_DENIED)) {
+            Security.logOut(req);
+        }
+
+        try {
+            req.setAttribute("exception", exceptionKind); //TODO maybe find better solution, if any
+            resp.sendError(exceptionKind.getStatusCode(), exceptionKind.getErrorMessage());
+        } catch (IOException e) {
+            LOGGER.error("Curious: exceptionn during sending an error");
+        }
+    }
+
     private Object[] getAllParameters(Endpoint endpoint, HttpServletRequest req, HttpServletResponse resp) throws NoSuchMethodException, NoSuchFieldException, ExtendedException {
-        Method method = endpoint.getControllerMethod();
+        Method method = endpoint.getMethod();
         Parameter[] parameters = method.getParameters();
         Object[] args = new Object[parameters.length];
 

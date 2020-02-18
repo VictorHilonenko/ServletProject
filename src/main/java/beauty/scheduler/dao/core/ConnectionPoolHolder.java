@@ -1,6 +1,5 @@
 package beauty.scheduler.dao.core;
 
-import beauty.scheduler.web.myspring.ClassFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +12,7 @@ import java.sql.SQLException;
 
 //NOTE: ready for review
 public class ConnectionPoolHolder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPoolHolder.class);
     private static volatile DataSource dataSource;
 
     private static DataSource getDataSource() {

@@ -2,14 +2,13 @@ package beauty.scheduler.web.myspring;
 
 import beauty.scheduler.entity.enums.Role;
 
+import java.util.HashMap;
 import java.util.Map;
 
-//NOTE: ready for review
 public class RoleMap<T> {
-    private Map<Role, T> roleMap;
+    private Map<Role, T> roleMap = new HashMap<>();
 
-    public RoleMap(Map<Role, T> roleMap) {
-        this.roleMap = roleMap;
+    public RoleMap() {
     }
 
     public RoleMap addValueForRole(Role roleTag, T value) {
@@ -22,13 +21,5 @@ public class RoleMap<T> {
 
     public T getForRole(Role role) {
         return roleMap.get(role);
-    }
-
-    public Map<Role, T> getRoleMap() {
-        return this.roleMap;
-    }
-
-    public void setRoleMap(Map<Role, T> roleMap) {
-        this.roleMap = roleMap;
     }
 }

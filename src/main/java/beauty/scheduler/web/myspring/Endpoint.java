@@ -13,20 +13,18 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringJoiner;
 
 //NOTE: partly ready for review
 public class Endpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(Endpoint.class);
 
-    private RequestMethod requestMethod;
-    private String urlPattern;
-    private Method controllerMethod;
+    private Method method;
     private RoleMap<ExceptionKind> exceptions;
     private RoleMap<String> redirections;
     private RoleMap<String> templates;
+    private RequestMethod requestMethod;
+    private String urlPattern;
 
     public static String endpointKey(RequestMethod requestMethod, String urlPattern) {
         StringJoiner sj = new StringJoiner("->");
@@ -35,63 +33,50 @@ public class Endpoint {
         return sj.toString();
     }
 
-    public Endpoint(Method routableMethod) {
-        if (routableMethod == null) {
-            this.urlPattern = ""; //that's for "notFoundEdnpoint" in Router
+    public Endpoint(Method endpointMethod) {
+        this.method = endpointMethod;
+        this.exceptions = new RoleMap<>();
+        this.redirections = new RoleMap<>();
+        this.templates = new RoleMap<>();
+
+        if (endpointMethod == null) {
             return;
         }
 
-        EndpointMethod endpointMethodAnnotation = routableMethod.getAnnotation(EndpointMethod.class);
+        EndpointMethod endpointMethodAnnotation = endpointMethod.getAnnotation(EndpointMethod.class);
 
-        this.controllerMethod = routableMethod;
         this.requestMethod = endpointMethodAnnotation.requestMethod();
         this.urlPattern = endpointMethodAnnotation.urlPattern();
 
-        initializeRestrictions(routableMethod);
-        initializeDefaultTemplates(routableMethod);
+        initializeRestrictions(endpointMethod);
+        initializeDefaultTemplates(endpointMethod);
     }
 
     private void initializeRestrictions(Method method) {
-        Map<Role, ExceptionKind> exceptions = new HashMap<>();
-        Map<Role, String> redirections = new HashMap<>();
-
         Arrays.stream(method.getAnnotationsByType(Restriction.class)).forEach(restriction -> {
             ExceptionKind exceptionKind = restriction.exception();
             String redirection = restriction.redirection();
 
             Role.getAllByRoleTag(restriction.role()).forEach(role -> {
                 if (!exceptionKind.equals(ExceptionKind.NULL)) {
-                    exceptions.put(role, exceptionKind);
+                    exceptions.addValueForRole(role, exceptionKind);
                 } else if (!"".equals(redirection)) {
-                    redirections.put(role, redirection);
+                    redirections.addValueForRole(role, redirection);
                 }
             });
         });
-
-        if (exceptions.size() > 0) {
-            this.exceptions = new RoleMap<>(exceptions);
-        }
-        if (redirections.size() > 0) {
-            this.redirections = new RoleMap<>(redirections);
-        }
     }
 
     private void initializeDefaultTemplates(Method method) {
-        Map<Role, String> templates = new HashMap<>();
-
         Arrays.stream(method.getAnnotationsByType(DefaultTemplate.class)).forEach(defaultTemplate -> {
             String template = defaultTemplate.template();
 
             Role.getAllByRoleTag(defaultTemplate.role()).forEach(role -> {
                 if (!"".equals(template)) {
-                    templates.put(role, template);
+                    templates.addValueForRole(role, template);
                 }
             });
         });
-
-        if (templates.size() > 0) {
-            this.templates = new RoleMap<>(templates);
-        }
     }
 
     public String getEndpointKey() {
@@ -99,50 +84,26 @@ public class Endpoint {
     }
 
     public boolean hasExceptionForRole(Role role) {
-        if (exceptions == null) {
-            return false;
-        }
-
         return exceptions.getForRole(role) != null;
     }
 
     public boolean hasRedirectionForRole(Role role) {
-        if (redirections == null) {
-            return false;
-        }
-
         return redirections.getForRole(role) != null;
     }
 
     public boolean hasDefaultTemplateForRole(Role role) {
-        if (templates == null) {
-            return false;
-        }
-
         return templates.getForRole(role) != null;
     }
 
     public ExceptionKind getExceptionForRole(Role role) {
-        if (exceptions == null) {
-            return null;
-        }
-
         return exceptions.getForRole(role);
     }
 
     public String getRedirectionForRole(Role role) {
-        if (redirections == null) {
-            return null;
-        }
-
         return redirections.getForRole(role);
     }
 
     public String getDefaultTemplateForRole(Role role) {
-        if (templates == null) {
-            return null;
-        }
-
         return templates.getForRole(role);
     }
 
@@ -154,8 +115,8 @@ public class Endpoint {
         return this.urlPattern;
     }
 
-    public Method getControllerMethod() {
-        return this.controllerMethod;
+    public Method getMethod() {
+        return this.method;
     }
 
     public RoleMap<ExceptionKind> getExceptions() {
@@ -178,8 +139,8 @@ public class Endpoint {
         this.urlPattern = urlPattern;
     }
 
-    public void setControllerMethod(Method controllerMethod) {
-        this.controllerMethod = controllerMethod;
+    public void setMethod(Method method) {
+        this.method = method;
     }
 
     public void setExceptions(RoleMap<ExceptionKind> exceptions) {
@@ -195,7 +156,7 @@ public class Endpoint {
     }
 
     //NOTE: two Endpoints that have equal requestMethod and urlPattern has to be equal,
-    //that is why these equals and hashCode methods use only two fields
+    //that is why these equals and hashCode methods use only two fields:
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
@@ -223,7 +184,7 @@ public class Endpoint {
         return new ToStringBuilder(this)
                 .append("requestMethod", requestMethod)
                 .append("urlPattern", urlPattern)
-                .append("controllerMethod", controllerMethod)
+                .append("method", method)
                 .append("exceptions", exceptions)
                 .append("redirections", redirections)
                 .append("templates", templates)
