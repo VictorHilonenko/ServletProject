@@ -4,6 +4,9 @@ import beauty.scheduler.dao.core.annotations.DBColumn;
 import beauty.scheduler.dao.core.annotations.DBTable;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import static beauty.scheduler.util.AppConstants.ID_FIELD;
 
@@ -136,5 +139,52 @@ public class User {
         this.serviceType = serviceType;
     }
 
-    //TODO toString()
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return new EqualsBuilder()
+                .append(id, user.id)
+                .append(firstNameEn, user.firstNameEn)
+                .append(lastNameEn, user.lastNameEn)
+                .append(firstNameUk, user.firstNameUk)
+                .append(lastNameUk, user.lastNameUk)
+                .append(email, user.email)
+                .append(telNumber, user.telNumber)
+                .append(password, user.password)
+                .append(role, user.role)
+                .append(serviceType, user.serviceType)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(firstNameEn)
+                .append(lastNameEn)
+                .append(firstNameUk)
+                .append(lastNameUk)
+                .append(email)
+                .append(telNumber)
+                .append(password)
+                .append(role)
+                .append(serviceType)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("firstNameEn", firstNameEn)
+                .append("email", email)
+                .append("role", role)
+                .append("serviceType", serviceType)
+                .toString();
+    }
 }

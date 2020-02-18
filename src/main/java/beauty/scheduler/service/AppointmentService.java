@@ -91,8 +91,6 @@ public class AppointmentService {
 
         //check past time
         LocalDateTime nowDateTime = LocalDateTime.now(ZONE_ID);
-        //TODO
-        //strange work...
         if (reserveDateTime.isBefore(nowDateTime)) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.dateIsInThePast", userPrincipal.getCurrentLang());
         }
@@ -175,7 +173,7 @@ public class AppointmentService {
         }
 
         if (!Boolean.parseBoolean(strServiceProvided)) {
-            LOGGER.info("attempt to set service provided unchecked");
+            LOGGER.warn("attempt to set service provided unchecked");
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.youCanOnlySetItChecked", userPrincipal.getCurrentLang());
         }
 

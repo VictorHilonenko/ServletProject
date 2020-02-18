@@ -2,6 +2,9 @@ package beauty.scheduler.entity;
 
 import beauty.scheduler.dao.core.annotations.DBColumn;
 import beauty.scheduler.dao.core.annotations.DBTable;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDate;
 
@@ -99,5 +102,53 @@ public class EmailMessage {
 
     public void setQuickAccessCode(String quickAccessCode) {
         this.quickAccessCode = quickAccessCode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EmailMessage that = (EmailMessage) o;
+
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(email, that.email)
+                .append(subject, that.subject)
+                .append(textMessage, that.textMessage)
+                .append(dateCreated, that.dateCreated)
+                .append(dateSent, that.dateSent)
+                .append(dateLinkOpened, that.dateLinkOpened)
+                .append(quickAccessCode, that.quickAccessCode)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(email)
+                .append(subject)
+                .append(textMessage)
+                .append(dateCreated)
+                .append(dateSent)
+                .append(dateLinkOpened)
+                .append(quickAccessCode)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("email", email)
+                .append("subject", subject)
+                .append("textMessage", textMessage)
+                .append("dateCreated", dateCreated)
+                .append("dateSent", dateSent)
+                .append("dateLinkOpened", dateLinkOpened)
+                .append("quickAccessCode", quickAccessCode)
+                .toString();
     }
 }

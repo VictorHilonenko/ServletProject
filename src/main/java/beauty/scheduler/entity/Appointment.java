@@ -3,6 +3,9 @@ package beauty.scheduler.entity;
 import beauty.scheduler.dao.core.annotations.DBColumn;
 import beauty.scheduler.dao.core.annotations.DBTable;
 import beauty.scheduler.entity.enums.ServiceType;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDate;
 
@@ -101,19 +104,48 @@ public class Appointment {
         this.serviceProvided = serviceProvided;
     }
 
-    //TODO write your own methods
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Appointment that = (Appointment) o;
+
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(appointmentDate, that.appointmentDate)
+                .append(appointmentTime, that.appointmentTime)
+                .append(serviceType, that.serviceType)
+                .append(customer, that.customer)
+                .append(master, that.master)
+                .append(serviceProvided, that.serviceProvided)
+                .isEquals();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(appointmentDate)
+                .append(appointmentTime)
+                .append(serviceType)
+                .append(customer)
+                .append(master)
+                .append(serviceProvided)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("appointmentDate", appointmentDate)
+                .append("appointmentTime", appointmentTime)
+                .append("serviceType", serviceType)
+                .append("customer", customer)
+                .append("master", master)
+                .append("serviceProvided", serviceProvided)
+                .toString();
     }
 }

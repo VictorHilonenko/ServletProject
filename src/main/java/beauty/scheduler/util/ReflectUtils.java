@@ -1,6 +1,5 @@
 package beauty.scheduler.util;
 
-import beauty.scheduler.dao.core.InstanceMapper;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 import org.slf4j.Logger;

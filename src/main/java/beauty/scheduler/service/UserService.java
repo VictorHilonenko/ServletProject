@@ -1,15 +1,11 @@
 package beauty.scheduler.service;
 
 import beauty.scheduler.dao.UserDao;
-import beauty.scheduler.dao.core.InstanceMapper;
 import beauty.scheduler.dto.UserDTO;
 import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
-import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.util.LocaleUtils;
-import beauty.scheduler.util.ReflectUtils;
-import beauty.scheduler.util.StringUtils;
+import beauty.scheduler.util.*;
 import beauty.scheduler.web.form.RegistrationForm;
 import beauty.scheduler.web.myspring.UserPrincipal;
 import beauty.scheduler.web.myspring.annotations.InjectDependency;

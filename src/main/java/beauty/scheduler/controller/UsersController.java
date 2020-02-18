@@ -41,7 +41,6 @@ public class UsersController {
     @Restriction(role = Role.authenticated, redirection = "/logout")
     @DefaultTemplate(template = "/WEB-INF/registration.jsp")
     public String registrationPage() {
-        LOGGER.info("registrationPage is shown");
         return DEFAULT_TEMPLATE;
     }
 

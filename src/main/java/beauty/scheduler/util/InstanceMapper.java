@@ -1,4 +1,4 @@
-package beauty.scheduler.dao.core;
+package beauty.scheduler.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
