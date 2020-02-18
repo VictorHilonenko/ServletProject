@@ -1,6 +1,6 @@
 <div align="center">
-	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README.md"><code>English</code></a>
-	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README_uk.md"><code>Українська</code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README.MD"><code>English</code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README_uk.MD"><code>Українська</code></a>
 </div>
 <hr>
 <div align="center">
@@ -8,9 +8,8 @@
 </div>
 <hr>
 <div align="center">
-	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README.md"><code><strong>NOTE: see also "MySpring"</strong></code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README.MD"><code><strong>NOTE: see also "MySpring" part description of this Servlet-based project</strong></code></a>
 </div>
-
 
 # Beauty Salon Scheduler system
 A web page should be created, which allows to view the work schedule of salon employees,
@@ -35,7 +34,7 @@ Administrators see **detailed** information.
 Masters and Customer **can see** the feedbacks they **are related** to.
 
 <div align="center">
-	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/src/main/java/beauty/scheduler/web/myspring/README.md"><code><strong>NOTE: see also "MySpring" description</strong></code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/src/main/java/beauty/scheduler/web/myspring/README.MD"><code><strong>NOTE: see also "MySpring" description</strong></code></a>
 </div>
 
 ## Technologies

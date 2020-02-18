@@ -1,6 +1,6 @@
 <div align="center">
-	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README.md"><code>English</code></a>
-	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README_uk.md"><code>Українська</code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README.MD"><code>English</code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/README_uk.MD"><code>Українська</code></a>
 </div>
 <hr>
 <div align="center">
@@ -8,11 +8,7 @@
 </div>
 <hr>
 <div align="center">
-	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README_uk.md"><code><strong>NOTE: див. також опис "MySpring"</strong></code></a>
-</div>
-
-<div align="center">
-	<a href="https://github.com/VictorHilonenko/ServletProject/tree/master/src/main/java/beauty/scheduler/web/myspring/README_uk.md"><code><strong>NOTE: див. також опис "MySpring"</strong></code></a>
+	<a href="https://github.com/VictorHilonenko/ServletProject/blob/master/src/main/java/beauty/scheduler/web/myspring/README_uk.MD"><code><strong>NOTE: див. також опис розділу "MySpring" цього сервлетного проекту</strong></code></a>
 </div>
 
 # Система **Розклад Салону Краси**  
