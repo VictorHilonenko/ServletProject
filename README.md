@@ -15,22 +15,6 @@ When the service is provided, the **Customer** leaves a feedback.
 A suggestion to leave a feedback comes **by email**.
 The **administrator** can read feedbacks about colleagues.
 
-## Technologies
-1. DB - MySql
-1. Java 8
-1. Maven
-
-## Installation  
-
-1. Copy (clone) project
-1. Install MySQL if necessary 
-1. Run: schema.sql from folder DUMP_DB
-1. Run: populate.sql from folder DUMP_DB
-1. Configure `/src/main/webapp/META-INF/context.xml` according to your DB settings
-1. Run in terminal: ```mvn clean tomcat7:run``` or add configuration and run in IDE  
-1. Go to: [```localhost:8989```](http://localhost:8989/)
-
-
 ## **_Clarification_** of conditions, **_extension_** of the task.
 Before development the following conditions where specified:
 
@@ -44,3 +28,18 @@ Administrators see **detailed** information.
 1. A Master can put a **"Service Provided"** mark in the "records" he is assigned to. At this point the email is sent to the Customer and he gets a possibility to write a feedback.
 1. All registered users can read feedbacks, but only **Administrator** can see **all the feedbacks**.
 Masters and Customer **can see** the feedbacks they **are related** to.
+
+## Technologies
+1. DB - MySql
+1. Java 8
+1. Maven
+
+## Installation  
+
+1. Clone project (git clone git://github.com/VictorHilonenko/ServletProject.git BeautyScheduler)
+1. Install MySQL if necessary 
+1. Run: schema.sql from folder DUMP_DB
+1. Run: populate.sql from folder DUMP_DB
+1. Configure `/src/main/webapp/META-INF/context.xml` according to your DB settings
+1. Run in terminal: ```mvn clean tomcat7:run``` or add configuration and run in IDE  
+1. Go to: [```localhost:8989```](http://localhost:8989/)
