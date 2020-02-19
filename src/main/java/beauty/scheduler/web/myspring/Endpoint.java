@@ -2,6 +2,7 @@ package beauty.scheduler.web.myspring;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
+import beauty.scheduler.util.StringUtils;
 import beauty.scheduler.web.myspring.annotation.DefaultTemplate;
 import beauty.scheduler.web.myspring.annotation.EndpointMethod;
 import beauty.scheduler.web.myspring.annotation.Restriction;
@@ -15,6 +16,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
+import static beauty.scheduler.util.AppConstants.CURLY_BRACES_LEFT;
+import static beauty.scheduler.util.AppConstants.SLASH_SYMBOL;
+
 public class Endpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(Endpoint.class);
 
@@ -24,11 +28,13 @@ public class Endpoint {
     private RoleMap<String> templates;
     private RequestMethod requestMethod;
     private String urlPattern;
+    private String quickUrlPattern;
+    private int slashesCount;
 
     public static String endpointKey(RequestMethod requestMethod, String urlPattern) {
-        StringJoiner sj = new StringJoiner("->");
-        sj.add(requestMethod.name());
+        StringJoiner sj = new StringJoiner("<-");
         sj.add(urlPattern);
+        sj.add(requestMethod.name());
         return sj.toString();
     }
 
@@ -45,7 +51,7 @@ public class Endpoint {
         EndpointMethod endpointMethodAnnotation = endpointMethod.getAnnotation(EndpointMethod.class);
 
         this.requestMethod = endpointMethodAnnotation.requestMethod();
-        this.urlPattern = endpointMethodAnnotation.urlPattern();
+        this.setUrlPattern(endpointMethodAnnotation.urlPattern());
 
         initializeRestrictions(endpointMethod);
         initializeDefaultTemplates(endpointMethod);
@@ -80,6 +86,19 @@ public class Endpoint {
 
     public String getEndpointKey() {
         return endpointKey(this.requestMethod, this.urlPattern);
+    }
+
+    private void setUrlPattern(String urlPattern) {
+        this.urlPattern = urlPattern;
+
+        //and additionally for future quick search:
+        this.slashesCount = StringUtils.count(urlPattern, SLASH_SYMBOL);
+        int indexOf = urlPattern.indexOf(CURLY_BRACES_LEFT);
+        if (indexOf == -1) {
+            this.quickUrlPattern = urlPattern;
+        } else {
+            this.quickUrlPattern = urlPattern.substring(0, indexOf);
+        }
     }
 
     public boolean hasExceptionForRole(Role role) {
@@ -130,28 +149,32 @@ public class Endpoint {
         return this.templates;
     }
 
-    public void setRequestMethod(RequestMethod requestMethod) {
+    private void setRequestMethod(RequestMethod requestMethod) {
         this.requestMethod = requestMethod;
-    }
-
-    public void setUrlPattern(String urlPattern) {
-        this.urlPattern = urlPattern;
     }
 
     public void setMethod(Method method) {
         this.method = method;
     }
 
-    public void setExceptions(RoleMap<ExceptionKind> exceptions) {
+    private void setExceptions(RoleMap<ExceptionKind> exceptions) {
         this.exceptions = exceptions;
     }
 
-    public void setRedirections(RoleMap<String> redirections) {
+    private void setRedirections(RoleMap<String> redirections) {
         this.redirections = redirections;
     }
 
-    public void setTemplates(RoleMap<String> templates) {
+    private void setTemplates(RoleMap<String> templates) {
         this.templates = templates;
+    }
+
+    public int getSlashesCount() {
+        return slashesCount;
+    }
+
+    public String getQuickUrlPattern() {
+        return quickUrlPattern;
     }
 
     //NOTE: two Endpoints that have equal requestMethod and urlPattern has to be equal,

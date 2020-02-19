@@ -42,19 +42,11 @@ public class Router {
         this.notFoundEdnpoint = notFoundEdnpoint;
     }
 
-    private Endpoint getEndpointFor(RequestMethod requestMethod, String urlPattern) {
-        return endpoints.getOrDefault(Endpoint.endpointKey(requestMethod, urlPattern), notFoundEdnpoint);
-    }
-
     //returns true if request has to be filtered and not go further
     public boolean restricted(HttpServletRequest req, HttpServletResponse resp) {
         Role sessionRole = Security.getUserPrincipal(req).getRole();
 
-        RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod());
-        String urlPattern = getPatternForURI(req.getRequestURI());
-        Endpoint endpoint = getEndpointFor(requestMethod, urlPattern);
-
-        req.setAttribute(ATTR_ENDPOINT, endpoint);
+        Endpoint endpoint = determineEndpoint(req);
 
         if (endpoint.hasExceptionForRole(sessionRole)) {
             processException(req, resp, endpoint, sessionRole);
@@ -147,6 +139,24 @@ public class Router {
         return resultPage;
     }
 
+    public static String sendRESTData(Object data, HttpServletResponse resp) throws ExtendedException {
+        resp.setContentType("application/json");
+
+        PrintWriter out;
+        try {
+            out = resp.getWriter();
+        } catch (IOException e) {
+            throw new ExtendedException(ExceptionKind.REPOSITORY_ISSUE);
+        }
+
+        String jsonData = new Gson().toJson(data);
+        out.print(jsonData);
+        out.flush();
+
+        //NOTE: leave blank for REST API
+        return "";
+    }
+
     private void processRedirect(HttpServletRequest req, HttpServletResponse resp, String redirectTo) {
         try {
             resp.sendRedirect(redirectTo);
@@ -206,35 +216,37 @@ public class Router {
         }
     }
 
-    //NOTE: now this method is hardcoded, need to make proper solution
-    private String getPatternForURI(String requestURI) {
-        String urlPattern = requestURI;
+    private Endpoint determineEndpoint(HttpServletRequest req) {
+        Endpoint endpoint = getEndpointForReguest(req);
 
-        if (urlPattern.contains("/feedbacks/")) {
-            urlPattern = "/feedbacks/{appointmentId}/{quickAccessCode}";
-        }
-        if (urlPattern.contains("/api/appointments/")) {
-            urlPattern = "/api/appointments/{start}/{end}";
-        }
+        req.setAttribute(ATTR_ENDPOINT, endpoint);
 
-        return urlPattern;
+        return endpoint;
     }
 
-    public static String sendRESTData(Object data, HttpServletResponse resp) throws ExtendedException {
-        resp.setContentType("application/json");
+    private Endpoint getEndpointForReguest(HttpServletRequest req) {
+        RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod());
+        String requestURI = req.getRequestURI();
 
-        PrintWriter out;
-        try {
-            out = resp.getWriter();
-        } catch (IOException e) {
-            throw new ExtendedException(ExceptionKind.REPOSITORY_ISSUE);
+        //first quick attempt to search:
+        String endpointKey = Endpoint.endpointKey(requestMethod, requestURI);
+
+        if (endpoints.containsKey(endpointKey)) {
+            return endpoints.get(endpointKey);
         }
 
-        String jsonData = new Gson().toJson(data);
-        out.print(jsonData);
-        out.flush();
+        //more complex search:
+        return findParametrizedEndpoint(requestMethod, requestURI);
+    }
 
-        //NOTE: leave blank for REST API
-        return "";
+    private Endpoint findParametrizedEndpoint(RequestMethod requestMethod, String requestURI) {
+        int slashesCount = StringUtils.count(requestURI, SLASH_SYMBOL);
+
+        return endpoints.values().stream()
+                .filter(endpoint -> (endpoint.getSlashesCount() == slashesCount &&
+                        requestMethod.equals(endpoint.getRequestMethod()) &&
+                        requestURI.startsWith(endpoint.getQuickUrlPattern())))
+                .findFirst()
+                .orElse(notFoundEdnpoint);
     }
 }

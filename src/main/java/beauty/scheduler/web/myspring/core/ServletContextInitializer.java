@@ -59,8 +59,7 @@ public class ServletContextInitializer {
         }
 
         Endpoint endpoint = new Endpoint(null);
-        endpoint.setRequestMethod(RequestMethod.GET);
-        endpoint.setUrlPattern("");
+        //(!!!) maybe pass to constructor
         endpoint.getExceptions().addValueForRole(Role.all, ExceptionKind.PAGE_NOT_FOUND);
 
         return endpoint;

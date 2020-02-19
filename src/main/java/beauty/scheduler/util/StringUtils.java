@@ -54,4 +54,8 @@ public class StringUtils {
         Matcher matcher = pattern.matcher(value);
         return matcher.matches();
     }
+
+    public static int count(String str, String target) {
+        return (str.length() - str.replace(target, "").length()) / target.length();
+    }
 }

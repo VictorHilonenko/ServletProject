@@ -37,6 +37,10 @@ public interface AppConstants {
 
     String MESSAGES_BUNDLE_NAME = "messages";
 
+    String SLASH_SYMBOL = "/";
+    String CURLY_BRACES_LEFT = "{";
+    String CURLY_BRACES_RIGHT = "}";
+
     //algorithmic, no sense to change:
     String DEFAULT_TEMPLATE = "default";
     String REDIRECT = "redirect:";
