@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-//NOTE: not ready for review
 public class ExtendedException extends Exception {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedException.class);
 

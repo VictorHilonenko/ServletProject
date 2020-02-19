@@ -43,7 +43,7 @@ function sendRowDataToServer(aRow, requestMethod) {
                 }
 	        },
 	        error: function (responseJSON) {
-                showStatus("error", $("#error_serviceUnavailable").val());
+                showStatus("error", $("#error_tryLater").val());
 	        },
 	        data: JSON.stringify(userData)
 	    });

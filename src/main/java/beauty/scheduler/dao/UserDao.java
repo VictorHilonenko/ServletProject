@@ -3,7 +3,7 @@ package beauty.scheduler.dao;
 import beauty.scheduler.dao.core.GenericDao;
 import beauty.scheduler.entity.User;
 import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,6 @@ import java.util.Optional;
 import static beauty.scheduler.dao.MappersStorage.USER_ENTITY_MAPPER;
 import static beauty.scheduler.util.AppConstants.TABLENAME;
 
-//NOTE: mostly ready for review
 @ServiceComponent
 public class UserDao extends GenericDao<User> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);

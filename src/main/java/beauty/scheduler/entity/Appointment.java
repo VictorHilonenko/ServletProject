@@ -1,7 +1,7 @@
 package beauty.scheduler.entity;
 
-import beauty.scheduler.dao.core.annotations.DBColumn;
-import beauty.scheduler.dao.core.annotations.DBTable;
+import beauty.scheduler.dao.annotation.DBColumn;
+import beauty.scheduler.dao.annotation.DBTable;
 import beauty.scheduler.entity.enums.ServiceType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 import static beauty.scheduler.util.AppConstants.ID_FIELD;
 
-//NOTE: ready for review
 @DBTable(name = "appointments")
 public class Appointment {
     @DBColumn(name = ID_FIELD)

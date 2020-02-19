@@ -3,7 +3,7 @@ package beauty.scheduler.dao;
 import beauty.scheduler.dao.core.GenericDao;
 import beauty.scheduler.entity.EmailMessage;
 import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-//NOTE: not ready for review
 @ServiceComponent
 public class EmailMessageDao extends GenericDao<EmailMessage> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageDao.class);

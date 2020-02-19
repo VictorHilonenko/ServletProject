@@ -1,4 +1,4 @@
-package beauty.scheduler.web.myspring.annotations;
+package beauty.scheduler.web.myspring.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

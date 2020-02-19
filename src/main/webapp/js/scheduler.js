@@ -93,7 +93,7 @@ function drawWeek() {
 			drawAppointment(appointmentRecord.map);
 		});
 	}).fail(function (responseJSON) {
-		showStatus("error", $("#error_serviceUnavailable").val());
+		showStatus("error", $("#error_tryLater").val());
 	});
 }
 
@@ -243,7 +243,7 @@ function reserveTime(dlg) {
         	}
         },
         error: function (responseJSON) {
-            showStatus("error", $("#error_serviceUnavailable").val());
+            showStatus("error", $("#error_tryLater").val());
         },
         data: JSON.stringify(appointmentDTO)
     });
@@ -273,7 +273,7 @@ function updateServiceProvided(appointmentId, serviceProvidedNewValue, dlg) {
         	}
         },
         error: function (responseJSON) {
-            showStatus("error", $("#error_serviceUnavailable").val());
+            showStatus("error", $("#error_tryLater").val());
 			dlg.dialog("close");
         	drawWeek();
         },

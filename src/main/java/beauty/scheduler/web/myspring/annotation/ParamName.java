@@ -1,12 +1,12 @@
-package beauty.scheduler.web.myspring.annotations;
+package beauty.scheduler.web.myspring.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface RepeatedRestriction {
-    Restriction[] value();
+public @interface ParamName {
+    String name();
 }

@@ -1,16 +1,15 @@
-package beauty.scheduler.web.form;
+package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.util.ReflectUtils;
 import beauty.scheduler.util.StringUtils;
+import beauty.scheduler.web.myspring.annotation.Regex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.StringJoiner;
 
-//NOTE: mostly ready for review
 public class FormValidator {
     private static final Logger LOGGER = LoggerFactory.getLogger(FormValidator.class);
 
@@ -36,7 +35,7 @@ public class FormValidator {
         String fieldValue = "";
         try {
             fieldValue = (String) ReflectUtils.get(form, fieldName);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (Exception e) {
             LOGGER.error("Wrong field configuration " + form.getClass() + " " + fieldName);
             appendError(errors, fieldName, "error.wrongFieldConf");
             return;

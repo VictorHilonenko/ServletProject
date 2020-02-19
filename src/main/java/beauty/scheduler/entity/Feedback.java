@@ -1,14 +1,13 @@
 package beauty.scheduler.entity;
 
-import beauty.scheduler.dao.core.annotations.DBColumn;
-import beauty.scheduler.dao.core.annotations.DBTable;
+import beauty.scheduler.dao.annotation.DBColumn;
+import beauty.scheduler.dao.annotation.DBTable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import static beauty.scheduler.util.AppConstants.ID_FIELD;
 
-//NOTE: ready for review
 @DBTable(name = "feedbacks")
 public class Feedback {
     @DBColumn(name = ID_FIELD)

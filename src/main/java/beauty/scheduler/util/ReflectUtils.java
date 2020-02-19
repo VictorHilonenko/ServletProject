@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//NOTE: almost not ready for review, will make some refactoring
 public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectUtils.class);
 
@@ -29,7 +28,7 @@ public class ReflectUtils {
         //also there is a possibility to make a special class for this purpose, but right now this will do
     }
 
-    public static int pairClassHashCode(Class toClass, Class fromClass) {
+    private static int pairClassHashCode(Class toClass, Class fromClass) {
         int result = 1;
         final int PRIME = 59;
         result = result * PRIME + toClass.hashCode();
@@ -53,7 +52,7 @@ public class ReflectUtils {
         return false;
     }
 
-    public static Method setterFor(String fieldName, Class instanceClass, Class toClass) {
+    private static Method setterFor(String fieldName, Class instanceClass, Class toClass) {
         //NOTE: that wouldn't be completely legal access to a field
         //if we use field.setAccessible(true); and then field.set(...
         //so, let's do it through a setter if any exists:
@@ -68,7 +67,7 @@ public class ReflectUtils {
         }
     }
 
-    public static Method getterFor(String fieldName, Class instanceClass) {
+    private static Method getterFor(String fieldName, Class instanceClass) {
         //NOTE: that wouldn't be completely legal access to a field
         //if we use field.setAccessible(true); and then field.set(...
         //so, let's do it through a setter if any exists:
@@ -113,13 +112,13 @@ public class ReflectUtils {
             setter.invoke(instance, value);
             return true;
         } catch (Exception e) {
-            LOGGER.error("Couldn't set " + value.toString() + " by " + setter.toString());
+            LOGGER.error("Couldn't set value by " + setter.toString());
         }
 
         return false;
     }
 
-    public static void set(Object instance, String fieldName, Class toClass, Object value) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static void set(Object instance, String fieldName, Class toClass, Object value) throws InvocationTargetException, IllegalAccessException {
         Method setter = setterFor(fieldName, instance.getClass(), toClass);
         set(instance, setter, value);
     }
@@ -131,12 +130,12 @@ public class ReflectUtils {
         return getter.invoke(instance);
     }
 
-    public static Object get(Object instance, String fieldName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object get(Object instance, String fieldName) throws InvocationTargetException, IllegalAccessException {
         Method getter = getterFor(fieldName, instance.getClass());
         return get(instance, getter);
     }
 
-    public static Map<Method, Method> getLinkingMap(Class fromClass, Class toClass) throws NoSuchMethodException {
+    private static Map<Method, Method> getLinkingMap(Class fromClass, Class toClass) {
 
         //TODO make it cacheable
 
@@ -164,7 +163,7 @@ public class ReflectUtils {
         return linkingMap;
     }
 
-    public static Object map(Object instanceFrom, Object instanceTo) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object map(Object instanceFrom, Object instanceTo) throws IllegalAccessException, InvocationTargetException {
 
         Map<Method, Method> linkingMap = getLinkingMap(instanceFrom.getClass(), instanceTo.getClass());
 
@@ -188,7 +187,7 @@ public class ReflectUtils {
         return value;
     }
 
-    public static Object getNewInstanceFrom(Class neededClass, Object instanceFrom) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    private static Object getNewInstanceFrom(Class neededClass, Object instanceFrom) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         return map(instanceFrom, neededClass.newInstance());
     }
 

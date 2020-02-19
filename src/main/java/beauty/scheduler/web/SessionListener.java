@@ -1,6 +1,6 @@
 package beauty.scheduler.web;
 
-import beauty.scheduler.web.myspring.Security;
+import beauty.scheduler.web.myspring.core.Security;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;

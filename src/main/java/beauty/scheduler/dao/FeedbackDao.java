@@ -5,7 +5,7 @@ import beauty.scheduler.dao.core.Pagination;
 import beauty.scheduler.entity.Feedback;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,6 @@ import java.util.Optional;
 
 import static beauty.scheduler.dao.MappersStorage.FEEDBACK_ENTITY_MAPPER;
 
-//NOTE: mostly ready for review
 @ServiceComponent
 public class FeedbackDao extends GenericDao<Feedback> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackDao.class);
@@ -37,7 +36,7 @@ public class FeedbackDao extends GenericDao<Feedback> {
     }
 
     @Override
-    public boolean create(Feedback entity) throws SQLException, ExtendedException {
+    public boolean create(Feedback entity) throws ExtendedException {
         //not necessary in this project logic
         throw new ExtendedException(ExceptionKind.WRONG_METHOD_CALLED);
     }

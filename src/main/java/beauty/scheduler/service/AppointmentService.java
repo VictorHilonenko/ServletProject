@@ -7,10 +7,10 @@ import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.LocaleUtils;
+import beauty.scheduler.util.StringUtils;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.InjectDependency;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
-import com.google.gson.Gson;
+import beauty.scheduler.web.myspring.annotation.InjectDependency;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.*;
 
-//NOTE: partly ready for review
 @ServiceComponent
 public class AppointmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentService.class);
@@ -50,7 +49,7 @@ public class AppointmentService {
     }
 
     public String addAppointmentByJSON(String jsonData, UserPrincipal userPrincipal) {
-        Map<String, String> map = new Gson().fromJson(jsonData, Map.class);
+        Map<String, String> map = StringUtils.mapFromJSON(jsonData);
         String strDate = map.getOrDefault("date", "");
         String strTime = map.getOrDefault("time", "");
         String strServiceType = map.getOrDefault("serviceType", "");
@@ -113,7 +112,7 @@ public class AppointmentService {
     }
 
     public String setServiceProvidedByJSON(String jsonData, UserPrincipal userPrincipal) {
-        Map<String, String> map = new Gson().fromJson(jsonData, Map.class);
+        Map<String, String> map = StringUtils.mapFromJSON(jsonData);
         String strId = map.getOrDefault("id", "");
         String strServiceProvided = map.getOrDefault("serviceProvided", "");
 

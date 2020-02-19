@@ -6,23 +6,23 @@ import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.util.*;
-import beauty.scheduler.web.form.RegistrationForm;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.InjectDependency;
-import beauty.scheduler.web.myspring.annotations.ServiceComponent;
-import com.google.gson.Gson;
+import beauty.scheduler.web.myspring.annotation.InjectDependency;
+import beauty.scheduler.web.myspring.annotation.ServiceComponent;
+import beauty.scheduler.web.myspring.form.RegistrationForm;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static beauty.scheduler.util.AppConstants.REST_ERROR;
 import static beauty.scheduler.util.AppConstants.REST_SUCCESS;
 
-//NOTE: ready for review
 @ServiceComponent
 public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
@@ -51,7 +51,7 @@ public class UserService {
         return user;
     }
 
-    public void createUser(RegistrationForm form) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, SQLException, InstantiationException, ExtendedException {
+    public void createUser(RegistrationForm form) throws Exception {
         InstanceMapper<User> userMapper = ReflectUtils.getMapper(User.class);
         User user = userMapper.map(form);
 
@@ -69,7 +69,7 @@ public class UserService {
         return userDao.getAll();
     }
 
-    public List<UserDTO> getAllUserDTO() throws SQLException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ExtendedException {
+    public List<UserDTO> getAllUserDTO() throws Exception {
         InstanceMapper<UserDTO> userDTOMapper = ReflectUtils.getMapper(UserDTO.class);
 
         List<UserDTO> list = new ArrayList<>();
@@ -82,7 +82,7 @@ public class UserService {
 
     //it's possible to make this method general/universal, but now it's a first approach:
     public String updateUserByJSON(String jsonData, UserPrincipal userPrincipal) {
-        Map<String, String> map = new Gson().fromJson(jsonData, HashMap.class);
+        Map<String, String> map = StringUtils.mapFromJSON(jsonData);
         String email = map.getOrDefault("email", "");
         String strRole = map.getOrDefault("role", "");
         String strServiceType = map.getOrDefault("serviceType", "");
@@ -127,6 +127,7 @@ public class UserService {
     public String getLocalizedName(User user, String lang) {
         String nameEn = user.getFirstNameEn();
         String nameUk = user.getFirstNameUk();
+
         if (lang.equals(LocaleUtils.getDefaultLocale().getLanguage()) || StringUtils.isEmpty(nameUk)) {
             return nameEn;
         } else {

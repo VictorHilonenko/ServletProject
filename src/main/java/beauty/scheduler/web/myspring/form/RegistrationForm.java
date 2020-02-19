@@ -1,8 +1,9 @@
-package beauty.scheduler.web.form;
+package beauty.scheduler.web.myspring.form;
+
+import beauty.scheduler.web.myspring.annotation.Regex;
 
 import static beauty.scheduler.util.AppConstants.*;
 
-//NOTE: ready for review
 public class RegistrationForm {
     @Regex(pattern = REGEX_NOT_EMPTY_ENGLISH, errorMessage = "warning.notEmptyEnglishLetters")
     private String firstNameEn;

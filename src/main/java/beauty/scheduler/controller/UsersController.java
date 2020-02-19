@@ -6,21 +6,20 @@ import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.service.UserService;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
-import beauty.scheduler.web.form.FormValidator;
-import beauty.scheduler.web.form.LoginForm;
-import beauty.scheduler.web.form.RegistrationForm;
+import beauty.scheduler.util.StringUtils;
+import beauty.scheduler.web.myspring.ContentType;
 import beauty.scheduler.web.myspring.RequestMethod;
-import beauty.scheduler.web.myspring.Router;
-import beauty.scheduler.web.myspring.Security;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.*;
+import beauty.scheduler.web.myspring.annotation.*;
+import beauty.scheduler.web.myspring.core.FormValidator;
+import beauty.scheduler.web.myspring.core.Security;
+import beauty.scheduler.web.myspring.form.LoginForm;
+import beauty.scheduler.web.myspring.form.RegistrationForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.*;
 
-//NOTE: ready for review
 @ServiceComponent
 public class UsersController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
@@ -47,7 +45,7 @@ public class UsersController {
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/registration")
     @Restriction(role = Role.authenticated, redirection = "/logout")
     @DefaultTemplate(template = "/WEB-INF/registration.jsp")
-    public String registrationAttempt(RegistrationForm form, HttpServletRequest req) throws InvocationTargetException, NoSuchMethodException, SQLException, IllegalAccessException, InstantiationException, ExtendedException {
+    public String registrationAttempt(RegistrationForm form, HttpServletRequest req) throws Exception {
 
         Map<String, String> errors = new HashMap<>();
         FormValidator.validate(form, errors);
@@ -109,7 +107,7 @@ public class UsersController {
 
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/logout")
     @Restriction(role = Role.notAuthenticated, redirection = "/")
-    public String logout(HttpServletRequest req, HttpServletResponse resp) {
+    public String logout(HttpServletRequest req) {
 
         //depending on business logic we could call userService, so it could make
         //some actions like saving login/logout timing to DB, etc. and then call Security.loginUser
@@ -123,7 +121,7 @@ public class UsersController {
     @Restriction(role = Role.nonstaff, exception = ExceptionKind.PAGE_NOT_FOUND)
     @Restriction(role = Role.ROLE_MASTER, exception = ExceptionKind.ACCESS_DENIED)
     @DefaultTemplate(role = Role.ROLE_ADMIN, template = "/WEB-INF/admin.jsp")
-    public String apiUserListForAdmin(HttpServletRequest req, HttpServletResponse resp) throws SQLException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, ExtendedException {
+    public String apiUserListForAdmin(HttpServletRequest req) throws Exception {
 
         req.setAttribute(ATTR_USERS, userService.getAllUserDTO());
         req.setAttribute(ATTR_ROLES, Role.getAllByTag("front"));
@@ -132,19 +130,17 @@ public class UsersController {
         return DEFAULT_TEMPLATE;
     }
 
-    @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/users")
+    @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/users", contentType = ContentType.JSON)
     @Restriction(role = Role.nonstaff, exception = ExceptionKind.PAGE_NOT_FOUND)
     @Restriction(role = Role.ROLE_MASTER, exception = ExceptionKind.ACCESS_DENIED)
-    public String apiUserUpdateAttempt(HttpServletRequest req, HttpServletResponse resp) throws IOException, ExtendedException {
-        String jsonData = req.getReader()
-                .lines()
-                .collect(Collectors.joining());
+    public String apiUserUpdateAttempt(HttpServletRequest req) throws IOException {
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
 
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
-        String status = userService.updateUserByJSON(jsonData, userPrincipal);
+        String message = userService.updateUserByJSON(jsonData, userPrincipal);
 
-        return Router.sendRESTData(status, resp);
+        return StringUtils.toJSON(message);
     }
 
     public UserService getUserService() {

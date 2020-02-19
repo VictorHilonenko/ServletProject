@@ -5,23 +5,22 @@ import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.service.AppointmentService;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
+import beauty.scheduler.util.StringUtils;
+import beauty.scheduler.web.myspring.ContentType;
 import beauty.scheduler.web.myspring.RequestMethod;
-import beauty.scheduler.web.myspring.Router;
-import beauty.scheduler.web.myspring.Security;
 import beauty.scheduler.web.myspring.UserPrincipal;
-import beauty.scheduler.web.myspring.annotations.*;
+import beauty.scheduler.web.myspring.annotation.*;
+import beauty.scheduler.web.myspring.core.Security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//NOTE: ready for review
 @ServiceComponent
 public class AppointmentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentsController.class);
@@ -29,9 +28,9 @@ public class AppointmentsController {
     @InjectDependency
     private AppointmentService appointmentService;
 
-    @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/api/appointments/{start}/{end}")
+    @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/api/appointments/{start}/{end}", contentType = ContentType.JSON)
     public String apiAppointmentsListByPeriod(@ParamName(name = "start") LocalDate start, @ParamName(name = "end") LocalDate end,
-                                              HttpServletRequest req, HttpServletResponse resp) throws SQLException, ExtendedException {
+                                              HttpServletRequest req) throws SQLException, ExtendedException {
         if (start.isAfter(end)) {
             throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
         }
@@ -40,37 +39,33 @@ public class AppointmentsController {
 
         List<AppointmentDTO> list = appointmentService.getAllAppointmentsDTO(start, end, userPrincipal);
 
-        return Router.sendRESTData(list, resp);
+        return StringUtils.toJSON(list);
     }
 
-    @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/api/appointments")
+    @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/api/appointments", contentType = ContentType.JSON)
     @Restriction(role = Role.notAuthenticated, exception = ExceptionKind.ACCESS_DENIED)
     @Restriction(role = Role.staff, exception = ExceptionKind.ACCESS_DENIED)
-    public String apiAppointmentCreateAttempt(HttpServletRequest req, HttpServletResponse resp) throws IOException, ExtendedException {
-        String jsonData = req.getReader()
-                .lines()
-                .collect(Collectors.joining());
+    public String apiAppointmentCreateAttempt(HttpServletRequest req) throws IOException {
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
 
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
         String message = appointmentService.addAppointmentByJSON(jsonData, userPrincipal);
 
-        return Router.sendRESTData(message, resp);
+        return StringUtils.toJSON(message);
     }
 
-    @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/appointments")
+    @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/appointments", contentType = ContentType.JSON)
     @Restriction(role = Role.nonstaff, exception = ExceptionKind.ACCESS_DENIED)
     @Restriction(role = Role.ROLE_ADMIN, exception = ExceptionKind.ACCESS_DENIED)
-    public String apiSetServiceProvidedAttempt(HttpServletRequest req, HttpServletResponse resp) throws IOException, ExtendedException {
-        String jsonData = req.getReader()
-                .lines()
-                .collect(Collectors.joining());
+    public String apiSetServiceProvidedAttempt(HttpServletRequest req) throws IOException {
+        String jsonData = req.getReader().lines().collect(Collectors.joining());
 
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
         String message = appointmentService.setServiceProvidedByJSON(jsonData, userPrincipal);
 
-        return Router.sendRESTData(message, resp);
+        return StringUtils.toJSON(message);
     }
 
     public AppointmentService getAppointmentService() {
