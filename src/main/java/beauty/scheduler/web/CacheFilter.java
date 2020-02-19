@@ -10,7 +10,7 @@ import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 @WebFilter(servletNames = MAIN_PACKAGE + ".web.Servlet")
 public class CacheFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override

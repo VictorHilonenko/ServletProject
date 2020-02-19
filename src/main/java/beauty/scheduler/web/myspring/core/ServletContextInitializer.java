@@ -2,6 +2,8 @@ package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
+import beauty.scheduler.util.ExtendedException;
+import beauty.scheduler.util.LocaleUtils;
 import beauty.scheduler.web.myspring.Endpoint;
 import beauty.scheduler.web.myspring.RequestMethod;
 import beauty.scheduler.web.myspring.annotation.EndpointMethod;
@@ -21,7 +23,12 @@ public class ServletContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServletContextInitializer.class);
 
     public static void init(ServletContext context) {
-        BeanFactory beanFactory = new BeanFactory(new HashMap<>());
+        BeanFactory beanFactory;
+        try {
+            beanFactory = new BeanFactory(new HashMap<>());
+        } catch (ExtendedException e) {
+            throw new RuntimeException(LocaleUtils.getLocalizedMessage("error.wrongConfiguration", LocaleUtils.getDefaultLocale().getLanguage()));
+        }
 
         Map<String, Endpoint> endpoints = gatherRoutingData();
         Endpoint notFoundEdnpoint = determineNotFoundEdnpoint(endpoints);
@@ -31,7 +38,7 @@ public class ServletContextInitializer {
         context.setAttribute(ATTR_ACTIVE_USERS, new HashSet<String>());
     }
 
-    public static Map<String, Endpoint> gatherRoutingData() {
+    private static Map<String, Endpoint> gatherRoutingData() {
         Map<String, Endpoint> endpoints = new HashMap<>();
 
         Reflections refMethods = new Reflections(MAIN_PACKAGE, new MethodAnnotationsScanner());
@@ -59,7 +66,6 @@ public class ServletContextInitializer {
         }
 
         Endpoint endpoint = new Endpoint(null);
-        //(!!!) maybe pass to constructor
         endpoint.getExceptions().addValueForRole(Role.all, ExceptionKind.PAGE_NOT_FOUND);
 
         return endpoint;

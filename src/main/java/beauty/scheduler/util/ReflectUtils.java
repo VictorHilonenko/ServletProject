@@ -118,7 +118,7 @@ public class ReflectUtils {
         return false;
     }
 
-    public static void set(Object instance, String fieldName, Class toClass, Object value) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static void set(Object instance, String fieldName, Class toClass, Object value) throws InvocationTargetException, IllegalAccessException {
         Method setter = setterFor(fieldName, instance.getClass(), toClass);
         set(instance, setter, value);
     }
@@ -130,12 +130,12 @@ public class ReflectUtils {
         return getter.invoke(instance);
     }
 
-    public static Object get(Object instance, String fieldName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object get(Object instance, String fieldName) throws InvocationTargetException, IllegalAccessException {
         Method getter = getterFor(fieldName, instance.getClass());
         return get(instance, getter);
     }
 
-    private static Map<Method, Method> getLinkingMap(Class fromClass, Class toClass) throws NoSuchMethodException {
+    private static Map<Method, Method> getLinkingMap(Class fromClass, Class toClass) {
 
         //TODO make it cacheable
 
@@ -163,7 +163,7 @@ public class ReflectUtils {
         return linkingMap;
     }
 
-    public static Object map(Object instanceFrom, Object instanceTo) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object map(Object instanceFrom, Object instanceTo) throws IllegalAccessException, InvocationTargetException {
 
         Map<Method, Method> linkingMap = getLinkingMap(instanceFrom.getClass(), instanceTo.getClass());
 
@@ -187,7 +187,7 @@ public class ReflectUtils {
         return value;
     }
 
-    private static Object getNewInstanceFrom(Class neededClass, Object instanceFrom) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    private static Object getNewInstanceFrom(Class neededClass, Object instanceFrom) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         return map(instanceFrom, neededClass.newInstance());
     }
 

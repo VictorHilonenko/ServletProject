@@ -28,6 +28,7 @@ public class Endpoint {
     private RoleMap<String> templates;
     private RequestMethod requestMethod;
     private String urlPattern;
+    private ContentType contentType;
     private String quickUrlPattern;
     private int slashesCount;
 
@@ -52,6 +53,7 @@ public class Endpoint {
 
         this.requestMethod = endpointMethodAnnotation.requestMethod();
         this.setUrlPattern(endpointMethodAnnotation.urlPattern());
+        this.contentType = endpointMethodAnnotation.contentType();
 
         initializeRestrictions(endpointMethod);
         initializeDefaultTemplates(endpointMethod);
@@ -131,6 +133,10 @@ public class Endpoint {
 
     public String getUrlPattern() {
         return this.urlPattern;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
     }
 
     public Method getMethod() {

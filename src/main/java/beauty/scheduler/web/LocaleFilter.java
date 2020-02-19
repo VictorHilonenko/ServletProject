@@ -17,7 +17,7 @@ import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 @WebFilter(servletNames = MAIN_PACKAGE + ".web.Servlet")
 public class LocaleFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
@@ -27,7 +27,6 @@ public class LocaleFilter implements Filter {
 
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html");
 
         HttpServletRequest req = (HttpServletRequest) request;
 

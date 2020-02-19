@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -36,7 +35,7 @@ public class FormValidator {
         String fieldValue = "";
         try {
             fieldValue = (String) ReflectUtils.get(form, fieldName);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (Exception e) {
             LOGGER.error("Wrong field configuration " + form.getClass() + " " + fieldName);
             appendError(errors, fieldName, "error.wrongFieldConf");
             return;

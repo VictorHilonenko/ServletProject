@@ -1,5 +1,7 @@
 package beauty.scheduler.web.myspring.core;
 
+import beauty.scheduler.util.ExceptionKind;
+import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.ReflectUtils;
 import beauty.scheduler.web.myspring.annotation.InjectDependency;
 import beauty.scheduler.web.myspring.annotation.ServiceComponent;
@@ -10,8 +12,8 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 
@@ -21,7 +23,7 @@ public class BeanFactory {
 
     private Map<String, Object> instancesContainer;
 
-    public BeanFactory(Map<String, Object> instancesContainer) {
+    public BeanFactory(Map<String, Object> instancesContainer) throws ExtendedException {
         this.instancesContainer = instancesContainer;
 
         makeInstances();
@@ -36,7 +38,9 @@ public class BeanFactory {
         return instancesContainer.get(className);
     }
 
-    private void makeInstances() {
+    private void makeInstances() throws ExtendedException {
+        AtomicBoolean allSet = new AtomicBoolean(true);
+
         Reflections refClasses = new Reflections(MAIN_PACKAGE, new TypeAnnotationsScanner(), new SubTypesScanner());
         refClasses.getTypesAnnotatedWith(ServiceComponent.class).forEach(aClass -> {
             try {
@@ -44,12 +48,18 @@ public class BeanFactory {
                 instancesContainer.put(aClass.getSimpleName(), instance);
             } catch (InstantiationException | IllegalAccessException e) {
                 LOGGER.error("wrong configuration! can't create instance of " + aClass);
-                throw new RuntimeException("wrong configuration! can't create instance");
+                allSet.set(false);
             }
         });
+
+        if (!allSet.get()) {
+            throw new ExtendedException(ExceptionKind.WRONG_CONFIGURATION);
+        }
     }
 
-    private void injectDependencies() {
+    private void injectDependencies() throws ExtendedException {
+        AtomicBoolean allSet = new AtomicBoolean(true);
+
         Reflections refFields = new Reflections(MAIN_PACKAGE, new FieldAnnotationsScanner());
         refFields.getFieldsAnnotatedWith(InjectDependency.class).forEach(field -> {
             String injectFrom = field.getType().getSimpleName();
@@ -57,7 +67,7 @@ public class BeanFactory {
 
             if (!instancesContainer.containsKey(injectFrom) || !instancesContainer.containsKey(injectTo)) {
                 LOGGER.error("wrong configuration! no service component found for " + injectFrom + " and/or " + injectTo);
-                throw new RuntimeException("wrong configuration! no service component found");
+                allSet.set(false);
             }
 
             Object instanceFrom = getInstantiatedClass(injectFrom);
@@ -65,10 +75,14 @@ public class BeanFactory {
 
             try {
                 ReflectUtils.set(instanceTo, field.getName(), field.getType(), instanceFrom);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            } catch (Exception e) {
                 LOGGER.error("wrong configuration! no setter found for " + injectFrom + " and/or " + injectTo);
-                throw new RuntimeException("wrong configuration! no setter found");
+                allSet.set(false);
             }
         });
+
+        if (!allSet.get()) {
+            throw new ExtendedException(ExceptionKind.WRONG_CONFIGURATION);
+        }
     }
 }

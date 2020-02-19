@@ -1,5 +1,8 @@
 package beauty.scheduler.util;
 
+import com.google.gson.Gson;
+
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -57,5 +60,13 @@ public class StringUtils {
 
     public static int count(String str, String target) {
         return (str.length() - str.replace(target, "").length()) / target.length();
+    }
+
+    public static String toJSON(Object anObject) {
+        return new Gson().toJson(anObject);
+    }
+
+    public static Map<String, String> mapFromJSON(String jsonData) {
+        return new Gson().fromJson(jsonData, Map.class);
     }
 }

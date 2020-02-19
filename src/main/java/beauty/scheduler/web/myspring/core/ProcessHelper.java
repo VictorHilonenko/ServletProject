@@ -2,10 +2,9 @@ package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
-import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.StringUtils;
+import beauty.scheduler.web.myspring.ContentType;
 import beauty.scheduler.web.myspring.Endpoint;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,64 +13,61 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static beauty.scheduler.util.AppConstants.*;
 import static beauty.scheduler.web.myspring.core.ParamHelper.getAllParameters;
 
-public class Processor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Processor.class);
+public class ProcessHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessHelper.class);
 
     static String process(Router router, HttpServletRequest req, HttpServletResponse resp) {
-        String resultPage;
-
         Endpoint endpoint = (Endpoint) req.getAttribute(ATTR_ENDPOINT);
+        resp.setContentType(endpoint.getContentType().getStrContentType());
 
-        try {
-            resultPage = processController(router, req, resp, endpoint);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            LOGGER.error("processController " + endpoint.toString());
-            processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
+        String result = processController(router, req, resp, endpoint);
+
+        if (ContentType.HTML.equals(endpoint.getContentType())) {
+
+            return processResultHTML(result, req, resp, endpoint);
+
+        } else if (ContentType.JSON.equals(endpoint.getContentType())) {
+
+            return processResultJSON(result, resp);
+
+        } else {
+
+            processException(req, resp, ExceptionKind.NOT_SUPPORTED);
             return "exception"; //for debug purposes
-        }
 
-        return processResultPage(resultPage, req, resp, endpoint);
+        }
     }
 
-    private static String processController(Router router, HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) throws InvocationTargetException, IllegalAccessException {
+    private static String processController(Router router, HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) {
         Method method = endpoint.getMethod();
 
-        //it's almost impossible, but for reliability and with keeping in ming that "notFoundEdnpoint" has such value of method, lets's do this check
-        if (method == null) {
+        if (method == null) { //it's almost impossible, but for reliability, lets's do this check
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
             return "exception"; //for debug purposes
         }
 
-        if (endpoint.getUrlPattern().contains("{")) {
-            try {
-                addURIParametersToRequest(endpoint.getUrlPattern(), req);
-            } catch (NoSuchFieldException e) {
-                processException(req, resp, ExceptionKind.WRONG_DATA_PASSED);
-                return "exception"; //for debug purposes
-            }
-        }
+        ParamHelper.processParametersURI(req, endpoint);
 
-        Object[] args;
+        Object[] args = getAllParameters(endpoint, req, resp);
+
+        Object classInstance = router.getBean(method.getDeclaringClass().getSimpleName());
+
         try {
-            args = getAllParameters(endpoint, req, resp);
+            return (String) method.invoke(classInstance, args);
         } catch (Exception e) {
+            LOGGER.warn("wrong data passed to " + endpoint.toString());
             processException(req, resp, ExceptionKind.WRONG_DATA_PASSED);
             return "exception"; //for debug purposes
         }
-
-        Object classInstance = router.getBeanFactory().getInstantiatedClass(method.getDeclaringClass().getSimpleName());
-
-        return (String) method.invoke(classInstance, args);
     }
 
-    private static String processResultPage(String resultPage, HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) {
-        if (resultPage == null) {
+    private static String processResultHTML(String resultPage, HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) {
+        if (StringUtils.isEmpty(resultPage)) {
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
             return "exception"; //for debug purposes
         }
@@ -92,33 +88,28 @@ public class Processor {
             return "redirect"; //for debug purposes
         }
 
-        if (!"".equals(resultPage)) { //"" - for REST
-            try {
-                req.getRequestDispatcher(resultPage).forward(req, resp);
-            } catch (IOException | ServletException e) {
-                processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
-            }
+        try {
+            req.getRequestDispatcher(resultPage).forward(req, resp);
+        } catch (IOException | ServletException e) {
+            processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
         }
 
         return resultPage;
     }
 
-    public static String sendRESTData(Object data, HttpServletResponse resp) throws ExtendedException {
-        resp.setContentType("application/json");
-
+    private static String processResultJSON(String jsonData, HttpServletResponse resp) {
         PrintWriter out;
+
         try {
             out = resp.getWriter();
         } catch (IOException e) {
-            throw new ExtendedException(ExceptionKind.REPOSITORY_ISSUE);
+            return REST_ERROR;
         }
 
-        String jsonData = new Gson().toJson(data);
         out.print(jsonData);
         out.flush();
 
-        //NOTE: leave blank for REST API
-        return "";
+        return REST_SUCCESS;
     }
 
     private static void processRedirect(HttpServletRequest req, HttpServletResponse resp, String redirectTo) {
@@ -160,24 +151,4 @@ public class Processor {
             LOGGER.error("Curious: exceptionn during sending an error");
         }
     }
-
-    private static void addURIParametersToRequest(String urlPattern, HttpServletRequest req) throws NoSuchFieldException {
-        String[] patternParts = urlPattern.split("/");
-        String[] uriParts = req.getRequestURI().split("/");
-
-        if (patternParts.length != uriParts.length) {
-            //it's impossible, but better to check
-            throw new NoSuchFieldException("disparate URI and pattern!");
-        }
-
-        for (int i = 0; i <= patternParts.length - 1; i++) {
-            String patternPart = patternParts[i];
-            if (!patternPart.contains("{")) {
-                continue;
-            }
-            String attributeName = patternPart.replaceAll("[{}]", "");
-            req.setAttribute(URI_PREFIX + attributeName, uriParts[i]);
-        }
-    }
-
 }

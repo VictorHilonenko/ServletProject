@@ -25,7 +25,7 @@ public class Router {
         ServletContext context = req.getServletContext();
         Router router = (Router) context.getAttribute(ATTR_ROUTER);
 
-        Processor.process(router, req, resp);
+        ProcessHelper.process(router, req, resp);
     }
 
     public Router(BeanFactory beanFactory, Map<String, Endpoint> endpoints, Endpoint notFoundEdnpoint) {
@@ -41,10 +41,10 @@ public class Router {
         Endpoint endpoint = determineEndpoint(req);
 
         if (endpoint.hasExceptionForRole(sessionRole)) {
-            Processor.processException(req, resp, endpoint, sessionRole);
+            ProcessHelper.processException(req, resp, endpoint, sessionRole);
             return true;
         } else if (endpoint.hasRedirectionForRole(sessionRole)) {
-            Processor.processRedirect(req, resp, endpoint, sessionRole);
+            ProcessHelper.processRedirect(req, resp, endpoint, sessionRole);
             return true;
         }
 
@@ -85,7 +85,7 @@ public class Router {
                 .orElse(notFoundEdnpoint);
     }
 
-    BeanFactory getBeanFactory() {
-        return beanFactory;
+    Object getBean(String simpleName) {
+        return beanFactory.getInstantiatedClass(simpleName);
     }
 }
