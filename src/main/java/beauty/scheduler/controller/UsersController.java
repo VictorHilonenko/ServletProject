@@ -10,7 +10,7 @@ import beauty.scheduler.web.myspring.RequestMethod;
 import beauty.scheduler.web.myspring.UserPrincipal;
 import beauty.scheduler.web.myspring.annotation.*;
 import beauty.scheduler.web.myspring.core.FormValidator;
-import beauty.scheduler.web.myspring.core.Router;
+import beauty.scheduler.web.myspring.core.Processor;
 import beauty.scheduler.web.myspring.core.Security;
 import beauty.scheduler.web.myspring.form.LoginForm;
 import beauty.scheduler.web.myspring.form.RegistrationForm;
@@ -143,7 +143,7 @@ public class UsersController {
 
         String status = userService.updateUserByJSON(jsonData, userPrincipal);
 
-        return Router.sendRESTData(status, resp);
+        return Processor.sendRESTData(status, resp);
     }
 
     public UserService getUserService() {

@@ -8,7 +8,7 @@ import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.web.myspring.RequestMethod;
 import beauty.scheduler.web.myspring.UserPrincipal;
 import beauty.scheduler.web.myspring.annotation.*;
-import beauty.scheduler.web.myspring.core.Router;
+import beauty.scheduler.web.myspring.core.Processor;
 import beauty.scheduler.web.myspring.core.Security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class AppointmentsController {
 
         List<AppointmentDTO> list = appointmentService.getAllAppointmentsDTO(start, end, userPrincipal);
 
-        return Router.sendRESTData(list, resp);
+        return Processor.sendRESTData(list, resp);
     }
 
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/api/appointments")
@@ -54,7 +54,7 @@ public class AppointmentsController {
 
         String message = appointmentService.addAppointmentByJSON(jsonData, userPrincipal);
 
-        return Router.sendRESTData(message, resp);
+        return Processor.sendRESTData(message, resp);
     }
 
     @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/appointments")
@@ -69,7 +69,7 @@ public class AppointmentsController {
 
         String message = appointmentService.setServiceProvidedByJSON(jsonData, userPrincipal);
 
-        return Router.sendRESTData(message, resp);
+        return Processor.sendRESTData(message, resp);
     }
 
     public AppointmentService getAppointmentService() {

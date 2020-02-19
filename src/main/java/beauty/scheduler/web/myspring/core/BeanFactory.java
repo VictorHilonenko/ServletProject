@@ -15,6 +15,7 @@ import java.util.Map;
 
 import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 
+//TODO make it immutable
 public class BeanFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanFactory.class);
 
