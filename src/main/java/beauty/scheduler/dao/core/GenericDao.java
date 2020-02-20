@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.ParameterizedType;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,11 +20,11 @@ public abstract class GenericDao<T> implements EntityDao<T> {
 
     private SQLStatementsGenerator sqlStatementsGenerator = new SQLStatementsGenerator(); //NOTE: no way to inject to an Abstract class except this
 
-    public Optional<T> getById(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String query) throws SQLException {
+    private Optional<T> getById(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String query) throws SQLException {
         Optional<T> result = Optional.empty();
 
-        try (Connection connection = ConnectionPoolHolder.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (ConnectionWrapper connectionWrapper = TransactionManager.getConnection();
+             PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query)) {
 
             statementMapper.map(preparedStatement);
 
@@ -45,14 +44,14 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return result;
     }
 
-    public Optional<T> getById(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper) throws SQLException, ExtendedException {
+    protected Optional<T> getById(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper) throws SQLException, ExtendedException {
         Class tClass = getGenericParameterClass(this.getClass());
 
         String query = sqlStatementsGenerator.getGeneralSelectQueryFor(tClass, "WHERE " + TABLENAME + "." + ID_FIELD + " = ?");
         return getById(statementMapper, entityMapper, query);
     }
 
-    private PreparedStatement prepareStatementSelect(StatementMapper<T> statementMapper, Connection connection, String query, Pagination pagination) throws SQLException {
+    private PreparedStatement prepareStatementSelect(StatementMapper<T> statementMapper, ConnectionWrapper connectionWrapper, String query, Pagination pagination) throws SQLException {
         if (pagination != null) {
             StringJoiner sj = new StringJoiner(" ");
             sj.add(query);
@@ -64,21 +63,21 @@ public abstract class GenericDao<T> implements EntityDao<T> {
             query = sj.toString();
         }
 
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query);
 
         statementMapper.map(preparedStatement);
 
         return preparedStatement;
     }
 
-    private PreparedStatement prepareStatementCount(StatementMapper<T> statementMapper, Connection connection, Pagination pagination) throws SQLException {
+    private PreparedStatement prepareStatementCount(StatementMapper<T> statementMapper, ConnectionWrapper connectionWrapper, Pagination pagination) throws SQLException {
         PreparedStatement preparedStatement = null;
 
         if (pagination != null) {
             StringJoiner sj = new StringJoiner(" ");
             sj.add(pagination.getQueryCount());
 
-            preparedStatement = connection.prepareStatement(sj.toString());
+            preparedStatement = connectionWrapper.prepareStatement(sj.toString());
 
             statementMapper.map(preparedStatement);
         }
@@ -86,12 +85,12 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return preparedStatement;
     }
 
-    public List<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String query, Pagination pagination) throws SQLException {
+    private List<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String query, Pagination pagination) throws SQLException {
         List<T> result = new ArrayList<>();
 
-        try (Connection connection = ConnectionPoolHolder.getConnection();
-             PreparedStatement preparedStatementCount = prepareStatementCount(statementMapper, connection, pagination);
-             PreparedStatement preparedStatementSelect = prepareStatementSelect(statementMapper, connection, query, pagination);
+        try (ConnectionWrapper connectionWrapper = TransactionManager.getConnection();
+             PreparedStatement preparedStatementCount = prepareStatementCount(statementMapper, connectionWrapper, pagination);
+             PreparedStatement preparedStatementSelect = prepareStatementSelect(statementMapper, connectionWrapper, query, pagination);
         ) {
 
             if (pagination != null) {
@@ -126,18 +125,18 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return result;
     }
 
-    public List<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String query) throws SQLException {
+    private List<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String query) throws SQLException {
         return getAll(statementMapper, entityMapper, query, null);
     }
 
-    public List<T> getAllWhere(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String where) throws SQLException, ExtendedException {
+    protected List<T> getAllWhere(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String where) throws SQLException, ExtendedException {
         Class tClass = getGenericParameterClass(this.getClass());
 
         String query = sqlStatementsGenerator.getGeneralSelectQueryFor(tClass, where);
         return getAll(statementMapper, entityMapper, query);
     }
 
-    public List<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper) throws SQLException, ExtendedException {
+    protected List<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper) throws SQLException, ExtendedException {
         Class tClass = getGenericParameterClass(this.getClass());
 
         String query = sqlStatementsGenerator.getGeneralSelectQueryFor(tClass);
@@ -152,7 +151,7 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return pagination;
     }
 
-    public Pagination<T> getAllWhere(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String where, int page, int pageSize) throws SQLException, ExtendedException {
+    protected Pagination<T> getAllWhere(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String where, int page, int pageSize) throws SQLException, ExtendedException {
         Class tClass = getGenericParameterClass(this.getClass());
 
         String queryCount = sqlStatementsGenerator.getGeneralCountQueryFor(tClass, where);
@@ -164,7 +163,7 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return pagination;
     }
 
-    public Pagination<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, int page, int pageSize) throws SQLException, ExtendedException {
+    protected Pagination<T> getAll(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, int page, int pageSize) throws SQLException, ExtendedException {
         Class tClass = getGenericParameterClass(this.getClass());
 
         String queryCount = sqlStatementsGenerator.getGeneralCountQueryFor(tClass);
@@ -176,11 +175,11 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return pagination;
     }
 
-    public int getCount(StatementMapper<T> statementMapper, String query) throws SQLException {
+    private int getCount(StatementMapper<T> statementMapper, String query) throws SQLException {
         int count = 0;
 
-        try (Connection connection = ConnectionPoolHolder.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (ConnectionWrapper connectionWrapper = TransactionManager.getConnection();
+             PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query)) {
 
             statementMapper.map(preparedStatement);
 
@@ -207,7 +206,7 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return getCount(statementMapper, query);
     }
 
-    public int getCountWhere(StatementMapper<T> statementMapper, String where) throws SQLException, ExtendedException {
+    private int getCountWhere(StatementMapper<T> statementMapper, String where) throws SQLException, ExtendedException {
         Class tClass = getGenericParameterClass(this.getClass());
 
         String query = sqlStatementsGenerator.getGeneralCountQueryFor(tClass, where);
@@ -218,9 +217,9 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return getCountWhere(ps -> ps.setString(1, fieldValue), "WHERE " + fieldName + " = ?") > 0;
     }
 
-    public boolean executeStatement(StatementMapper<T> statementMapper, String query) throws SQLException {
-        try (Connection connection = ConnectionPoolHolder.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+    protected boolean executeStatement(StatementMapper<T> statementMapper, String query) throws SQLException {
+        try (ConnectionWrapper connectionWrapper = TransactionManager.getConnection();
+             PreparedStatement preparedStatement = connectionWrapper.prepareStatement(query)) {
 
             statementMapper.map(preparedStatement);
 
@@ -268,11 +267,11 @@ public abstract class GenericDao<T> implements EntityDao<T> {
         return delete(statementMapper, query);
     }
 
-    public static Class getGenericParameterClass(Class aClass, int parameterIndex) {
+    private static Class getGenericParameterClass(Class aClass, int parameterIndex) {
         return (Class) ((ParameterizedType) aClass.getGenericSuperclass()).getActualTypeArguments()[parameterIndex];
     }
 
-    public static Class getGenericParameterClass(Class aClass) {
+    private static Class getGenericParameterClass(Class aClass) {
         return getGenericParameterClass(aClass, 0);
     }
 

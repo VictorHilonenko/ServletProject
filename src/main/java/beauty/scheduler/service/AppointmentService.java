@@ -1,6 +1,7 @@
 package beauty.scheduler.service;
 
 import beauty.scheduler.dao.AppointmentDao;
+import beauty.scheduler.dao.core.TransactionManager;
 import beauty.scheduler.dto.AppointmentDTO;
 import beauty.scheduler.entity.Appointment;
 import beauty.scheduler.entity.enums.Role;
@@ -147,18 +148,25 @@ public class AppointmentService {
     }
 
     private String saveWithTransaction(Appointment appointment, String lang) {
-        //try to update
-        boolean updated = false;
+        boolean updated;
+
         try {
-            //TODO start transaction
+            TransactionManager.startTransaction();
+
             appointmentDao.update(appointment);
             emailMessageService.createEmailForProvidedService(appointment);
-            //TODO commit
+
+            TransactionManager.commit();
+
             updated = true;
         } catch (SQLException | ExtendedException e) {
-            //TODO rollback
-            LOGGER.error("SQLException updateServiceProvidedByJSON");
+            LOGGER.error("SQLException updateServiceProvidedByJSON " + e.getMessage());
+
+            TransactionManager.rollback();
+
+            updated = false;
         }
+
         if (!updated) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", lang);
         }

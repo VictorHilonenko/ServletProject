@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ConnectionPoolHolder {
+class ConnectionPoolHolder {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPoolHolder.class);
     private static volatile DataSource dataSource;
 
@@ -30,7 +30,7 @@ public class ConnectionPoolHolder {
         return dataSource;
     }
 
-    public static Connection getConnection() throws SQLException {
+    static Connection getConnection() throws SQLException {
         return getDataSource().getConnection();
     }
 }
