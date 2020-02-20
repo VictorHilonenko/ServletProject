@@ -66,7 +66,7 @@ public class EmailMessageService {
 
         EmailMessage emailMessage = new EmailMessage(null,
                 appointment.getCustomer().getEmail(),
-                LocaleUtils.getLocalizedMessage("i18n.leaveFeedback", customerLang),
+                LocaleUtils.getLocalizedMessage("i18n.leaveFeedbackPlease", customerLang),
                 textMessage,
                 LocalDate.now(ZONE_ID),
                 false,

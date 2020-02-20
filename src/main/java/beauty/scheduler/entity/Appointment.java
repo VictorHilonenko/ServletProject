@@ -3,11 +3,13 @@ package beauty.scheduler.entity;
 import beauty.scheduler.dao.annotation.DBColumn;
 import beauty.scheduler.dao.annotation.DBTable;
 import beauty.scheduler.entity.enums.ServiceType;
+import beauty.scheduler.util.LocaleUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static beauty.scheduler.util.AppConstants.ID_FIELD;
 
@@ -57,6 +59,11 @@ public class Appointment {
 
     public LocalDate getAppointmentDate() {
         return appointmentDate;
+    }
+
+    public String getFormattedAppointmentDate(String lang) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(LocaleUtils.getLocalizedMessage("localdate.format.long", lang));
+        return formatter.format(appointmentDate);
     }
 
     public void setAppointmentDate(LocalDate appointmentDate) {

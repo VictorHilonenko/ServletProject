@@ -58,8 +58,9 @@
 
 		</table>
     </section>
-
-
+    <br>
+    <br>
+    <br>
 
 	<script src="/js/admin.js"></script>
 

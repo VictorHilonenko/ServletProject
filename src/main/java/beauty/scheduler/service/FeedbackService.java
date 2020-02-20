@@ -83,7 +83,7 @@ public class FeedbackService {
 
     private FeedbackDTO entityToDTOMapper(Feedback feedback, UserPrincipal userPrincipal) {
         return new FeedbackDTO(feedback.getId(),
-                feedback.getAppointment().getAppointmentDate(), //TODO localized dates
+                feedback.getAppointment().getFormattedAppointmentDate(userPrincipal.getCurrentLang()),
                 feedback.getAppointment().getAppointmentTime(),
                 feedback.getAppointment().getServiceType().getI18n(),
                 UserService.getLocalizedName(feedback.getAppointment().getCustomer(), userPrincipal.getCurrentLang()),
