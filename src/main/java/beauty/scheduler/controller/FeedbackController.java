@@ -27,8 +27,8 @@ import java.util.Optional;
 import static beauty.scheduler.util.AppConstants.*;
 
 @ServiceComponent
-public class FeedbacksController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbacksController.class);
+public class FeedbackController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackController.class);
 
     @InjectDependency
     private FeedbackService feedbackService;
@@ -86,10 +86,6 @@ public class FeedbacksController {
         feedbacksList(req, new Pagination());
 
         return DEFAULT_TEMPLATE;
-    }
-
-    public FeedbackService getFeedbackService() {
-        return feedbackService;
     }
 
     public void setFeedbackService(FeedbackService feedbackService) {

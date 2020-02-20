@@ -22,12 +22,12 @@ This annotation is used on **fields** and the core of MySpring provides annotati
 The Spring analogs for that is **@Autowired**.
 
 #### @EndpointMethod
-This annotation is used on **methods** and maps HTTP requests to handler methods of MVC and REST endpoints.
-The Spring analogs for that is **@RequestMapping**.
+This annotation is used on **methods** and maps HTTP requests to handler methods of JSP/HTML and REST/JSON endpoints.
+The Spring analogs for that is **@RequestMapping** and **@RestController**.
 
 #### @Restriction
 This annotation is used on **methods** and provides annotation-driven security and behavior features of the web application.
-There are Similar Spring functions in security configuration (it is provided by extending WebSecurityConfigurerAdapter abstract class which implements WebSecurityConfigurer interface).
+There are similar Spring functions in security configuration (it is provided by extending WebSecurityConfigurerAdapter abstract class which implements WebSecurityConfigurer interface).
 Besides, @Restriction annotation provides not only permissions/restrictions but also redirections.
 
 #### @DefaultTemplate

@@ -2,6 +2,7 @@ package beauty.scheduler.util;
 
 import com.google.gson.Gson;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +37,14 @@ public class StringUtils {
             sb.append(str.substring(0, 1).toLowerCase());
         }
         sb.append(str.substring(1));
+        return sb.toString();
+    }
+
+    public static String concatenator(String... args) {
+        StringBuilder sb = new StringBuilder();
+
+        Arrays.stream(args).forEach(sb::append);
+
         return sb.toString();
     }
 

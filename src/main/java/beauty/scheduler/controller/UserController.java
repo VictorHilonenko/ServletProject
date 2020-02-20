@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 import static beauty.scheduler.util.AppConstants.*;
 
 @ServiceComponent
-public class UsersController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
+public class UserController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @InjectDependency
     private UserService userService;
@@ -141,10 +141,6 @@ public class UsersController {
         String message = userService.updateUserByJSON(jsonData, userPrincipal);
 
         return StringUtils.toJSON(message);
-    }
-
-    public UserService getUserService() {
-        return this.userService;
     }
 
     public void setUserService(UserService userService) {

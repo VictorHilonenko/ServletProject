@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
 --
--- Host: localhost    Database: ss3
+-- Host: localhost    Database: beauty_scheduler
 -- ------------------------------------------------------
 -- Server version	8.0.18
 
@@ -35,7 +35,7 @@ CREATE TABLE `appointments` (
   KEY `FKrqdfukjcn0rhqrac8j96cu9w4` (`master_id`),
   CONSTRAINT `FK4q5rt20vvnkv7eohwq22l3ayy` FOREIGN KEY (`customer_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FKrqdfukjcn0rhqrac8j96cu9w4` FOREIGN KEY (`master_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=231 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,16 +48,15 @@ DROP TABLE IF EXISTS `email_messages`;
 CREATE TABLE `email_messages` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `date_created` date NOT NULL,
-  `date_link_opened` date DEFAULT NULL,
-  `date_sent` date DEFAULT NULL,
   `email` varchar(255) NOT NULL,
   `quick_access_code` varchar(255) DEFAULT NULL,
   `subject` varchar(255) NOT NULL,
   `text_message` text,
+  `sent` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`),
-  KEY `IDX_DATESENT` (`date_sent`),
-  KEY `IDX_QUICKACCESSCODE` (`quick_access_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  KEY `IDX_QUICKACCESSCODE` (`quick_access_code`),
+  KEY `IDX_SENT` (`sent`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,7 +74,7 @@ CREATE TABLE `feedbacks` (
   PRIMARY KEY (`id`),
   KEY `FK58uid2ow3xl8erqdy5qy7prkm` (`appointment_id`),
   CONSTRAINT `FK58uid2ow3xl8erqdy5qy7prkm` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -112,4 +111,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-15 18:45:43
+-- Dump completed on 2020-02-20  2:51:01

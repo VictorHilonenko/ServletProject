@@ -7,40 +7,41 @@
 	<img src="https://github.com/VictorHilonenko/ServletProject/raw/master/src/main/webapp/images/logo_uk.png">
 </div>
 
-# "MySpring" description
 
-In this project a mini Spring like framework was developed (see package **beauty.scheduler.web.myspring**).
+# Опис "MySpring"
 
-The main facade for the framework functionality is represented by several custom annotations:
+У цьому проекті був розроблений міні-фреймворк типу Spring (див. пакет **beauty.scheduler.web.myspring**).
+
+Головний фасад для функціональної основи представлений кількома спеціальними анотаціями:
 
 #### @ServiceComponent
-This annotation is used on **classes** that have to be injected as beans to other classes with **@InjectDependency** annotation.
-The Spring analogs for that are **@Service** and **@Component** annotations.
+Ця анотація застосовується до **класів**, які повинні бути впроваджені як залежності до полів інших класів, що мають анотацію **InjectDependency**.
+Аналогом у Spring для цього функціоналу є анотації **@Service** та **@Component**.
 
 #### @InjectDependency
-This annotation is used on **fields** and the core of MySpring provides annotation-driven injection at runtime.
-The Spring analogs for that is **@Autowired**.
+Ця анотація застосовується до **полів**, в які ядро MySpring забезпечує впровадження залежності під час виконання.
+Аналогом у Spring для цього є **@Autowired**.
 
 #### @EndpointMethod
-This annotation is used on **methods** and maps HTTP requests to handler methods of MVC and REST endpoints.
-The Spring analogs for that is **@RequestMapping**.
+Ця анотація застосовується до **методів** та відображає HTTP-запити на оброблювальні методи кінцевих точок JSP/HTML та REST/JSON.
+Аналогами Spring для цього є **@RequestMapping** та **@RestController**.
 
 #### @Restriction
-This annotation is used on **methods** and provides annotation-driven security and behavior features of the web application.
-There are Similar Spring functions in security configuration (it is provided by extending WebSecurityConfigurerAdapter abstract class which implements WebSecurityConfigurer interface).
-Besides, @Restriction annotation provides not only permissions/restrictions but also redirections.
+Ця анотація застосовується до **методів** та забезпечує функції обмеження доступу та поведінки веб-додатка.
+Існують аналогічні функції Spring в конфігурації безпеки (вона забезпечується розширенням абстрактного класу WebSecurityConfigurerAdapter, який реалізує інтерфейс WebSecurityConfigurer).
+Крім того, анотація **@Restriction** забезпечує не тільки дозволи / обмеження, але й перенаправлення на інші сторінки за вказаними у анотаціях правилами.
 
 #### @DefaultTemplate
-This annotation is used on **methods** and allows to make role-based specification for default JSP templates for a certain endpoint.
-However, the default template can be redefined in @EndpointMethod by returning a String with any other JSP template path based on business logic.
+Ця анотація застосовується до **методів** і дозволяє зробити специфікацію на основі ролей для шаблонів JSP-сторінок за замовчуванням для відповідної кінцевої точки.
+Також шаблон, який буде використаний для відображення сторінки можна перевизначити в конкретному **методі**, повернувши оператором **return** рядок з будь-яким іншим шляхом до шаблону JSP-сторінки на основі бізнес-логіки.
 
 #### @ParamName
-This annotation is used on **method's parameters** that are described in urlPattern with curly braces {} and provides a convenient way of getting parameters passed in URI.
-The Spring analogs for that is **@PathVariable**.
+Ця анотація застосовується до **параметрів** методу, які описані в параметрі **urlPattern** між фігурними дужками {} та забезпечує зручний спосіб отримання значень параметрів, переданих в URI.
+Аналогом Spring для цього є **@PathVariable**.
 
 _**NOTE**: todo - describe **other injecting parameters possibilities** and **forms auto-assembling** features and **form-validation annotations**_
 
-## Some examples:
+## Деякі приклади:
 
 <div align="center">
 	<img src="https://raw.githubusercontent.com/VictorHilonenko/ServletProject/master/src/main/webapp/images/example1.png">

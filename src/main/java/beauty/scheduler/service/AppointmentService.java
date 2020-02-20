@@ -34,8 +34,6 @@ public class AppointmentService {
     @InjectDependency
     private AppointmentDao appointmentDao;
     @InjectDependency
-    private UserService userService;
-    @InjectDependency
     private EmailMessageService emailMessageService;
 
     public AppointmentService() {
@@ -145,19 +143,27 @@ public class AppointmentService {
         //action itself
         appointment.setServiceProvided(true);
 
+        return saveWithTransaction(appointment, userPrincipal.getCurrentLang());
+    }
+
+    private String saveWithTransaction(Appointment appointment, String lang) {
         //try to update
         boolean updated = false;
         try {
-            updated = appointmentDao.update(appointment);
+            //TODO start transaction
+            appointmentDao.update(appointment);
+            emailMessageService.createEmailForProvidedService(appointment);
+            //TODO commit
+            updated = true;
         } catch (SQLException | ExtendedException e) {
+            //TODO rollback
             LOGGER.error("SQLException updateServiceProvidedByJSON");
-            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", userPrincipal.getCurrentLang());
         }
         if (!updated) {
-            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", userPrincipal.getCurrentLang());
+            return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", lang);
         }
 
-        emailMessageService.sendRequestForFeedbackToCustomer(appointment);
+        emailMessageService.pushEmailSending();
 
         return REST_SUCCESS;
     }
@@ -249,7 +255,7 @@ public class AppointmentService {
 
     private void addFieldsForUser(HashMap<String, String> fieldsMap, Appointment appointment, String email, String lang) {
         if (email.equals(appointment.getCustomer().getEmail())) {
-            fieldsMap.put("customer_name", userService.getLocalizedName(appointment.getCustomer(), lang));
+            fieldsMap.put("customer_name", UserService.getLocalizedName(appointment.getCustomer(), lang));
             fieldsMap.put("rights_customer_name", "R");
 
             if (appointment.getServiceProvided()) {
@@ -261,9 +267,9 @@ public class AppointmentService {
 
     private void addFieldsForMaster(HashMap<String, String> fieldsMap, Appointment appointment, String email, String lang) {
         if (email.equals(appointment.getMaster().getEmail())) {
-            fieldsMap.put("customer_name", userService.getLocalizedName(appointment.getCustomer(), lang));
+            fieldsMap.put("customer_name", UserService.getLocalizedName(appointment.getCustomer(), lang));
             fieldsMap.put("rights_customer_name", "R");
-            fieldsMap.put("master_name", userService.getLocalizedName(appointment.getMaster(), lang));
+            fieldsMap.put("master_name", UserService.getLocalizedName(appointment.getMaster(), lang));
             fieldsMap.put("rights_master_name", "R");
 
             fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
@@ -285,37 +291,21 @@ public class AppointmentService {
         fieldsMap.put("customer_email", appointment.getCustomer().getEmail());
         fieldsMap.put("rights_customer_email", "H");
 
-        fieldsMap.put("customer_name", userService.getLocalizedName(appointment.getCustomer(), lang) + " \n" + appointment.getCustomer().getTelNumber());
+        fieldsMap.put("customer_name", UserService.getLocalizedName(appointment.getCustomer(), lang) + " \n" + appointment.getCustomer().getTelNumber());
         fieldsMap.put("rights_customer_name", "R");
 
         fieldsMap.put("master_email", appointment.getMaster().getEmail());
         fieldsMap.put("rights_master_email", "H");
 
-        fieldsMap.put("master_name", userService.getLocalizedName(appointment.getMaster(), lang) + " \n" + appointment.getMaster().getTelNumber());
+        fieldsMap.put("master_name", UserService.getLocalizedName(appointment.getMaster(), lang) + " \n" + appointment.getMaster().getTelNumber());
         fieldsMap.put("rights_master_name", "R");
 
         fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
         fieldsMap.put("rights_serviceProvided", "R");
     }
 
-    public AppointmentDao getAppointmentDao() {
-        return appointmentDao;
-    }
-
     public void setAppointmentDao(AppointmentDao appointmentDao) {
         this.appointmentDao = appointmentDao;
-    }
-
-    public UserService getUserService() {
-        return userService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public EmailMessageService getEmailMessageService() {
-        return emailMessageService;
     }
 
     public void setEmailMessageService(EmailMessageService emailMessageService) {

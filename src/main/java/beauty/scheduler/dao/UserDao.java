@@ -55,6 +55,7 @@ public class UserDao extends GenericDao<User> {
     @Override
     public boolean update(User entity) throws SQLException, ExtendedException {
         LOGGER.info("Update user: " + entity.toString());
+
         return update(ps -> {
             ps.setString(1, entity.getFirstNameEn());
             ps.setString(2, entity.getLastNameEn());
@@ -72,6 +73,7 @@ public class UserDao extends GenericDao<User> {
     @Override
     public boolean delete(User entity) throws SQLException, ExtendedException {
         LOGGER.info("Delete user: " + entity.toString());
+
         return delete(ps -> ps.setLong(1, entity.getId()));
     }
 }
