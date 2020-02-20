@@ -18,11 +18,23 @@ import static beauty.scheduler.util.AppConstants.TABLENAME;
 public class EmailMessageDao extends GenericDao<EmailMessage> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageDao.class);
 
-    public List<EmailMessage> findNotSent() throws SQLException, ExtendedException {
+    public List<EmailMessage> getListNotSent() throws SQLException, ExtendedException {
         return super.getAllWhere(ps -> {
                     ps.setBoolean(1, false);
                 },
                 EMAIL_MESSAGE_ENTITY_MAPPER, "WHERE " + TABLENAME + ".sent = ?");
+    }
+
+    public Optional<EmailMessage> findByEmail(String email) throws SQLException, ExtendedException {
+        List<EmailMessage> list = getAllWhere(ps -> ps.setString(1, email), EMAIL_MESSAGE_ENTITY_MAPPER, "WHERE " + TABLENAME + ".email = ?");
+
+        return list.stream().findFirst();
+    }
+
+    public Optional<EmailMessage> findByQuickAccessCode(String quickAccessCode) throws SQLException, ExtendedException {
+        List<EmailMessage> list = getAllWhere(ps -> ps.setString(1, quickAccessCode), EMAIL_MESSAGE_ENTITY_MAPPER, "WHERE " + TABLENAME + ".quick_access_code = ?");
+
+        return list.stream().findFirst();
     }
 
     @Override

@@ -12,6 +12,7 @@ public enum ExceptionKind {
     WRONG_CONFIGURATION(410, "error.wrongConfiguration"),
     WRONG_METHOD_CALLED(410, "error.someRepositoryIssueTryAgainLater"),
     NOT_SUPPORTED(404, "error.notSupported"),
+    SOME_ERROR(406, "error.tryLater"),
     NULL(0, ""); //this is used to make possible default value in annotation @Restriction
 
     private int statusCode;

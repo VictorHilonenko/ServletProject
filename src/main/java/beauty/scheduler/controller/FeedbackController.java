@@ -3,6 +3,7 @@ package beauty.scheduler.controller;
 import beauty.scheduler.dao.core.Pagination;
 import beauty.scheduler.dto.FeedbackDTO;
 import beauty.scheduler.entity.Feedback;
+import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.service.FeedbackService;
 import beauty.scheduler.util.ExceptionKind;
@@ -17,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -55,11 +55,17 @@ public class FeedbackController {
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/feedbacks/{appointmentId}/{quickAccessCode}")
     @Restriction(role = Role.staff, exception = ExceptionKind.ACCESS_DENIED)
     @DefaultTemplate(template = "/WEB-INF/feedbacks_customer.jsp")
-    public String feedbacksListByQuickLink(HttpServletRequest req, HttpServletResponse resp) {
+    public String feedbacksListByQuickLink(@ParamName(name = "quickAccessCode") String quickAccessCode, HttpServletRequest req) throws ExtendedException, SQLException {
 
-        //TODO rewrite from Spring
+        Optional<User> verifiedUser = feedbackService.getUserByQuickAccessCode(quickAccessCode);
 
-        return DEFAULT_TEMPLATE;
+        if (!verifiedUser.isPresent()) {
+            throw new ExtendedException(ExceptionKind.PAGE_NOT_FOUND);
+        }
+
+        Security.logInUser(req, verifiedUser.get());
+
+        return REDIRECT + "/feedbacks";
     }
 
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/feedbacks")

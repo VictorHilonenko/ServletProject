@@ -89,9 +89,14 @@ function drawWeek() {
 	
 	var apiUrl = "/api/appointments/"+startDate+"/"+endDate;
 	$.getJSON(apiUrl, function(responseJSON) {
-		$.each(responseJSON, function(i, appointmentRecord) {
-			drawAppointment(appointmentRecord.map);
-		});
+		if(typeof responseJSON == "object") {
+            $.each(responseJSON, function(i, appointmentRecord) {
+                drawAppointment(appointmentRecord.map);
+            });
+		} else {
+        	responseArray = responseJSON.split(":");
+        	showStatus("error", responseArray[1]);
+		}
 	}).fail(function (responseJSON) {
 		showStatus("error", $("#error_tryLater").val());
 	});
@@ -131,7 +136,7 @@ function drawAppointment(appointmentData) {
 	
 	var idOfCellToBind = "#d"+dayOfWeek(new Date(date))+"_"+time;
 	
-	var colorClass = " appointment_"+appointmentData["serviceType"].substring(0,1).toLowerCase();
+	var colorClass = " appointment_"+appointmentData["serviceType"].substring(0, 1).toLowerCase();
 	
 	var newElement = $("<a/>", {
 	    id: "appointment_"+appointment_id,

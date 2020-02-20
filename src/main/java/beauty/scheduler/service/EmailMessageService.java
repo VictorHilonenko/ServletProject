@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static beauty.scheduler.service.UserService.getUsersLang;
@@ -28,6 +29,32 @@ public class EmailMessageService {
 
     @InjectDependency
     private EmailMessageDao emailMessageDao;
+
+    public Optional<EmailMessage> findByEmail(String email) throws SQLException, ExtendedException {
+        return emailMessageDao.findByEmail(email);
+    }
+
+    //NOTE: it's a "one time get", the next time there will be no such email by the same quickAccessCode found
+    public String getEmailByQuickAccessCode(String quickAccessCode) throws SQLException, ExtendedException {
+        if (StringUtils.isEmpty(quickAccessCode)) {
+            return "";
+        }
+
+        Optional<EmailMessage> optionalEmailMessage = emailMessageDao.findByQuickAccessCode(quickAccessCode);
+
+        if (!optionalEmailMessage.isPresent()) {
+            return "";
+        }
+
+        EmailMessage emailMessage = optionalEmailMessage.get();
+        emailMessage.setQuickAccessCode("");
+
+        if (!emailMessageDao.update(emailMessage)) {
+            return "";
+        }
+
+        return emailMessage.getEmail();
+    }
 
     public void createEmailForProvidedService(Appointment appointment) throws SQLException, ExtendedException {
         String customerLang = getUsersLang(appointment.getCustomer());
@@ -53,7 +80,7 @@ public class EmailMessageService {
             List<EmailMessage> list;
 
             try {
-                list = emailMessageDao.findNotSent();
+                list = emailMessageDao.getListNotSent();
             } catch (Exception e) {
                 LOGGER.error("repository issue during pushEmailSending");
                 return;
@@ -96,9 +123,9 @@ public class EmailMessageService {
     }
 
     private void deleteOldEmailMessages() {
-        //TODO
-        //maybe use java.util.concurrent.ScheduledExecutorService
-        //for that
+        //would be interesting to add
+        // java.util.concurrent.ScheduledExecutorService
+        //for that, but it is "out of scope" now
     }
 
     public void setEmailMessageDao(EmailMessageDao emailMessageDao) {

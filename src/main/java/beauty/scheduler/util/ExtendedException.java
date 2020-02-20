@@ -10,16 +10,20 @@ public class ExtendedException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    private ExceptionKind anException;
+    private ExceptionKind exceptionKind;
     private Optional<Exception> originalException;
 
-    public ExtendedException(ExceptionKind anException) {
-        this.anException = anException;
+    public ExtendedException(ExceptionKind exceptionKind) {
+        this.exceptionKind = exceptionKind;
         this.originalException = Optional.empty();
     }
 
-    public ExtendedException(ExceptionKind anError, Exception originalException) {
-        this.anException = anError;
+    public ExtendedException(ExceptionKind exceptionKind, Exception originalException) {
+        this.exceptionKind = exceptionKind;
         this.originalException = Optional.of(originalException);
+    }
+
+    public ExceptionKind getExceptionKind() {
+        return exceptionKind;
     }
 }
