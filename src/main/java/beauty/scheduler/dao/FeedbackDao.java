@@ -43,6 +43,8 @@ public class FeedbackDao extends GenericDao<Feedback> {
 
     @Override
     public boolean update(Feedback entity) throws SQLException, ExtendedException {
+        LOGGER.info("Update feedback: " + entity.toString());
+
         return update(ps -> {
             ps.setLong(1, entity.getAppointment().getId());
             ps.setByte(2, entity.getRating());
@@ -57,6 +59,8 @@ public class FeedbackDao extends GenericDao<Feedback> {
     }
 
     public void createNewFeedbacksOnProvidedServicesForCustomer(Long customerId) throws SQLException {
+        LOGGER.info("Create new feedbacks");
+
         String query =
                 "INSERT INTO `feedbacks`\n" +
                         "	(`appointment_id`,\n" +

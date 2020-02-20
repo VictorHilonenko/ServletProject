@@ -1,11 +1,9 @@
 package beauty.scheduler.dto;
 
-import java.time.LocalDate;
-
 public class FeedbackDTO {
     private Long id;
 
-    private LocalDate appointmentDate;
+    private String appointmentDate;
 
     private Byte appointmentTime;
 
@@ -22,7 +20,7 @@ public class FeedbackDTO {
     public FeedbackDTO() {
     }
 
-    public FeedbackDTO(Long id, LocalDate appointmentDate, Byte appointmentTime, String serviceType, String customerName, String masterName, Byte rating, String textMessage) {
+    public FeedbackDTO(Long id, String appointmentDate, Byte appointmentTime, String serviceType, String customerName, String masterName, Byte rating, String textMessage) {
         this.id = id;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
@@ -41,11 +39,11 @@ public class FeedbackDTO {
         this.id = id;
     }
 
-    public LocalDate getAppointmentDate() {
+    public String getAppointmentDate() {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(LocalDate appointmentDate) {
+    public void setAppointmentDate(String appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
 

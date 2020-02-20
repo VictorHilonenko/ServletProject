@@ -7,27 +7,26 @@
 <jsp:include page="/WEB-INF/header.jsp" />
 
 	<section>
-		<h1>Feedbacks</h1>
 		<c:if test = "${paginationFeedbacksDTO != null}">
 		    <c:if test = "${paginationFeedbacksDTO.totalRecords > 0}">
                 <div class="schedule_cont">
                     <c:choose>
                         <c:when test = "${userPrincipal.hasRoleTag('admin')}">
-                            <h3>All feedbacks</h3>
+                            <h1><fmt:message key="i18n.allFeedbacks"/></h1>
                         </c:when>
                         <c:otherwise>
-                            <h3>Feedbacks for you</h3>
+                            <h1><fmt:message key="i18n.forYouFeedbacks"/></h1>
                         </c:otherwise>
                     </c:choose>
                     <table class="table_schedule">
                         <tr>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Service type</th>
-                            <th>Customer</th>
-                            <th>Master</th>
-                            <th>Rating</th>
-                            <th>Text</th>
+                            <th><fmt:message key="i18n.date"/></th>
+                            <th><fmt:message key="i18n.time"/></th>
+                            <th><fmt:message key="i18n.serviceType"/></th>
+                            <th><fmt:message key="i18n.USER"/></th>
+                            <th><fmt:message key="i18n.MASTER"/></th>
+                            <th><fmt:message key="i18n.rating"/></th>
+                            <th><fmt:message key="i18n.text"/></th>
                         </tr>
                         <c:forEach var="feedbackDTO" items="${paginationFeedbacksDTO.items}">
                             <tr>
@@ -68,11 +67,14 @@
             </c:if>
 		    <c:if test = "${paginationFeedbacksDTO.totalRecords == 0}">
                 <div class="schedule_cont">
-                    <h3>Nothing to show yet...</h3>
+                    <h3><fmt:message key="i18n.nothing_to_show"/></h3>
                 </div>
             </c:if>
 		</c:if>
 
     </section>
+    <br>
+    <br>
+    <br>
 
 <jsp:include page="/WEB-INF/footer.jsp" />
