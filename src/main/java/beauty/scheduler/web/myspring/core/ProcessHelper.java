@@ -9,7 +9,6 @@ import beauty.scheduler.web.myspring.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -91,7 +90,7 @@ public class ProcessHelper {
 
         try {
             req.getRequestDispatcher(resultPage).forward(req, resp);
-        } catch (IOException | ServletException e) {
+        } catch (Exception e) {
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
         }
 
