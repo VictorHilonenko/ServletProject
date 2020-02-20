@@ -23,7 +23,7 @@ public interface AppConstants {
     String REGEX_NOT_LT_2_ENGLISH = "^[A-Za-z0-9]{2,}$";
     String REGEX_URAINIAN = "^[А-Яа-яІіЇїЄє]*$";
     String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-    String REGEX_TEL_FORMAT = "^\\+?380\\d{9}$"; //TODO make more comlex
+    String REGEX_TEL_FORMAT = "^\\+?380\\d{9}$";
     String REGEX_1_10_RANGE = "^([1-9]|10)$";
     String REGEX_NUMBERS = "^[0-9]+$";
 

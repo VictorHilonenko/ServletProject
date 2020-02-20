@@ -4,6 +4,7 @@ import beauty.scheduler.dao.FeedbackDao;
 import beauty.scheduler.dao.core.Pagination;
 import beauty.scheduler.dto.FeedbackDTO;
 import beauty.scheduler.entity.Feedback;
+import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
@@ -25,6 +26,10 @@ public class FeedbackService {
 
     @InjectDependency
     private FeedbackDao feedbackDao;
+    @InjectDependency
+    private UserService userService;
+    @InjectDependency
+    private EmailMessageService emailMessageService;
 
     public FeedbackService() {
     }
@@ -87,6 +92,12 @@ public class FeedbackService {
                 feedback.getTextMessage());
     }
 
+    public Optional<User> getUserByQuickAccessCode(String quickAccessCode) throws SQLException, ExtendedException {
+        String email = emailMessageService.getEmailByQuickAccessCode(quickAccessCode);
+
+        return userService.findByEmail(email);
+    }
+
     //plenty of checks, actually
     public Optional<Feedback> getVerifiedFeedback(FeedbackForm form, UserPrincipal userPrincipal) throws SQLException, ExtendedException {
         if (!userPrincipal.getId().isPresent()) {
@@ -124,5 +135,13 @@ public class FeedbackService {
 
     public void setFeedbackDao(FeedbackDao feedbackDao) {
         this.feedbackDao = feedbackDao;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void setEmailMessageService(EmailMessageService emailMessageService) {
+        this.emailMessageService = emailMessageService;
     }
 }

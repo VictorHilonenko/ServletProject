@@ -5,6 +5,7 @@ import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.service.AppointmentService;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
+import beauty.scheduler.util.LocaleUtils;
 import beauty.scheduler.util.StringUtils;
 import beauty.scheduler.web.myspring.ContentType;
 import beauty.scheduler.web.myspring.RequestMethod;
@@ -21,6 +22,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static beauty.scheduler.util.AppConstants.REST_ERROR;
+
 @ServiceComponent
 public class AppointmentController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
@@ -29,13 +32,14 @@ public class AppointmentController {
     private AppointmentService appointmentService;
 
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/api/appointments/{start}/{end}", contentType = ContentType.JSON)
-    public String apiAppointmentsListByPeriod(@ParamName(name = "start") LocalDate start, @ParamName(name = "end") LocalDate end,
-                                              HttpServletRequest req) throws SQLException, ExtendedException {
-        if (start.isAfter(end)) {
-            throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
-        }
+    public String apiAppointmentsListByPeriod(@ParamName(name = "start") LocalDate start,
+                                              @ParamName(name = "end") LocalDate end, HttpServletRequest req) throws SQLException, ExtendedException {
 
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
+
+        if (start.isAfter(end)) {
+            return StringUtils.toJSON(REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang()));
+        }
 
         List<AppointmentDTO> list = appointmentService.getAllAppointmentsDTO(start, end, userPrincipal);
 
