@@ -27,16 +27,23 @@ public class EmailMessage {
     @DBColumn(name = "date_created")
     private LocalDate dateCreated;
 
-    @DBColumn(name = "date_sent")
-    private LocalDate dateSent;
-
-    @DBColumn(name = "date_link_opened")
-    private LocalDate dateLinkOpened;
+    @DBColumn(name = "sent")
+    private Boolean sent;
 
     @DBColumn(name = "quick_access_code")
     private String quickAccessCode;
 
     public EmailMessage() {
+    }
+
+    public EmailMessage(Long id, String email, String subject, String textMessage, LocalDate dateCreated, Boolean sent, String quickAccessCode) {
+        this.id = id;
+        this.email = email;
+        this.subject = subject;
+        this.textMessage = textMessage;
+        this.dateCreated = dateCreated;
+        this.sent = sent;
+        this.quickAccessCode = quickAccessCode;
     }
 
     public Long getId() {
@@ -79,20 +86,12 @@ public class EmailMessage {
         this.dateCreated = dateCreated;
     }
 
-    public LocalDate getDateSent() {
-        return dateSent;
+    public Boolean getSent() {
+        return sent;
     }
 
-    public void setDateSent(LocalDate dateSent) {
-        this.dateSent = dateSent;
-    }
-
-    public LocalDate getDateLinkOpened() {
-        return dateLinkOpened;
-    }
-
-    public void setDateLinkOpened(LocalDate dateLinkOpened) {
-        this.dateLinkOpened = dateLinkOpened;
+    public void setSent(Boolean sent) {
+        this.sent = sent;
     }
 
     public String getQuickAccessCode() {
@@ -117,8 +116,7 @@ public class EmailMessage {
                 .append(subject, that.subject)
                 .append(textMessage, that.textMessage)
                 .append(dateCreated, that.dateCreated)
-                .append(dateSent, that.dateSent)
-                .append(dateLinkOpened, that.dateLinkOpened)
+                .append(sent, that.sent)
                 .append(quickAccessCode, that.quickAccessCode)
                 .isEquals();
     }
@@ -131,8 +129,7 @@ public class EmailMessage {
                 .append(subject)
                 .append(textMessage)
                 .append(dateCreated)
-                .append(dateSent)
-                .append(dateLinkOpened)
+                .append(sent)
                 .append(quickAccessCode)
                 .toHashCode();
     }
@@ -145,8 +142,7 @@ public class EmailMessage {
                 .append("subject", subject)
                 .append("textMessage", textMessage)
                 .append("dateCreated", dateCreated)
-                .append("dateSent", dateSent)
-                .append("dateLinkOpened", dateLinkOpened)
+                .append("sent", sent)
                 .append("quickAccessCode", quickAccessCode)
                 .toString();
     }

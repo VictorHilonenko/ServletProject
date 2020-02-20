@@ -2,6 +2,7 @@ package beauty.scheduler.dao;
 
 import beauty.scheduler.dao.core.EntityMapper;
 import beauty.scheduler.entity.Appointment;
+import beauty.scheduler.entity.EmailMessage;
 import beauty.scheduler.entity.Feedback;
 import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
@@ -21,6 +22,14 @@ public interface MappersStorage {
             resultSet.getString("users_password"),
             Role.lookupNotNull(resultSet.getString("users_role")),
             ServiceType.lookupNotNull(resultSet.getString("users_service_type")));
+
+    EntityMapper<EmailMessage> EMAIL_MESSAGE_ENTITY_MAPPER = resultSet -> new EmailMessage(resultSet.getLong("email_messages_id"),
+            resultSet.getString("email_messages_email"),
+            resultSet.getString("email_messages_subject"),
+            resultSet.getString("email_messages_text_message"),
+            resultSet.getDate("email_messages_date_created").toLocalDate(),
+            resultSet.getBoolean("email_messages_sent"),
+            resultSet.getString("email_messages_quick_access_code"));
 
     EntityMapper<Appointment> APPOINTMENT_ENTITY_MAPPER = resultSet -> new Appointment(resultSet.getLong("appointments_id"),
             resultSet.getDate("appointments_appointment_date").toLocalDate(),
@@ -76,5 +85,4 @@ public interface MappersStorage {
                     resultSet.getBoolean("appointment_service_provided")),
             resultSet.getByte("feedbacks_rating"),
             resultSet.getString("feedbacks_text_message"));
-
 }

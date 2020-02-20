@@ -10,16 +10,18 @@ import static beauty.scheduler.util.AppConstants.MESSAGES_BUNDLE_NAME;
 public class LocaleUtils {
     private static final Map<String, Locale> enabledLangs = new HashMap<>();
     private static final Map<Locale, ResourceBundle> messagesBundles = new HashMap<>();
-    private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+
+    public static final Locale LOCALE_ENGLISH = Locale.ENGLISH;
+    public static final Locale LOCALE_UKRAINIAN = Locale.forLanguageTag("uk"); //there is no Locale for "uk" in java.util.Locale yet
+
+    private static final Locale DEFAULT_LOCALE = LOCALE_ENGLISH;
 
     static {
-        Locale enLocale = Locale.ENGLISH;
-        enabledLangs.put(enLocale.getLanguage(), Locale.ENGLISH);
-        messagesBundles.put(enLocale, ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, enLocale));
+        enabledLangs.put(LOCALE_ENGLISH.getLanguage(), LOCALE_ENGLISH);
+        messagesBundles.put(LOCALE_ENGLISH, ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, LOCALE_ENGLISH));
 
-        Locale ukLocale = Locale.forLanguageTag("uk"); //there is no Locale for "uk" yet
-        enabledLangs.put(ukLocale.getLanguage(), ukLocale);
-        messagesBundles.put(ukLocale, ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, ukLocale));
+        enabledLangs.put(LOCALE_UKRAINIAN.getLanguage(), LOCALE_UKRAINIAN);
+        messagesBundles.put(LOCALE_UKRAINIAN, ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, LOCALE_UKRAINIAN));
     }
 
     public static String getLocalizedMessage(String message, String lang) {

@@ -25,8 +25,6 @@ public class FeedbackService {
 
     @InjectDependency
     private FeedbackDao feedbackDao;
-    @InjectDependency
-    private UserService userService;
 
     public FeedbackService() {
     }
@@ -83,8 +81,8 @@ public class FeedbackService {
                 feedback.getAppointment().getAppointmentDate(), //TODO localized dates
                 feedback.getAppointment().getAppointmentTime(),
                 feedback.getAppointment().getServiceType().getI18n(),
-                userService.getLocalizedName(feedback.getAppointment().getCustomer(), userPrincipal.getCurrentLang()),
-                userService.getLocalizedName(feedback.getAppointment().getMaster(), userPrincipal.getCurrentLang()),
+                UserService.getLocalizedName(feedback.getAppointment().getCustomer(), userPrincipal.getCurrentLang()),
+                UserService.getLocalizedName(feedback.getAppointment().getMaster(), userPrincipal.getCurrentLang()),
                 feedback.getRating(),
                 feedback.getTextMessage());
     }
@@ -124,20 +122,7 @@ public class FeedbackService {
         feedbackDao.update(feedback);
     }
 
-    public FeedbackDao getFeedbackDao() {
-        return feedbackDao;
-    }
-
     public void setFeedbackDao(FeedbackDao feedbackDao) {
         this.feedbackDao = feedbackDao;
     }
-
-    public UserService getUserService() {
-        return userService;
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
 }

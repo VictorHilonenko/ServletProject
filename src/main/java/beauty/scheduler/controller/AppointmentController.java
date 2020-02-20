@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ServiceComponent
-public class AppointmentsController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentsController.class);
+public class AppointmentController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
     @InjectDependency
     private AppointmentService appointmentService;
@@ -66,10 +66,6 @@ public class AppointmentsController {
         String message = appointmentService.setServiceProvidedByJSON(jsonData, userPrincipal);
 
         return StringUtils.toJSON(message);
-    }
-
-    public AppointmentService getAppointmentService() {
-        return appointmentService;
     }
 
     public void setAppointmentService(AppointmentService appointmentService) {

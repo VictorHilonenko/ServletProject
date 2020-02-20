@@ -41,6 +41,13 @@ public interface AppConstants {
     String CURLY_BRACES_LEFT = "{";
     String CURLY_BRACES_RIGHT = "}";
 
+    String MAIL_HOST = "smtp.ukr.net";
+    String MAIL_USERNAME = "admin_email_test@ukr.net";
+    String MAIL_FROM = "Beauty scheduler <admin_email_test@ukr.net>";
+    String MAIL_PASSWORD = "7zXpnqVF7MVUj6pa";
+    String MAIL_PROTOCOL = "smtps";
+    short MAIL_PORT = 465;
+
     //algorithmic, no sense to change:
     String DEFAULT_TEMPLATE = "default";
     String REDIRECT = "redirect:";
@@ -60,6 +67,6 @@ public interface AppConstants {
 
     String URI_PREFIX = "uri_";
 
-    String TABLENAME = "{tablename}";
+    String TABLENAME = "{tablename}"; //this literal will be substituted for a table in runtime
 
 }

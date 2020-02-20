@@ -29,8 +29,6 @@ public class UserService {
 
     @InjectDependency
     private UserDao userDao;
-    @InjectDependency
-    private EmailMessageService emailMessageService;
 
     public UserService() {
     }
@@ -124,7 +122,7 @@ public class UserService {
         return userDao.findByEmail(email);
     }
 
-    public String getLocalizedName(User user, String lang) {
+    public static String getLocalizedName(User user, String lang) {
         String nameEn = user.getFirstNameEn();
         String nameUk = user.getFirstNameUk();
 
@@ -135,19 +133,15 @@ public class UserService {
         }
     }
 
-    public UserDao getUserDao() {
-        return userDao;
+    public static String getUsersLang(User user) {
+        if (!StringUtils.isEmpty(user.getFirstNameUk()) || !StringUtils.isEmpty(user.getLastNameUk())) {
+            return LocaleUtils.LOCALE_UKRAINIAN.getLanguage();
+        } else {
+            return LocaleUtils.LOCALE_ENGLISH.getLanguage();
+        }
     }
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
-    }
-
-    public EmailMessageService getEmailMessageService() {
-        return emailMessageService;
-    }
-
-    public void setEmailMessageService(EmailMessageService emailMessageService) {
-        this.emailMessageService = emailMessageService;
     }
 }

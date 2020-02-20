@@ -27,6 +27,7 @@ public class ServletContextInitializer {
         try {
             beanFactory = new BeanFactory(new HashMap<>());
         } catch (ExtendedException e) {
+            LOGGER.error("critical error: wrongConfiguration!");
             throw new RuntimeException(LocaleUtils.getLocalizedMessage("error.wrongConfiguration", LocaleUtils.getDefaultLocale().getLanguage()));
         }
 
