@@ -89,7 +89,7 @@ public class AppointmentService {
 
         //check past time
         LocalDateTime nowDateTime = LocalDateTime.now(ZONE_ID);
-        if (reserveDateTime.isBefore(nowDateTime)) {
+        if (APPOINTMENTS_TIME_TRAVELING_CHECK && reserveDateTime.isBefore(nowDateTime)) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.dateIsInThePast", userPrincipal.getCurrentLang());
         }
 
@@ -203,7 +203,7 @@ public class AppointmentService {
         LocalDateTime nowDateTime = LocalDateTime.now(ZONE_ID);
         LocalDateTime appointmentDateTime = LocalDateTime.of(appointment.getAppointmentDate(), LocalTime.of(appointment.getAppointmentTime(), 0));
 
-        if (appointmentDateTime.isAfter(nowDateTime)) {
+        if (APPOINTMENTS_TIME_TRAVELING_CHECK && appointmentDateTime.isAfter(nowDateTime)) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.dateIsInFuture", userPrincipal.getCurrentLang());
         }
 

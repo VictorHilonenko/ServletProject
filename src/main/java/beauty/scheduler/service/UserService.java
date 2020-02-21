@@ -94,9 +94,8 @@ public class UserService {
         }
 
         Optional<Role> optionalRole = Role.lookupOptional(strRole);
-        Optional<ServiceType> optionalServiceType = ServiceType.lookupOptional(strServiceType);
 
-        if (!optionalUser.isPresent() || !optionalRole.isPresent() || !optionalServiceType.isPresent()) {
+        if (!optionalUser.isPresent() || !optionalRole.isPresent()) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
         }
 
@@ -106,7 +105,7 @@ public class UserService {
 
         User user = optionalUser.get();
         user.setRole(optionalRole.get());
-        user.setServiceType(optionalServiceType.get());
+        user.setServiceType(ServiceType.lookupNotNull(strServiceType));
 
         try {
             userDao.update(user);

@@ -45,10 +45,12 @@ Masters and Customer **can see** the feedbacks they **are related** to.
 ## Install 
 
 1. Clone project (git clone git://github.com/VictorHilonenko/ServletProject.git BeautyScheduler)
-1. Install MySQL if necessary 
-1. Run: schema.sql from folder DUMP_DB
-1. Run: populate.sql from folder DUMP_DB
-1. Configure `/src/main/webapp/META-INF/context.xml` according to your DB settings
+1. You can keep the settings in `/src/main/webapp/META-INF/context.xml` "as is" and start working immediately
+1. Otherwise follow these steps:  
+- Install MySQL if necessary 
+- Run: schema.sql from folder DUMP_DB
+- Run: populate.sql from folder DUMP_DB
+- Configure `/src/main/webapp/META-INF/context.xml` according to your DB settings
 
 ## Run
 

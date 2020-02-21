@@ -100,12 +100,12 @@ public class EmailMessageService {
         email.setAuthenticator(new DefaultAuthenticator(MAIL_USERNAME, MAIL_PASSWORD));
         email.setSSLOnConnect(true);
         email.setSubject(emailMessage.getSubject());
+        String emailAddress = StringUtils.isEmpty(DEBUG_EMAIL) ? emailMessage.getEmail() : DEBUG_EMAIL;
 
         try {
             email.setFrom(MAIL_FROM);
             email.setMsg(emailMessage.getTextMessage());
-            //email.addTo(emailMessage.getEmail()); //TODO
-            email.addTo("viking33@ukr.net"); //for debugging
+            email.addTo(emailAddress);
             email.send();
         } catch (Exception e) {
             LOGGER.error("email not sent " + emailMessage.toString());
