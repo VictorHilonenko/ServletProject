@@ -19,12 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.*;
 
@@ -100,7 +98,8 @@ public class UserController {
         //depending on business logic we could call userService, so it could make
         //some actions like saving login/logout timing to DB, etc. and then call Security.loginUser
         //but in this project task that was not determined, so, let's "Keep It Simple Stupid":
-        Security.logInUser(req, verifiedUser.get());
+        UserPrincipal userPrincipal = Security.buildUserPrincipal(req, verifiedUser.get());
+        Security.logInUser(req, userPrincipal);
 
         return REDIRECT + "/";
     }
@@ -133,9 +132,7 @@ public class UserController {
     @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/users", contentType = ContentType.JSON)
     @Restriction(role = Role.nonstaff, exception = ExceptionKind.PAGE_NOT_FOUND)
     @Restriction(role = Role.ROLE_MASTER, exception = ExceptionKind.ACCESS_DENIED)
-    public String apiUserUpdateAttempt(HttpServletRequest req) throws IOException {
-        String jsonData = req.getReader().lines().collect(Collectors.joining());
-
+    public String apiUserUpdateAttempt(@Json String jsonData, HttpServletRequest req) {
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
         String message = userService.updateUserByJSON(jsonData, userPrincipal);

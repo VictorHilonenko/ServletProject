@@ -21,8 +21,8 @@ public class WelcomeController {
     @EndpointMethod(requestMethod = RequestMethod.GET, urlPattern = "/")
     @DefaultTemplate(template = "/WEB-INF/scheduler.jsp", role = Role.all)
     public String welcome(HttpServletRequest req) {
-        req.setAttribute("WORK_TIME_STARTS", WORK_TIME_STARTS);
-        req.setAttribute("WORK_TIME_ENDS", WORK_TIME_ENDS);
+        req.setAttribute(WORK_TIME_STARTS_ATTR, WORK_TIME_STARTS);
+        req.setAttribute(WORK_TIME_ENDS_ATTR, WORK_TIME_ENDS);
         req.setAttribute(ATTR_SERVICE_TYPES, Arrays.stream(ServiceType.values()).filter(s -> s != ServiceType.NULL).toArray());
 
         return DEFAULT_TEMPLATE;

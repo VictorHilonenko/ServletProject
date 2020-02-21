@@ -11,6 +11,8 @@ public interface AppConstants {
     //for tuning/adjustment:
     String SITE_URL = "http://localhost:8989";
 
+    String WORK_TIME_STARTS_ATTR = "WORK_TIME_STARTS";
+    String WORK_TIME_ENDS_ATTR = "WORK_TIME_ENDS";
     byte WORK_TIME_STARTS = 8;
     byte WORK_TIME_ENDS = 20;
 
@@ -28,6 +30,7 @@ public interface AppConstants {
     short MAIL_PORT = 465;
 
     ZoneId ZONE_ID = ZoneId.of("Europe/Kiev");
+    String APP_ENCODING = "UTF-8";
 
     int DEFAULT_PAGE_SIZE = 10;
 

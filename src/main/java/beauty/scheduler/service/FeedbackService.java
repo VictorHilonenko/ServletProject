@@ -34,7 +34,7 @@ public class FeedbackService {
     public FeedbackService() {
     }
 
-    public void createNewFeedbacksOnProvidedServicesForCustomer(Long customerId) throws SQLException {
+    private void createNewFeedbacksOnProvidedServicesForCustomer(Long customerId) throws SQLException {
         feedbackDao.createNewFeedbacksOnProvidedServicesForCustomer(customerId);
     }
 

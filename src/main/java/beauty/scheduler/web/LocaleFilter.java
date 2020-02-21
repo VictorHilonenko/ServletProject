@@ -11,8 +11,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
-import static beauty.scheduler.util.AppConstants.ATTR_LANG;
-import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
+import static beauty.scheduler.util.AppConstants.*;
 
 @WebFilter(servletNames = MAIN_PACKAGE + ".web.Servlet")
 public class LocaleFilter implements Filter {
@@ -25,8 +24,8 @@ public class LocaleFilter implements Filter {
                          ServletResponse response,
                          FilterChain chain) throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding(APP_ENCODING);
+        response.setCharacterEncoding(APP_ENCODING);
 
         HttpServletRequest req = (HttpServletRequest) request;
 

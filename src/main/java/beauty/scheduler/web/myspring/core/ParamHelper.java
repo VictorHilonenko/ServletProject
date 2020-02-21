@@ -4,6 +4,7 @@ import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.ReflectUtils;
 import beauty.scheduler.web.myspring.Endpoint;
+import beauty.scheduler.web.myspring.annotation.Json;
 import beauty.scheduler.web.myspring.annotation.ParamName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.URI_PREFIX;
 
@@ -49,11 +52,20 @@ public class ParamHelper {
     }
 
     private static Object getParameter(Parameter parameter, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        if (parameter.isAnnotationPresent(ParamName.class)) {
+        if (parameter.isAnnotationPresent(Json.class)) {
+            return getJsonData(req);
+        } else if (parameter.isAnnotationPresent(ParamName.class)) {
             return getAnnotatedParameter(parameter, req);
         } else {
             return getNonAnnotatedParameter(parameter.getParameterizedType(), req, resp);
         }
+    }
+
+    private static String getJsonData(HttpServletRequest req) throws IOException {
+        return req
+                .getReader()
+                .lines()
+                .collect(Collectors.joining());
     }
 
     private static Object getAnnotatedParameter(Parameter parameter, HttpServletRequest req) throws Exception {

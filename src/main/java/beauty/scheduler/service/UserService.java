@@ -117,11 +117,11 @@ public class UserService {
         return REST_SUCCESS;
     }
 
-    public Optional<User> findByEmail(String email) throws SQLException, ExtendedException {
+    Optional<User> findByEmail(String email) throws SQLException, ExtendedException {
         return userDao.findByEmail(email);
     }
 
-    public static String getLocalizedName(User user, String lang) {
+    static String getLocalizedName(User user, String lang) {
         String nameEn = user.getFirstNameEn();
         String nameUk = user.getFirstNameUk();
 
@@ -132,7 +132,7 @@ public class UserService {
         }
     }
 
-    public static String getUsersLang(User user) {
+    static String getUsersLang(User user) {
         if (!StringUtils.isEmpty(user.getFirstNameUk()) || !StringUtils.isEmpty(user.getLastNameUk())) {
             return LocaleUtils.LOCALE_UKRAINIAN.getLanguage();
         } else {
