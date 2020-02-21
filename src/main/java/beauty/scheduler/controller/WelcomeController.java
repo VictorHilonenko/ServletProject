@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
 import static beauty.scheduler.util.AppConstants.*;
 
@@ -22,7 +23,7 @@ public class WelcomeController {
     public String welcome(HttpServletRequest req) {
         req.setAttribute("WORK_TIME_STARTS", WORK_TIME_STARTS);
         req.setAttribute("WORK_TIME_ENDS", WORK_TIME_ENDS);
-        req.setAttribute(ATTR_SERVICE_TYPES, ServiceType.values());
+        req.setAttribute(ATTR_SERVICE_TYPES, Arrays.stream(ServiceType.values()).filter(s -> s != ServiceType.NULL).toArray());
 
         return DEFAULT_TEMPLATE;
     }
