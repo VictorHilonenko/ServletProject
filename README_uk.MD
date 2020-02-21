@@ -55,3 +55,36 @@
 
 1. Виконати команду термінала: ```mvn clean tomcat7:run``` або додати конфігурацію і запустити програму з IDE  
 1. Перейти за посиланням: [```localhost:8989```](http://localhost:8989/)
+
+#### Список вже зареєстрованих користувачів та їх паролі:
+<table>
+	<tr>
+		<th>Login</th><th>Password</th>
+	</tr>
+	<tr>
+		<td>admin@mail.com</td><td>admin</td>
+	</tr>
+	<tr>
+		<td>lindsey@mail.com</td><td>user</td>
+	</tr>
+	<tr>
+		<td>caitlin@mail.com</td><td>user</td>
+	</tr>
+	<tr>
+		<td>jennie@mail.com</td><td>user</td>
+	</tr>
+	<tr>
+		<td>julia@mail.com</td><td>master</td>
+	</tr>
+	<tr>
+		<td>tanya@mail.com</td><td>master</td>
+	</tr>
+	<tr>
+		<td>nata@mail.com</td><td>master</td>
+	</tr>
+	<tr>
+		<td>josy@mail.com</td><td>master</td>
+	</tr>
+</table>
+
+
