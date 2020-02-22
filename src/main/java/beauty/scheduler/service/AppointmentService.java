@@ -72,12 +72,12 @@ public class AppointmentService {
         return REST_SUCCESS;
     }
 
-    public String validateAppointmentDataForAdd(String strDate, String strTime, String strServiceType, UserPrincipal userPrincipal) {
+    private String validateAppointmentDataForAdd(String strDate, String strTime, String strServiceType, UserPrincipal userPrincipal) {
         strTime = (strTime.length() == 1 ? "0" : "") + strTime;
         String strDateTime = strDate + "T" + strTime + ":00:00.000";
 
         //check format
-        Byte time;
+        byte time;
         LocalDateTime reserveDateTime;
         try {
             time = Byte.parseByte(strTime);
@@ -176,7 +176,7 @@ public class AppointmentService {
         return REST_SUCCESS;
     }
 
-    public String validateIncomingDataForServiceProvided(String strId, String strServiceProvided, UserPrincipal userPrincipal) {
+    private String validateIncomingDataForServiceProvided(String strId, String strServiceProvided, UserPrincipal userPrincipal) {
         //check format
         try {
             int id = Integer.parseInt(strId);
@@ -225,7 +225,7 @@ public class AppointmentService {
         return ""; //if OK
     }
 
-    public AppointmentDTO appointmentToDTO(Appointment appointment, UserPrincipal userPrincipal) {
+    private AppointmentDTO appointmentToDTO(Appointment appointment, UserPrincipal userPrincipal) {
         AppointmentDTO appointmentDTO = new AppointmentDTO();
 
         setFieldsAndRightsToDTOAccordingToPolicy(appointmentDTO, appointment, userPrincipal);
@@ -246,7 +246,7 @@ public class AppointmentService {
         fieldsMap.put("rights_id", "H");
         fieldsMap.put("date", appointment.getAppointmentDate().toString());
         fieldsMap.put("rights_date", "R");
-        fieldsMap.put("time", appointment.getAppointmentTime().toString());
+        fieldsMap.put("time", Byte.toString(appointment.getAppointmentTime()));
         fieldsMap.put("rights_time", "R");
         fieldsMap.put("serviceType", appointment.getServiceType().name());
         fieldsMap.put("rights_serviceType", "R");
@@ -267,7 +267,7 @@ public class AppointmentService {
             fieldsMap.put("rights_customer_name", "R");
 
             if (appointment.getServiceProvided()) {
-                fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
+                fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
                 fieldsMap.put("rights_serviceProvided", "R");
             }
         }
@@ -280,7 +280,7 @@ public class AppointmentService {
             fieldsMap.put("master_name", UserService.getLocalizedName(appointment.getMaster(), lang));
             fieldsMap.put("rights_master_name", "R");
 
-            fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
+            fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
             if (appointment.getServiceProvided()) {
                 fieldsMap.put("rights_serviceProvided", "R");
             } else {
@@ -289,7 +289,7 @@ public class AppointmentService {
         } else if (email.equals(appointment.getCustomer().getEmail())) {
             //that's possible when a master was a Customer for some service
             if (appointment.getServiceProvided()) {
-                fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
+                fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
                 fieldsMap.put("rights_serviceProvided", "R");
             }
         }
@@ -308,7 +308,7 @@ public class AppointmentService {
         fieldsMap.put("master_name", UserService.getLocalizedName(appointment.getMaster(), lang) + " \n" + appointment.getMaster().getTelNumber());
         fieldsMap.put("rights_master_name", "R");
 
-        fieldsMap.put("serviceProvided", appointment.getServiceProvided().toString());
+        fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
         fieldsMap.put("rights_serviceProvided", "R");
     }
 

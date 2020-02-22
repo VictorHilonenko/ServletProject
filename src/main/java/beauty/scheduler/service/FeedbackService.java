@@ -126,7 +126,7 @@ public class FeedbackService {
     }
 
     public void updateFeedback(Feedback feedback, FeedbackForm form) throws SQLException, ExtendedException {
-        Byte rating = Byte.parseByte(form.getRating());
+        byte rating = Byte.parseByte(form.getRating());
         feedback.setRating(rating);
         feedback.setTextMessage(form.getTextMessage());
 

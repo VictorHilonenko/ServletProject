@@ -28,7 +28,7 @@ public class EmailMessage {
     private LocalDate dateCreated;
 
     @DBColumn(name = "sent")
-    private Boolean sent;
+    private boolean sent;
 
     @DBColumn(name = "quick_access_code")
     private String quickAccessCode;
@@ -36,7 +36,7 @@ public class EmailMessage {
     public EmailMessage() {
     }
 
-    public EmailMessage(int id, String email, String subject, String textMessage, LocalDate dateCreated, Boolean sent, String quickAccessCode) {
+    public EmailMessage(int id, String email, String subject, String textMessage, LocalDate dateCreated, boolean sent, String quickAccessCode) {
         this.id = id;
         this.email = email;
         this.subject = subject;
@@ -86,11 +86,11 @@ public class EmailMessage {
         this.dateCreated = dateCreated;
     }
 
-    public Boolean getSent() {
+    public boolean getSent() {
         return sent;
     }
 
-    public void setSent(Boolean sent) {
+    public void setSent(boolean sent) {
         this.sent = sent;
     }
 
