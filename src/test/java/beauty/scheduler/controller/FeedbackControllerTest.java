@@ -93,7 +93,7 @@ public class FeedbackControllerTest {
         String quickAccessCode = "test";
 
         User user = new User();
-        user.setId(1L);
+        user.setId(1);
 
         when(context.getAttribute(ATTR_ACTIVE_USERS)).thenReturn(new HashSet<>());
         when(request.getServletContext()).thenReturn(context);

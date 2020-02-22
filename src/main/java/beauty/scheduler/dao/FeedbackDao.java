@@ -20,8 +20,8 @@ public class FeedbackDao extends GenericDao<Feedback> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackDao.class);
 
     @Override
-    public Optional<Feedback> getById(Long id) throws SQLException, ExtendedException {
-        return super.getById(ps -> ps.setLong(1, id), FEEDBACK_ENTITY_MAPPER);
+    public Optional<Feedback> getById(int id) throws SQLException, ExtendedException {
+        return super.getById(ps -> ps.setInt(1, id), FEEDBACK_ENTITY_MAPPER);
     }
 
     @Override
@@ -46,10 +46,10 @@ public class FeedbackDao extends GenericDao<Feedback> {
         LOGGER.info("Update feedback: " + entity.toString());
 
         return update(ps -> {
-            ps.setLong(1, entity.getAppointment().getId());
+            ps.setInt(1, entity.getAppointment().getId());
             ps.setByte(2, entity.getRating());
             ps.setString(3, entity.getTextMessage());
-            ps.setLong(4, entity.getId());
+            ps.setInt(4, entity.getId());
         });
     }
 
@@ -58,7 +58,7 @@ public class FeedbackDao extends GenericDao<Feedback> {
         return false;
     }
 
-    public void createNewFeedbacksOnProvidedServicesForCustomer(Long customerId) throws SQLException {
+    public void createNewFeedbacksOnProvidedServicesForCustomer(int customerId) throws SQLException {
         LOGGER.info("Create new feedbacks");
 
         String query =
@@ -79,27 +79,27 @@ public class FeedbackDao extends GenericDao<Feedback> {
                         "	AND `appointments`.`service_provided` = 1\n" +
                         "	AND `feedbacks`.`id` IS NULL";
 
-        executeStatement(ps -> ps.setLong(1, customerId), query);
+        executeStatement(ps -> ps.setInt(1, customerId), query);
     }
 
-    public List<Feedback> getFeedbacksToLeave(Long customerId) throws SQLException, ExtendedException {
-        return getAllWhere(ps -> ps.setLong(1, customerId), FEEDBACK_ENTITY_MAPPER,
+    public List<Feedback> getFeedbacksToLeave(int customerId) throws SQLException, ExtendedException {
+        return getAllWhere(ps -> ps.setInt(1, customerId), FEEDBACK_ENTITY_MAPPER,
                 "WHERE\n" +
                         "	customer_id = ?\n" +
                         "	AND rating = 0\n" +
                         "	AND text_message = ''");
     }
 
-    public Pagination<Feedback> getAllForUser(Long userId, int page, int pageSize) throws SQLException, ExtendedException {
-        return getAllWhere(ps -> ps.setLong(1, userId), FEEDBACK_ENTITY_MAPPER,
+    public Pagination<Feedback> getAllForUser(int userId, int page, int pageSize) throws SQLException, ExtendedException {
+        return getAllWhere(ps -> ps.setInt(1, userId), FEEDBACK_ENTITY_MAPPER,
                 "WHERE\n" +
                         "	customer.id = ?\n" +
                         "	AND rating > 0\n" +
                         "	AND text_message != ''", page, pageSize);
     }
 
-    public Pagination<Feedback> getAllForMaster(Long userId, int page, int pageSize) throws SQLException, ExtendedException {
-        return getAllWhere(ps -> ps.setLong(1, userId), FEEDBACK_ENTITY_MAPPER,
+    public Pagination<Feedback> getAllForMaster(int userId, int page, int pageSize) throws SQLException, ExtendedException {
+        return getAllWhere(ps -> ps.setInt(1, userId), FEEDBACK_ENTITY_MAPPER,
                 "WHERE\n" +
                         "	master.id = ?\n" +
                         "	AND rating > 0\n" +

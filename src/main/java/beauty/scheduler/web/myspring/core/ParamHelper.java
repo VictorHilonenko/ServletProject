@@ -84,12 +84,6 @@ public class ParamHelper {
             } catch (DateTimeParseException e) {
                 throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
             }
-        } else if (type == Long.class) {
-            try {
-                result = Long.parseLong(getRequestValue(req, name));
-            } catch (DateTimeParseException e) {
-                throw new ExtendedException(ExceptionKind.WRONG_DATA_PASSED);
-            }
         } else {
             //... other types ...
         }

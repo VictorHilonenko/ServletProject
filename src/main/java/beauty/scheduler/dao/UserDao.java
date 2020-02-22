@@ -25,8 +25,8 @@ public class UserDao extends GenericDao<User> {
     }
 
     @Override
-    public Optional<User> getById(Long id) throws SQLException, ExtendedException {
-        return super.getById(ps -> ps.setLong(1, id), USER_ENTITY_MAPPER);
+    public Optional<User> getById(int id) throws SQLException, ExtendedException {
+        return super.getById(ps -> ps.setInt(1, id), USER_ENTITY_MAPPER);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UserDao extends GenericDao<User> {
             ps.setString(7, entity.getPassword());
             ps.setString(8, entity.getRole().name());
             ps.setString(9, entity.getServiceType().name());
-            ps.setLong(10, entity.getId());
+            ps.setInt(10, entity.getId());
         });
     }
 
@@ -74,6 +74,6 @@ public class UserDao extends GenericDao<User> {
     public boolean delete(User entity) throws SQLException, ExtendedException {
         LOGGER.info("Delete user: " + entity.toString());
 
-        return delete(ps -> ps.setLong(1, entity.getId()));
+        return delete(ps -> ps.setInt(1, entity.getId()));
     }
 }

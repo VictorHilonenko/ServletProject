@@ -62,9 +62,9 @@ public class EmailMessageService {
         String quickAccessCode = UUID.randomUUID().toString();
 
         String textMessage = StringUtils.concatenator(LocaleUtils.getLocalizedMessage("i18n.leaveFeedbackHere", customerLang), " ",
-                SITE_URL, "/feedbacks/", appointment.getId().toString(), "/", quickAccessCode);
+                SITE_URL, "/feedbacks/", Integer.toString(appointment.getId()), "/", quickAccessCode);
 
-        EmailMessage emailMessage = new EmailMessage(null,
+        EmailMessage emailMessage = new EmailMessage(0,
                 appointment.getCustomer().getEmail(),
                 LocaleUtils.getLocalizedMessage("i18n.leaveFeedbackPlease", customerLang),
                 textMessage,

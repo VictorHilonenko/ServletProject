@@ -125,7 +125,7 @@ public class AppointmentService {
         //try to find the Appointment
         Optional<Appointment> optionalAppointment;
         try {
-            optionalAppointment = appointmentDao.getById(Long.parseLong(strId));
+            optionalAppointment = appointmentDao.getById(Integer.parseInt(strId));
         } catch (SQLException | ExtendedException e) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", userPrincipal.getCurrentLang());
         }
@@ -179,7 +179,7 @@ public class AppointmentService {
     public String validateIncomingDataForServiceProvided(String strId, String strServiceProvided, UserPrincipal userPrincipal) {
         //check format
         try {
-            Long id = Long.parseLong(strId);
+            int id = Integer.parseInt(strId);
         } catch (DateTimeParseException e) {
             LOGGER.error("wrong data format of " + strId);
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
@@ -218,7 +218,7 @@ public class AppointmentService {
         }
 
         //is it his/her appointment?
-        if (!appointment.getMaster().getId().equals(userPrincipal.getId().get())) {
+        if (appointment.getMaster().getId() != userPrincipal.getId().get()) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.onlyMasterCanSetThis", userPrincipal.getCurrentLang());
         }
 
@@ -242,7 +242,7 @@ public class AppointmentService {
         HashMap<String, String> fieldsMap = appointmentDTO.getMap();
 
         //common fields:
-        fieldsMap.put("id", appointment.getId().toString());
+        fieldsMap.put("id", Integer.toString(appointment.getId()));
         fieldsMap.put("rights_id", "H");
         fieldsMap.put("date", appointment.getAppointmentDate().toString());
         fieldsMap.put("rights_date", "R");
