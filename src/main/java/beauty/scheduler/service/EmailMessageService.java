@@ -93,7 +93,7 @@ public class EmailMessageService {
         thread.start();
     }
 
-    public void sendAnEmail(EmailMessage emailMessage) {
+    private void sendAnEmail(EmailMessage emailMessage) {
         Email email = new SimpleEmail();
         email.setHostName(MAIL_HOST);
         email.setSmtpPort(MAIL_PORT);

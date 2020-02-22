@@ -16,11 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.REST_ERROR;
 
@@ -49,9 +47,7 @@ public class AppointmentController {
     @EndpointMethod(requestMethod = RequestMethod.POST, urlPattern = "/api/appointments", contentType = ContentType.JSON)
     @Restriction(role = Role.notAuthenticated, exception = ExceptionKind.ACCESS_DENIED)
     @Restriction(role = Role.staff, exception = ExceptionKind.ACCESS_DENIED)
-    public String apiAppointmentCreateAttempt(HttpServletRequest req) throws IOException {
-        String jsonData = req.getReader().lines().collect(Collectors.joining());
-
+    public String apiAppointmentCreateAttempt(@Json String jsonData, HttpServletRequest req) {
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
         String message = appointmentService.addAppointmentByJSON(jsonData, userPrincipal);
@@ -62,9 +58,7 @@ public class AppointmentController {
     @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/appointments", contentType = ContentType.JSON)
     @Restriction(role = Role.nonstaff, exception = ExceptionKind.ACCESS_DENIED)
     @Restriction(role = Role.ROLE_ADMIN, exception = ExceptionKind.ACCESS_DENIED)
-    public String apiSetServiceProvidedAttempt(HttpServletRequest req) throws IOException {
-        String jsonData = req.getReader().lines().collect(Collectors.joining());
-
+    public String apiSetServiceProvidedAttempt(@Json String jsonData, HttpServletRequest req) {
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
         String message = appointmentService.setServiceProvidedByJSON(jsonData, userPrincipal);

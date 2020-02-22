@@ -18,13 +18,24 @@ import static beauty.scheduler.util.AppConstants.*;
 public class Security {
     private static final Logger LOGGER = LoggerFactory.getLogger(Security.class);
 
-
-    private static void setAnonimousPrincipal(HttpSession session) {
+    private static UserPrincipal buildUserPrincipal(HttpSession session, User user) {
         String sessionLang = (String) session.getAttribute(ATTR_LANG);
-        session.setAttribute(ATTR_USER_PRINCIPAL, new UserPrincipal(Optional.empty(), "", Role.ROLE_ANONYMOUS, sessionLang));
+        return new UserPrincipal(Optional.ofNullable(user.getId()), user.getEmail(), user.getRole(), sessionLang);
     }
 
-    public static void makeSessionInitialized(HttpSession session) {
+    public static UserPrincipal buildUserPrincipal(HttpServletRequest req, User user) {
+        return buildUserPrincipal(getActualSession(req), user);
+    }
+
+    private static void setAnonimousPrincipal(HttpSession session) {
+        User anonymous = new User();
+        anonymous.setEmail("");
+        anonymous.setRole(Role.ROLE_ANONYMOUS);
+
+        session.setAttribute(ATTR_USER_PRINCIPAL, buildUserPrincipal(session, anonymous));
+    }
+
+    private static void makeSessionInitialized(HttpSession session) {
         String sessionLang = (String) session.getAttribute(ATTR_LANG);
         if (!Optional.ofNullable(sessionLang).isPresent()) {
             session.setAttribute(ATTR_LANG, LocaleUtils.getDefaultLocale().getLanguage());
@@ -51,13 +62,10 @@ public class Security {
         return getUserPrincipal(getActualSession(req));
     }
 
-    public static void logInUser(HttpServletRequest req, User user) {
+    public static void logInUser(HttpServletRequest req, UserPrincipal userPrincipal) {
         ServletContext context = req.getServletContext();
         HttpSession session = getActualSession(req);
         Set<UserPrincipal> activeUsers = (Set<UserPrincipal>) context.getAttribute(ATTR_ACTIVE_USERS);
-
-        String sessionLang = Optional.ofNullable((String) session.getAttribute(ATTR_LANG)).orElse(LocaleUtils.getDefaultLocale().getLanguage());
-        UserPrincipal userPrincipal = new UserPrincipal(Optional.of(user.getId()), user.getEmail(), user.getRole(), sessionLang);
 
         activeUsers.add(userPrincipal);
         session.setAttribute(ATTR_USER_PRINCIPAL, userPrincipal);

@@ -11,6 +11,8 @@ public interface AppConstants {
     //for tuning/adjustment:
     String SITE_URL = "http://localhost:8989";
 
+    String WORK_TIME_STARTS_ATTR = "WORK_TIME_STARTS";
+    String WORK_TIME_ENDS_ATTR = "WORK_TIME_ENDS";
     byte WORK_TIME_STARTS = 8;
     byte WORK_TIME_ENDS = 20;
 
@@ -28,13 +30,14 @@ public interface AppConstants {
     short MAIL_PORT = 465;
 
     ZoneId ZONE_ID = ZoneId.of("Europe/Kiev");
+    String APP_ENCODING = "UTF-8";
 
     int DEFAULT_PAGE_SIZE = 10;
 
     String REGEX_NOT_EMPTY_GENERAL = "^[A-Za-zА-Яа-яІіЇїЄє.,:;%!?\\-+0-9 \\s]+$";
     String REGEX_NOT_EMPTY_ENGLISH = "^[A-Za-z]+$";
     String REGEX_NOT_LT_2_ENGLISH = "^[A-Za-z0-9]{2,}$";
-    String REGEX_URAINIAN = "^[А-Яа-яІіЇїЄє]*$";
+    String REGEX_URAINIAN = "^[А-Яа-яІіЇїЄє'`]*$";
     String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     String REGEX_TEL_FORMAT = "^\\+?380\\d{9}$";
     String REGEX_1_10_RANGE = "^([1-9]|10)$";

@@ -63,7 +63,8 @@ public class FeedbackController {
             throw new ExtendedException(ExceptionKind.PAGE_NOT_FOUND);
         }
 
-        Security.logInUser(req, verifiedUser.get());
+        UserPrincipal userPrincipal = Security.buildUserPrincipal(req, verifiedUser.get());
+        Security.logInUser(req, userPrincipal);
 
         return REDIRECT + "/feedbacks";
     }
