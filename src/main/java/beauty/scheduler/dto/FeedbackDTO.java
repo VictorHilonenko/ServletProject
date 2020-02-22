@@ -1,7 +1,7 @@
 package beauty.scheduler.dto;
 
 public class FeedbackDTO {
-    private Long id;
+    private int id;
 
     private String appointmentDate;
 
@@ -20,7 +20,7 @@ public class FeedbackDTO {
     public FeedbackDTO() {
     }
 
-    public FeedbackDTO(Long id, String appointmentDate, Byte appointmentTime, String serviceType, String customerName, String masterName, Byte rating, String textMessage) {
+    public FeedbackDTO(int id, String appointmentDate, Byte appointmentTime, String serviceType, String customerName, String masterName, Byte rating, String textMessage) {
         this.id = id;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
@@ -31,11 +31,11 @@ public class FeedbackDTO {
         this.textMessage = textMessage;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

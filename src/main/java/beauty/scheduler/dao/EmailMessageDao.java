@@ -38,8 +38,8 @@ public class EmailMessageDao extends GenericDao<EmailMessage> {
     }
 
     @Override
-    public Optional<EmailMessage> getById(Long id) throws SQLException, ExtendedException {
-        return super.getById(ps -> ps.setLong(1, id), EMAIL_MESSAGE_ENTITY_MAPPER);
+    public Optional<EmailMessage> getById(int id) throws SQLException, ExtendedException {
+        return super.getById(ps -> ps.setInt(1, id), EMAIL_MESSAGE_ENTITY_MAPPER);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class EmailMessageDao extends GenericDao<EmailMessage> {
             ps.setString(4, entity.getDateCreated().toString());
             ps.setBoolean(5, entity.getSent());
             ps.setString(6, entity.getQuickAccessCode());
-            ps.setLong(7, entity.getId());
+            ps.setInt(7, entity.getId());
         });
     }
 
@@ -81,6 +81,6 @@ public class EmailMessageDao extends GenericDao<EmailMessage> {
     public boolean delete(EmailMessage entity) throws SQLException, ExtendedException {
         LOGGER.info("Delete EmailMessage: " + entity.toString());
 
-        return delete(ps -> ps.setLong(1, entity.getId()));
+        return delete(ps -> ps.setInt(1, entity.getId()));
     }
 }

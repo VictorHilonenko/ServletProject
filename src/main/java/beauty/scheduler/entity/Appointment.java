@@ -16,7 +16,7 @@ import static beauty.scheduler.util.AppConstants.ID_FIELD;
 @DBTable(name = "appointments")
 public class Appointment {
     @DBColumn(name = ID_FIELD)
-    private Long id;
+    private int id;
 
     @DBColumn(name = "appointment_date")
     private LocalDate appointmentDate;
@@ -39,7 +39,7 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Long id, LocalDate appointmentDate, Byte appointmentTime, ServiceType serviceType, User customer, User master, Boolean serviceProvided) {
+    public Appointment(int id, LocalDate appointmentDate, Byte appointmentTime, ServiceType serviceType, User customer, User master, Boolean serviceProvided) {
         this.id = id;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
@@ -49,11 +49,11 @@ public class Appointment {
         this.serviceProvided = serviceProvided;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

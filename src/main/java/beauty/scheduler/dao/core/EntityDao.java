@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface EntityDao<T> {
 
-    Optional<T> getById(Long id) throws SQLException, ExtendedException;
+    Optional<T> getById(int id) throws SQLException, ExtendedException;
 
     List<T> getAll() throws SQLException, ExtendedException;
 

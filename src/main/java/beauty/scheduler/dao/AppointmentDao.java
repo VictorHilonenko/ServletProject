@@ -40,14 +40,10 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
     //NOTE: in this project if we wouldn't intern/flyweight the list of instances
     //it would not cause any issue, but anyway, it's better to do everything right
-    protected List<Appointment> internEntities(List<Appointment> list) {
-        Map<Long, Appointment> appointments = new HashMap<>();
-        Map<Long, User> users = new HashMap<>();
+    private List<Appointment> internEntities(List<Appointment> list) {
+        Map<Integer, User> users = new HashMap<>();
 
         list.forEach(appointment -> {
-            appointments.putIfAbsent(appointment.getId(), appointment);
-            appointment = appointments.get(appointment.getId());
-
             users.putIfAbsent(appointment.getCustomer().getId(), appointment.getCustomer());
             appointment.setCustomer(users.get(appointment.getCustomer().getId()));
 
@@ -59,8 +55,8 @@ public class AppointmentDao extends GenericDao<Appointment> {
     }
 
     @Override
-    public Optional<Appointment> getById(Long id) throws SQLException, ExtendedException {
-        return super.getById(ps -> ps.setLong(1, id), APPOINTMENT_ENTITY_MAPPER);
+    public Optional<Appointment> getById(int id) throws SQLException, ExtendedException {
+        return super.getById(ps -> ps.setInt(1, id), APPOINTMENT_ENTITY_MAPPER);
     }
 
     @Override
@@ -79,13 +75,13 @@ public class AppointmentDao extends GenericDao<Appointment> {
         //    ps.setString(1, entity.getAppointmentDate().toString());
         //    ps.setByte(2, entity.getAppointmentTime());
         //    ps.setString(3, entity.getServiceType().name());
-        //    ps.setLong(4, entity.getCustomer().getId());
-        //    ps.setLong(5, entity.getMaster().getId());
+        //    ps.setInt(4, entity.getCustomer().getId());
+        //    ps.setInt(5, entity.getMaster().getId());
         //    ps.setBoolean(6, entity.getServiceProvided());
         //});
     }
 
-    public String reserveTime(Long customerId, String strDate, String strTime, String strServiceType, String lang) {
+    public String reserveTime(int customerId, String strDate, String strTime, String strServiceType, String lang) {
         //NOTE: this insert statement solves the next task:
         //it finds an idle Master who can provide the requested ServiceType.
         //if there is no one, there will be an exception.
@@ -130,7 +126,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
             ps.setString(1, strDate);
             ps.setString(2, strTime);
             ps.setString(3, strServiceType);
-            ps.setLong(4, customerId);
+            ps.setInt(4, customerId);
             ps.setString(5, strServiceType);
             ps.setString(6, strDate);
             ps.setString(7, strTime);
@@ -158,10 +154,10 @@ public class AppointmentDao extends GenericDao<Appointment> {
             ps.setString(1, entity.getAppointmentDate().toString());
             ps.setByte(2, entity.getAppointmentTime());
             ps.setString(3, entity.getServiceType().name());
-            ps.setLong(4, entity.getCustomer().getId());
-            ps.setLong(5, entity.getMaster().getId());
+            ps.setInt(4, entity.getCustomer().getId());
+            ps.setInt(5, entity.getMaster().getId());
             ps.setBoolean(6, entity.getServiceProvided());
-            ps.setLong(7, entity.getId());
+            ps.setInt(7, entity.getId());
         });
     }
 
@@ -169,7 +165,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
     public boolean delete(Appointment entity) throws SQLException, ExtendedException {
         LOGGER.info("Delete appointment: " + entity.toString());
 
-        return delete(ps -> ps.setLong(1, entity.getId()));
+        return delete(ps -> ps.setInt(1, entity.getId()));
     }
 
 }

@@ -13,7 +13,7 @@ import static beauty.scheduler.util.AppConstants.ID_FIELD;
 @DBTable(name = "email_messages")
 public class EmailMessage {
     @DBColumn(name = ID_FIELD)
-    private Long id;
+    private int id;
 
     @DBColumn(name = "email")
     private String email;
@@ -36,7 +36,7 @@ public class EmailMessage {
     public EmailMessage() {
     }
 
-    public EmailMessage(Long id, String email, String subject, String textMessage, LocalDate dateCreated, Boolean sent, String quickAccessCode) {
+    public EmailMessage(int id, String email, String subject, String textMessage, LocalDate dateCreated, Boolean sent, String quickAccessCode) {
         this.id = id;
         this.email = email;
         this.subject = subject;
@@ -46,11 +46,11 @@ public class EmailMessage {
         this.quickAccessCode = quickAccessCode;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

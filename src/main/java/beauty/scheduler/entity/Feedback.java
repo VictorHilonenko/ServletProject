@@ -11,7 +11,7 @@ import static beauty.scheduler.util.AppConstants.ID_FIELD;
 @DBTable(name = "feedbacks")
 public class Feedback {
     @DBColumn(name = ID_FIELD)
-    private Long id;
+    private int id;
 
     @DBColumn(name = "appointment_id")
     private Appointment appointment;
@@ -25,18 +25,18 @@ public class Feedback {
     public Feedback() {
     }
 
-    public Feedback(Long id, Appointment appointment, Byte rating, String textMessage) {
+    public Feedback(int id, Appointment appointment, Byte rating, String textMessage) {
         this.id = id;
         this.appointment = appointment;
         this.rating = rating;
         this.textMessage = textMessage;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

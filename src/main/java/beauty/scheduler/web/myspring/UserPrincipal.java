@@ -5,7 +5,7 @@ import beauty.scheduler.entity.enums.Role;
 import java.util.Optional;
 
 public class UserPrincipal {
-    private Optional<Long> id;
+    private Optional<Integer> id;
     private String email;
     private Role role;
     private String currentLang;
@@ -13,7 +13,7 @@ public class UserPrincipal {
     public UserPrincipal() {
     }
 
-    public UserPrincipal(Optional<Long> id, String email, Role role, String currentLang) {
+    public UserPrincipal(Optional<Integer> id, String email, Role role, String currentLang) {
         this.id = id;
         this.email = email;
         this.role = role;
@@ -28,11 +28,11 @@ public class UserPrincipal {
         return role.hasTag(tag);
     }
 
-    public Optional<Long> getId() {
+    public Optional<Integer> getId() {
         return id;
     }
 
-    public void setId(Optional<Long> id) {
+    public void setId(Optional<Integer> id) {
         this.id = id;
     }
 

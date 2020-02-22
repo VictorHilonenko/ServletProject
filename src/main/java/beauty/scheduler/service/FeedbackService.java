@@ -34,13 +34,13 @@ public class FeedbackService {
     public FeedbackService() {
     }
 
-    private void createNewFeedbacksOnProvidedServicesForCustomer(Long customerId) throws SQLException {
+    private void createNewFeedbacksOnProvidedServicesForCustomer(int customerId) throws SQLException {
         feedbackDao.createNewFeedbacksOnProvidedServicesForCustomer(customerId);
     }
 
     public List<FeedbackDTO> getFeedbacksDTOToLeave(UserPrincipal userPrincipal) throws ExtendedException, SQLException {
         //it's redundant check, but reliability is important, so:
-        Long customerId = userPrincipal.getId()
+        int customerId = userPrincipal.getId()
                 .orElseThrow(() -> new ExtendedException(ExceptionKind.WRONG_DATA_PASSED));
         //
 
@@ -59,7 +59,7 @@ public class FeedbackService {
     }
 
     public Pagination<FeedbackDTO> getFeedbacksDTO(UserPrincipal userPrincipal, int page, int pageSize) throws ExtendedException, SQLException {
-        Long userId = userPrincipal.getId()
+        int userId = userPrincipal.getId()
                 .orElseThrow(() -> new ExtendedException(ExceptionKind.WRONG_DATA_PASSED));
 
         Pagination<Feedback> pagination;
@@ -104,7 +104,7 @@ public class FeedbackService {
             return Optional.empty();
         }
 
-        Long feedbackId = Long.parseLong(form.getId());
+        int feedbackId = Integer.parseInt(form.getId());
 
         Optional<Feedback> optionalFeedback = feedbackDao.getById(feedbackId);
         if (!optionalFeedback.isPresent()) {
@@ -113,7 +113,7 @@ public class FeedbackService {
 
         Feedback feedback = optionalFeedback.get();
 
-        if (!feedback.getAppointment().getCustomer().getId().equals(userPrincipal.getId().get())) {
+        if (feedback.getAppointment().getCustomer().getId() != userPrincipal.getId().get()) {
             return Optional.empty();
         }
 
