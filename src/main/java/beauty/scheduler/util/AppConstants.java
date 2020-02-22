@@ -37,7 +37,7 @@ public interface AppConstants {
     String REGEX_NOT_EMPTY_GENERAL = "^[A-Za-zА-Яа-яІіЇїЄє.,:;%!?\\-+0-9 \\s]+$";
     String REGEX_NOT_EMPTY_ENGLISH = "^[A-Za-z]+$";
     String REGEX_NOT_LT_2_ENGLISH = "^[A-Za-z0-9]{2,}$";
-    String REGEX_URAINIAN = "^[А-Яа-яІіЇїЄє]*$";
+    String REGEX_URAINIAN = "^[А-Яа-яІіЇїЄє'`]*$";
     String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     String REGEX_TEL_FORMAT = "^\\+?380\\d{9}$";
     String REGEX_1_10_RANGE = "^([1-9]|10)$";
