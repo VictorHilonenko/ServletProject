@@ -34,7 +34,6 @@ public class EmailMessageService {
         return emailMessageDao.findByEmail(email);
     }
 
-    //NOTE: it's a "one time get", the next time there will be no such email by the same quickAccessCode found
     String getEmailByQuickAccessCode(String quickAccessCode) throws SQLException, ExtendedException {
         if (StringUtils.isEmpty(quickAccessCode)) {
             return "";

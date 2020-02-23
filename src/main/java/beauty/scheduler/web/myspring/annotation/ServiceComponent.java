@@ -8,5 +8,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ServiceComponent {
-    //now we use only Singleton pattern for classes annotated with ServiceComponent
 }

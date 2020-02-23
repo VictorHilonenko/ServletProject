@@ -22,20 +22,6 @@
     		</div>
         </c:if>
 
-<!--		<div class="legend"> -->
-<!-- 			<input type="checkbox" name="haircut" value="HAIRDRESSING" class="checkbox"> -->
-<!-- 			<label for="haircut"> -->
-<!-- 				<a href="" class="serviceType appointment_h">Hairdressing</a> -->
-<!-- 			</label> -->
-<!-- 			<input type="checkbox" name="make-up" value="MAKEUP" class="checkbox"> -->
-<!-- 			<label for="make-up"> -->
-<!-- 				<a href="" class="serviceType appointment_m">Makeup</a> -->
-<!-- 			</label> -->
-<!-- 			<input type="checkbox" name="cosmetology" value="COSMETOLOGY" class="checkbox"> -->
-<!-- 			<label for="cosmetology"> -->
-<!-- 				<a href="" class="serviceType appointment_c">Cosmetology</a> -->
-<!-- 			</label> -->
-<!-- 		</div> -->
 		<div class="schedule_cont">
 			<table id="table_schedule" class="table_schedule">
 				<tr>
@@ -120,7 +106,6 @@
                 <span id="i18n_serviceProvided" class="popup_label4s"><fmt:message key="i18n.serviceProvided"/></span>
 			</div>
 		</div>
-		<input type="hidden" id="i18n_close" value="<fmt:message key="i18n.close"/>">
 	</div>
 
     <input type="hidden" id="week_shift" value="<fmt:message key="week.shift"/>">
@@ -128,6 +113,7 @@
     <input type="hidden" id="date_format_long" value="<fmt:message key="date.format.long"/>">
     <input type="hidden" id="i18n_reserve" value="<fmt:message key="i18n.reserve"/>">
     <input type="hidden" id="i18n_save" value="<fmt:message key="i18n.save"/>">
+    <input type="hidden" id="i18n_close" value="<fmt:message key="i18n.close"/>">
     <input type="hidden" id="WORK_TIME_STARTS" value="${WORK_TIME_STARTS}">
     <input type="hidden" id="WORK_TIME_ENDS" value="${WORK_TIME_ENDS}">
 

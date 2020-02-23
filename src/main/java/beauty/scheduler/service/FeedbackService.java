@@ -39,19 +39,10 @@ public class FeedbackService {
     }
 
     public List<FeedbackDTO> getFeedbacksDTOToLeave(UserPrincipal userPrincipal) throws ExtendedException, SQLException {
-        //it's redundant check, but reliability is important, so:
         int customerId = userPrincipal.getId()
                 .orElseThrow(() -> new ExtendedException(ExceptionKind.WRONG_DATA_PASSED));
-        //
 
-        //NOTE: when a user has to leave a feedback, we create record(s) for that here
-        // but only one time
-        //
-        //generally speaking there are 3 strategies to do that in this project logic
-        //all have advantages and disadvantages.
-        //can explain, why this way is chosen
         createNewFeedbacksOnProvidedServicesForCustomer(customerId);
-        //
 
         return feedbackDao.getFeedbacksToLeave(customerId).stream()
                 .map(feedback -> entityToDTOMapper(feedback, userPrincipal))
@@ -98,7 +89,6 @@ public class FeedbackService {
         return userService.findByEmail(email);
     }
 
-    //plenty of checks, actually
     public Optional<Feedback> getVerifiedFeedback(FeedbackForm form, UserPrincipal userPrincipal) throws SQLException, ExtendedException {
         if (!userPrincipal.getId().isPresent()) {
             return Optional.empty();
@@ -118,7 +108,6 @@ public class FeedbackService {
         }
 
         if (feedback.getRating() > 0 || !"".equals(feedback.getTextMessage())) {
-            //in this business logic we don't allow "rewriting" in any case, so
             return Optional.empty();
         }
 

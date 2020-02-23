@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,7 +14,6 @@ public enum Role {
     ROLE_USER("all,authenticated,nonstaff,front", "i18n.USER"),
     ROLE_MASTER("all,authenticated,staff,front", "i18n.MASTER"),
     ROLE_ADMIN("all,authenticated,staff,admin,front", "i18n.ADMIN"),
-    //these roles are for annotating convenience in @EndpointMethod:
     all("", ""),
     notAuthenticated("", ""),
     authenticated("", ""),
@@ -49,11 +49,10 @@ public enum Role {
         if ("".equals(roleTag.getTags())) {
             return getAllByTag(roleTag.name());
         } else {
-            return Arrays.asList(roleTag);
+            return Collections.singletonList(roleTag);
         }
     }
 
-    //make safer parsing from JSON
     public static Role lookupNotNull(String name) {
         try {
             return Role.valueOf(name);
@@ -72,7 +71,6 @@ public enum Role {
         }
     }
 
-    //for new registering users:
     public static final Role DEFAULT_ROLE = ROLE_USER;
 
     public String getTags() {

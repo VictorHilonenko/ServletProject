@@ -23,9 +23,6 @@ public class ReflectUtils {
         typeMappers.put(pairClassHashCode(int.class, String.class), instanceFrom -> StringUtils.stringToInt((String) instanceFrom));
         typeMappers.put(pairClassHashCode(Role.class, String.class), instanceFrom -> Role.lookupNotNull((String) instanceFrom));
         typeMappers.put(pairClassHashCode(ServiceType.class, String.class), instanceFrom -> ServiceType.lookupNotNull((String) instanceFrom));
-
-        //...this map can be extended, if necessary
-        //also there is a possibility to make a special class for this purpose, but right now this will do
     }
 
     private static int pairClassHashCode(Class toClass, Class fromClass) {
@@ -45,7 +42,7 @@ public class ReflectUtils {
             return true;
         }
 
-        if (toClass.equals(String.class)) { //we'll use toString() for that
+        if (toClass.equals(String.class)) {
             return true;
         }
 
@@ -53,10 +50,6 @@ public class ReflectUtils {
     }
 
     private static Method setterFor(String fieldName, Class instanceClass, Class toClass) {
-        //NOTE: that wouldn't be completely legal access to a field
-        //if we use field.setAccessible(true); and then field.set(...
-        //so, let's do it through a setter if any exists:
-
         String setterName = StringUtils.camelCase("set", fieldName, true);
 
         try {
@@ -68,10 +61,6 @@ public class ReflectUtils {
     }
 
     private static Method getterFor(String fieldName, Class instanceClass) {
-        //NOTE: that wouldn't be completely legal access to a field
-        //if we use field.setAccessible(true); and then field.set(...
-        //so, let's do it through a setter if any exists:
-
         String getterName = StringUtils.camelCase("get", fieldName, true);
 
         try {
@@ -136,8 +125,6 @@ public class ReflectUtils {
     }
 
     private static Map<Method, Method> getLinkingMap(Class fromClass, Class toClass) {
-
-        //TODO make it cacheable
 
         Map<String, Class> mapFrom = Arrays.stream(fromClass.getDeclaredFields())
                 .collect(Collectors.toMap(Field::getName, Field::getType));

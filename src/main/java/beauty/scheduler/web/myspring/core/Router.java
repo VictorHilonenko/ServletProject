@@ -34,7 +34,6 @@ public class Router {
         this.notFoundEdnpoint = notFoundEdnpoint;
     }
 
-    //returns true if request has to be filtered and not go further
     public boolean restricted(HttpServletRequest req, HttpServletResponse resp) {
         Role sessionRole = Security.getUserPrincipal(req).getRole();
 
@@ -63,14 +62,12 @@ public class Router {
         RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod());
         String requestURI = req.getRequestURI();
 
-        //first quick attempt to search:
         String endpointKey = Endpoint.endpointKey(requestMethod, requestURI);
 
         if (endpoints.containsKey(endpointKey)) {
             return endpoints.get(endpointKey);
         }
 
-        //more complex search:
         return findParametrizedEndpoint(requestMethod, requestURI);
     }
 

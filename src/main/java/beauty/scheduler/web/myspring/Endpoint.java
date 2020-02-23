@@ -93,7 +93,6 @@ public class Endpoint {
     private void setUrlPattern(String urlPattern) {
         this.urlPattern = urlPattern;
 
-        //and additionally for future quick search:
         this.slashesCount = StringUtils.count(urlPattern, SLASH_SYMBOL);
         int indexOf = urlPattern.indexOf(CURLY_BRACES_LEFT);
         if (indexOf == -1) {

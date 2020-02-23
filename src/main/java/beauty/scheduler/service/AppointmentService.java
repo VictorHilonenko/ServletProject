@@ -32,6 +32,10 @@ import static beauty.scheduler.util.AppConstants.*;
 public class AppointmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentService.class);
 
+    private final String HIDDEN = "H";
+    private final String READONLY = "R";
+    private final String WRITE = "W";
+
     @InjectDependency
     private AppointmentDao appointmentDao;
     @InjectDependency
@@ -53,19 +57,15 @@ public class AppointmentService {
         String strTime = map.getOrDefault("time", "");
         String strServiceType = map.getOrDefault("serviceType", "");
 
-        //validate incoming data
         String message = validateAppointmentDataForAdd(strDate, strTime, strServiceType, userPrincipal);
 
         if (!"".equals(message)) {
-            //not valid
             return message;
         }
 
-        //try to reserve Master for the date and time, if any is available for that ServiceType
         message = appointmentDao.reserveTime(userPrincipal.getId().get(), strDate, strTime, strServiceType, userPrincipal.getCurrentLang());
 
         if (!"".equals(message)) {
-            //db issue or no idle master
             return message;
         }
 
@@ -76,7 +76,6 @@ public class AppointmentService {
         strTime = (strTime.length() == 1 ? "0" : "") + strTime;
         String strDateTime = strDate + "T" + strTime + ":00:00.000";
 
-        //check format
         byte time;
         LocalDateTime reserveDateTime;
         try {
@@ -87,19 +86,16 @@ public class AppointmentService {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
         }
 
-        //check past time
         LocalDateTime nowDateTime = LocalDateTime.now(ZONE_ID);
         if (APPOINTMENTS_TIME_TRAVELING_CHECK && reserveDateTime.isBefore(nowDateTime)) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.dateIsInThePast", userPrincipal.getCurrentLang());
         }
 
-        //check work time
         if ((time < WORK_TIME_STARTS) || (time > WORK_TIME_ENDS)) {
             LOGGER.error("not working time " + strDateTime);
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.notWorkingTime", userPrincipal.getCurrentLang());
         }
 
-        //check service type
         try {
             strServiceType = ServiceType.valueOf(strServiceType).name();
         } catch (IllegalArgumentException e) {
@@ -107,7 +103,7 @@ public class AppointmentService {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
         }
 
-        return ""; //if OK
+        return "";
     }
 
     public String setServiceProvidedByJSON(String jsonData, UserPrincipal userPrincipal) {
@@ -115,33 +111,29 @@ public class AppointmentService {
         String strId = map.getOrDefault("id", "");
         String strServiceProvided = map.getOrDefault("serviceProvided", "");
 
-        //validate incoming data
         String message = validateIncomingDataForServiceProvided(strId, strServiceProvided, userPrincipal);
         if (!"".equals(message)) {
-            //not valid
             return message;
         }
 
-        //try to find the Appointment
         Optional<Appointment> optionalAppointment;
         try {
             optionalAppointment = appointmentDao.getById(Integer.parseInt(strId));
         } catch (SQLException | ExtendedException e) {
+            LOGGER.error("couldn't get appointment by id " + e.getMessage());
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", userPrincipal.getCurrentLang());
         }
         if (!optionalAppointment.isPresent()) {
+            LOGGER.error("no appointment for id " + strId);
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.appointmentNotFound", userPrincipal.getCurrentLang());
         }
         Appointment appointment = optionalAppointment.get();
 
-        //check politics for set "service provided"
         message = validateAppointmentForSetServiceProvided(appointment, userPrincipal);
         if (!"".equals(message)) {
-            //not valid
             return message;
         }
 
-        //action itself
         appointment.setServiceProvided(true);
 
         return saveWithTransaction(appointment, userPrincipal.getCurrentLang());
@@ -177,7 +169,6 @@ public class AppointmentService {
     }
 
     private String validateIncomingDataForServiceProvided(String strId, String strServiceProvided, UserPrincipal userPrincipal) {
-        //check format
         try {
             int id = Integer.parseInt(strId);
         } catch (DateTimeParseException e) {
@@ -190,16 +181,14 @@ public class AppointmentService {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.youCanOnlySetItChecked", userPrincipal.getCurrentLang());
         }
 
-        return ""; //if OK
+        return "";
     }
 
     private String validateAppointmentForSetServiceProvided(Appointment appointment, UserPrincipal userPrincipal) {
-        //is it not set yet?
         if (appointment.getServiceProvided()) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.alreadySet", userPrincipal.getCurrentLang());
         }
 
-        //maybe it is in future?
         LocalDateTime nowDateTime = LocalDateTime.now(ZONE_ID);
         LocalDateTime appointmentDateTime = LocalDateTime.of(appointment.getAppointmentDate(), LocalTime.of(appointment.getAppointmentTime(), 0));
 
@@ -207,22 +196,19 @@ public class AppointmentService {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.dateIsInFuture", userPrincipal.getCurrentLang());
         }
 
-        //is user authenticated?
         if (!userPrincipal.getId().isPresent()) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.notAuthenticated", userPrincipal.getCurrentLang());
         }
 
-        //does he has authority?
         if (!userPrincipal.getRole().equals(Role.ROLE_MASTER)) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.hasNoAuthority", userPrincipal.getCurrentLang());
         }
 
-        //is it his/her appointment?
         if (appointment.getMaster().getId() != userPrincipal.getId().get()) {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.onlyMasterCanSetThis", userPrincipal.getCurrentLang());
         }
 
-        return ""; //if OK
+        return "";
     }
 
     private AppointmentDTO appointmentToDTO(Appointment appointment, UserPrincipal userPrincipal) {
@@ -233,24 +219,20 @@ public class AppointmentService {
         return appointmentDTO;
     }
 
-    //fields with prefixes "rights_" are used in frontend to provide rights for separate roles
-    //values can be: "H" - hidden, "R" - read only, "W" - write
     private void setFieldsAndRightsToDTOAccordingToPolicy(AppointmentDTO appointmentDTO, Appointment appointment, UserPrincipal userPrincipal) {
         String email = userPrincipal.getEmail();
         Role role = userPrincipal.getRole();
         String lang = userPrincipal.getCurrentLang();
         HashMap<String, String> fieldsMap = appointmentDTO.getMap();
 
-        //common fields:
         fieldsMap.put("id", Integer.toString(appointment.getId()));
-        fieldsMap.put("rights_id", "H");
+        fieldsMap.put("rights_id", HIDDEN);
         fieldsMap.put("date", appointment.getAppointmentDate().toString());
-        fieldsMap.put("rights_date", "R");
+        fieldsMap.put("rights_date", READONLY);
         fieldsMap.put("time", Byte.toString(appointment.getAppointmentTime()));
-        fieldsMap.put("rights_time", "R");
+        fieldsMap.put("rights_time", READONLY);
         fieldsMap.put("serviceType", appointment.getServiceType().name());
-        fieldsMap.put("rights_serviceType", "R");
-        //
+        fieldsMap.put("rights_serviceType", READONLY);
 
         if (role.equals(Role.ROLE_USER)) {
             addFieldsForUser(fieldsMap, appointment, email, lang);
@@ -264,11 +246,11 @@ public class AppointmentService {
     private void addFieldsForUser(HashMap<String, String> fieldsMap, Appointment appointment, String email, String lang) {
         if (email.equals(appointment.getCustomer().getEmail())) {
             fieldsMap.put("customer_name", UserService.getLocalizedName(appointment.getCustomer(), lang));
-            fieldsMap.put("rights_customer_name", "R");
+            fieldsMap.put("rights_customer_name", READONLY);
 
             if (appointment.getServiceProvided()) {
                 fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
-                fieldsMap.put("rights_serviceProvided", "R");
+                fieldsMap.put("rights_serviceProvided", READONLY);
             }
         }
     }
@@ -276,40 +258,39 @@ public class AppointmentService {
     private void addFieldsForMaster(HashMap<String, String> fieldsMap, Appointment appointment, String email, String lang) {
         if (email.equals(appointment.getMaster().getEmail())) {
             fieldsMap.put("customer_name", UserService.getLocalizedName(appointment.getCustomer(), lang));
-            fieldsMap.put("rights_customer_name", "R");
+            fieldsMap.put("rights_customer_name", READONLY);
             fieldsMap.put("master_name", UserService.getLocalizedName(appointment.getMaster(), lang));
-            fieldsMap.put("rights_master_name", "R");
+            fieldsMap.put("rights_master_name", READONLY);
 
             fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
             if (appointment.getServiceProvided()) {
-                fieldsMap.put("rights_serviceProvided", "R");
+                fieldsMap.put("rights_serviceProvided", READONLY);
             } else {
-                fieldsMap.put("rights_serviceProvided", "W");
+                fieldsMap.put("rights_serviceProvided", WRITE);
             }
         } else if (email.equals(appointment.getCustomer().getEmail())) {
-            //that's possible when a master was a Customer for some service
             if (appointment.getServiceProvided()) {
                 fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
-                fieldsMap.put("rights_serviceProvided", "R");
+                fieldsMap.put("rights_serviceProvided", READONLY);
             }
         }
     }
 
     private void addFieldsForAdmin(HashMap<String, String> fieldsMap, Appointment appointment, String lang) {
         fieldsMap.put("customer_email", appointment.getCustomer().getEmail());
-        fieldsMap.put("rights_customer_email", "H");
+        fieldsMap.put("rights_customer_email", HIDDEN);
 
         fieldsMap.put("customer_name", UserService.getLocalizedName(appointment.getCustomer(), lang) + " \n" + appointment.getCustomer().getTelNumber());
-        fieldsMap.put("rights_customer_name", "R");
+        fieldsMap.put("rights_customer_name", READONLY);
 
         fieldsMap.put("master_email", appointment.getMaster().getEmail());
-        fieldsMap.put("rights_master_email", "H");
+        fieldsMap.put("rights_master_email", HIDDEN);
 
         fieldsMap.put("master_name", UserService.getLocalizedName(appointment.getMaster(), lang) + " \n" + appointment.getMaster().getTelNumber());
-        fieldsMap.put("rights_master_name", "R");
+        fieldsMap.put("rights_master_name", READONLY);
 
         fieldsMap.put("serviceProvided", Boolean.toString(appointment.getServiceProvided()));
-        fieldsMap.put("rights_serviceProvided", "R");
+        fieldsMap.put("rights_serviceProvided", READONLY);
     }
 
     public void setAppointmentDao(AppointmentDao appointmentDao) {

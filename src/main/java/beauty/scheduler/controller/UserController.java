@@ -53,7 +53,7 @@ public class UserController {
         }
 
         if (errors.size() > 0) {
-            form.setPassword(""); //classical way
+            form.setPassword("");
             req.setAttribute(ATTR_FORM, form);
 
             req.setAttribute(ATTR_ERRORS, errors);
@@ -87,7 +87,7 @@ public class UserController {
             FormValidator.appendError(errors, "", "warning.invalidUsernameAndOrPassword");
         }
         if (errors.size() > 0) {
-            form.setPassword(""); //classical way
+            form.setPassword("");
 
             req.setAttribute(ATTR_FORM, form);
             req.setAttribute(ATTR_ERRORS, errors);
@@ -95,9 +95,6 @@ public class UserController {
             return DEFAULT_TEMPLATE;
         }
 
-        //depending on business logic we could call userService, so it could make
-        //some actions like saving login/logout timing to DB, etc. and then call Security.loginUser
-        //but in this project task that was not determined, so, let's "Keep It Simple Stupid":
         UserPrincipal userPrincipal = Security.buildUserPrincipal(req, verifiedUser.get());
         Security.logInUser(req, userPrincipal);
 
@@ -108,9 +105,6 @@ public class UserController {
     @Restriction(role = Role.notAuthenticated, redirection = "/")
     public String logout(HttpServletRequest req) {
 
-        //depending on business logic we could call userService, so it could make
-        //some actions like saving login/logout timing to DB, etc. and then call Security.loginUser
-        //but in this project task that was not determined, so, let's "Keep It Simple Stupid":
         Security.logOut(req);
 
         return REDIRECT + "/";

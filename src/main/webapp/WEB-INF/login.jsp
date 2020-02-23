@@ -7,7 +7,7 @@
 <jsp:include page="/WEB-INF/header.jsp" />
 
 	<section>
-		<h1>Login page</h1>
+		<h1><fmt:message key="i18n.loginPage"/></h1>
 		<div class="form-cont">
 			<form action="/login" method="post">
                 <c:if test = "${errors.containsKey('')}">

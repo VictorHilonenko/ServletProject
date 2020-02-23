@@ -21,7 +21,6 @@ public enum ServiceType {
         return i18n;
     }
 
-    //make safer parsing from JSON
     public static ServiceType lookupNotNull(String name) {
         try {
             return ServiceType.valueOf(name);

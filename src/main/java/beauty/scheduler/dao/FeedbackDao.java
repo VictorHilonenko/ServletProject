@@ -37,7 +37,6 @@ public class FeedbackDao extends GenericDao<Feedback> {
 
     @Override
     public boolean create(Feedback entity) throws ExtendedException {
-        //not necessary in this project logic
         throw new ExtendedException(ExceptionKind.WRONG_METHOD_CALLED);
     }
 

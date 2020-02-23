@@ -8,7 +8,6 @@ public interface AppConstants {
 
     String MAIN_PACKAGE = "beauty.scheduler";
 
-    //for tuning/adjustment:
     String SITE_URL = "http://localhost:8989";
 
     String WORK_TIME_STARTS_ATTR = "WORK_TIME_STARTS";
@@ -16,12 +15,10 @@ public interface AppConstants {
     byte WORK_TIME_STARTS = 8;
     byte WORK_TIME_ENDS = 20;
 
-    boolean APPOINTMENTS_TIME_TRAVELING_CHECK = false; //true - for prod, false - for debug
+    boolean APPOINTMENTS_TIME_TRAVELING_CHECK = false;
 
-    //receive emails to:
-    String DEBUG_EMAIL = "admin_email_test@ukr.net"; //"" - for prod, or any proxy email for debug
+    String DEBUG_EMAIL = "admin_email_test@ukr.net";
 
-    //send emails from:
     String MAIL_HOST = "smtp.ukr.net";
     String MAIL_USERNAME = "admin_email_test@ukr.net";
     String MAIL_FROM = "Beauty scheduler <admin_email_test@ukr.net>";
@@ -57,7 +54,6 @@ public interface AppConstants {
     String CURLY_BRACES_LEFT = "{";
     String CURLY_BRACES_RIGHT = "}";
 
-    //algorithmic, no sense to change:
     String DEFAULT_TEMPLATE = "default";
     String REDIRECT = "redirect:";
 
@@ -76,6 +72,5 @@ public interface AppConstants {
 
     String URI_PREFIX = "uri_";
 
-    String TABLENAME = "{tablename}"; //this literal will be substituted for a table in runtime
-
+    String TABLENAME = "{tablename}";
 }
