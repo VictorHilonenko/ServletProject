@@ -7,11 +7,11 @@ import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.LocaleUtils;
 import beauty.scheduler.util.StringUtils;
-import beauty.scheduler.web.myspring.ContentType;
-import beauty.scheduler.web.myspring.RequestMethod;
 import beauty.scheduler.web.myspring.UserPrincipal;
 import beauty.scheduler.web.myspring.annotation.*;
 import beauty.scheduler.web.myspring.core.Security;
+import beauty.scheduler.web.myspring.enums.ContentType;
+import beauty.scheduler.web.myspring.enums.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package beauty.scheduler.web.myspring;
+package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
@@ -6,6 +6,8 @@ import beauty.scheduler.util.StringUtils;
 import beauty.scheduler.web.myspring.annotation.DefaultTemplate;
 import beauty.scheduler.web.myspring.annotation.EndpointMethod;
 import beauty.scheduler.web.myspring.annotation.Restriction;
+import beauty.scheduler.web.myspring.enums.ContentType;
+import beauty.scheduler.web.myspring.enums.RequestMethod;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -19,7 +21,7 @@ import java.util.StringJoiner;
 import static beauty.scheduler.util.AppConstants.CURLY_BRACES_LEFT;
 import static beauty.scheduler.util.AppConstants.SLASH_SYMBOL;
 
-public class Endpoint {
+class Endpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(Endpoint.class);
 
     private Method method;
@@ -32,7 +34,7 @@ public class Endpoint {
     private String quickUrlPattern;
     private int slashesCount;
 
-    public static String endpointKey(RequestMethod requestMethod, String urlPattern) {
+    static String endpointKey(RequestMethod requestMethod, String urlPattern) {
         StringJoiner sj = new StringJoiner("<-");
         sj.add(urlPattern);
         sj.add(requestMethod.name());
@@ -46,6 +48,7 @@ public class Endpoint {
         this.templates = new RoleMap<>();
 
         if (endpointMethod == null) {
+            this.exceptions.addValueForRole(Role.all, ExceptionKind.PAGE_NOT_FOUND);
             return;
         }
 
@@ -86,7 +89,7 @@ public class Endpoint {
         });
     }
 
-    public String getEndpointKey() {
+    String getEndpointKey() {
         return endpointKey(this.requestMethod, this.urlPattern);
     }
 
@@ -102,83 +105,51 @@ public class Endpoint {
         }
     }
 
-    public boolean hasExceptionForRole(Role role) {
+    boolean hasExceptionForRole(Role role) {
         return exceptions.getForRole(role) != null;
     }
 
-    public boolean hasRedirectionForRole(Role role) {
+    boolean hasRedirectionForRole(Role role) {
         return redirections.getForRole(role) != null;
     }
 
-    public boolean hasDefaultTemplateForRole(Role role) {
+    boolean hasDefaultTemplateForRole(Role role) {
         return templates.getForRole(role) != null;
     }
 
-    public ExceptionKind getExceptionForRole(Role role) {
+    ExceptionKind getExceptionForRole(Role role) {
         return exceptions.getForRole(role);
     }
 
-    public String getRedirectionForRole(Role role) {
+    String getRedirectionForRole(Role role) {
         return redirections.getForRole(role);
     }
 
-    public String getDefaultTemplateForRole(Role role) {
+    String getDefaultTemplateForRole(Role role) {
         return templates.getForRole(role);
     }
 
-    public RequestMethod getRequestMethod() {
+    RequestMethod getRequestMethod() {
         return this.requestMethod;
     }
 
-    public String getUrlPattern() {
+    String getUrlPattern() {
         return this.urlPattern;
     }
 
-    public ContentType getContentType() {
+    ContentType getContentType() {
         return contentType;
     }
 
-    public Method getMethod() {
+    Method getMethod() {
         return this.method;
     }
 
-    public RoleMap<ExceptionKind> getExceptions() {
-        return this.exceptions;
-    }
-
-    public RoleMap<String> getRedirections() {
-        return this.redirections;
-    }
-
-    public RoleMap<String> getTemplates() {
-        return this.templates;
-    }
-
-    private void setRequestMethod(RequestMethod requestMethod) {
-        this.requestMethod = requestMethod;
-    }
-
-    public void setMethod(Method method) {
-        this.method = method;
-    }
-
-    private void setExceptions(RoleMap<ExceptionKind> exceptions) {
-        this.exceptions = exceptions;
-    }
-
-    private void setRedirections(RoleMap<String> redirections) {
-        this.redirections = redirections;
-    }
-
-    private void setTemplates(RoleMap<String> templates) {
-        this.templates = templates;
-    }
-
-    public int getSlashesCount() {
+    int getSlashesCount() {
         return slashesCount;
     }
 
-    public String getQuickUrlPattern() {
+    String getQuickUrlPattern() {
         return quickUrlPattern;
     }
 

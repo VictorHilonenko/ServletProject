@@ -8,29 +8,30 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectUtils.class);
 
-    private static Map<Integer, InstanceMapper> typeMappers = new HashMap();
+    private static Map<String, InstanceMapper> typeMappers;
 
     static {
-        typeMappers.put(pairClassHashCode(int.class, null), instanceFrom -> 0);
-        typeMappers.put(pairClassHashCode(int.class, String.class), instanceFrom -> StringUtils.stringToInt((String) instanceFrom));
-        typeMappers.put(pairClassHashCode(Role.class, String.class), instanceFrom -> Role.lookupNotNull((String) instanceFrom));
-        typeMappers.put(pairClassHashCode(ServiceType.class, String.class), instanceFrom -> ServiceType.lookupNotNull((String) instanceFrom));
+        Map<String, InstanceMapper> tmpTypeMappers = new HashMap<>();
+
+        tmpTypeMappers.put(pairClassHashCode(int.class, null), instanceFrom -> 0);
+        tmpTypeMappers.put(pairClassHashCode(int.class, String.class), instanceFrom -> StringUtils.stringToInt((String) instanceFrom));
+        tmpTypeMappers.put(pairClassHashCode(Role.class, String.class), instanceFrom -> Role.lookupNotNull((String) instanceFrom));
+        tmpTypeMappers.put(pairClassHashCode(ServiceType.class, String.class), instanceFrom -> ServiceType.lookupNotNull((String) instanceFrom));
+
+        typeMappers = Collections.unmodifiableMap(tmpTypeMappers);
     }
 
-    private static int pairClassHashCode(Class toClass, Class fromClass) {
-        int result = 1;
-        final int PRIME = 59;
-        result = result * PRIME + toClass.hashCode();
-        result = result * PRIME + (fromClass == null ? 79 : fromClass.hashCode());
-        return result;
+    private static String pairClassHashCode(Class toClass, Class fromClass) {
+        StringJoiner sj = new StringJoiner("_");
+        sj.add(toClass == null ? "null" : toClass.getSimpleName());
+        sj.add(fromClass == null ? "null" : fromClass.getSimpleName());
+        return sj.toString();
     }
 
     private static boolean areConvertableTypes(Class toClass, Class fromClass) {
@@ -84,7 +85,7 @@ public class ReflectUtils {
             return true;
         }
 
-        int key = pairClassHashCode(toClass, fromClass);
+        String key = pairClassHashCode(toClass, fromClass);
 
         if (!typeMappers.containsKey(key)) {
             if (toClass.equals(String.class)) {
@@ -147,7 +148,7 @@ public class ReflectUtils {
             linkingMap.put(setterFor(fieldName, toClass, toFieldClass), getterFor(fieldName, fromClass));
         }
 
-        return linkingMap;
+        return Collections.unmodifiableMap(linkingMap);
     }
 
     public static Object map(Object instanceFrom, Object instanceTo) throws IllegalAccessException, InvocationTargetException {

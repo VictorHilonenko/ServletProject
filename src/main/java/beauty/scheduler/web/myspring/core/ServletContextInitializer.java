@@ -1,12 +1,9 @@
 package beauty.scheduler.web.myspring.core;
 
-import beauty.scheduler.entity.enums.Role;
-import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.LocaleUtils;
-import beauty.scheduler.web.myspring.Endpoint;
-import beauty.scheduler.web.myspring.RequestMethod;
 import beauty.scheduler.web.myspring.annotation.EndpointMethod;
+import beauty.scheduler.web.myspring.enums.RequestMethod;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.slf4j.Logger;
@@ -24,6 +21,11 @@ public class ServletContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServletContextInitializer.class);
 
     public static void init(ServletContext context) {
+        if (context.getAttribute(ATTR_ROUTER) != null) {
+            LOGGER.error("attempt to call ServletContextInitializer.init() method twice!");
+            throw new IllegalAccessError("It is forbidden to call this method twice!");
+        }
+
         BeanFactory beanFactory;
         try {
             beanFactory = new BeanFactory(new HashMap<>());
@@ -67,9 +69,6 @@ public class ServletContextInitializer {
             return endpoints.get(keyNotFoundEdnpoint);
         }
 
-        Endpoint endpoint = new Endpoint(null);
-        endpoint.getExceptions().addValueForRole(Role.all, ExceptionKind.PAGE_NOT_FOUND);
-
-        return endpoint;
+        return new Endpoint(null);
     }
 }

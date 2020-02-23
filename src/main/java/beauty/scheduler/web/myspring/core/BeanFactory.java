@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static beauty.scheduler.util.AppConstants.MAIN_PACKAGE;
 
-public class BeanFactory {
+class BeanFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanFactory.class);
 
     private Map<String, Object> instancesContainer;

@@ -4,8 +4,7 @@ import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.StringUtils;
-import beauty.scheduler.web.myspring.ContentType;
-import beauty.scheduler.web.myspring.Endpoint;
+import beauty.scheduler.web.myspring.enums.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ import java.lang.reflect.Method;
 import static beauty.scheduler.util.AppConstants.*;
 import static beauty.scheduler.web.myspring.core.ParamHelper.getAllParameters;
 
-public class ProcessHelper {
+class ProcessHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessHelper.class);
 
     static String process(Router router, HttpServletRequest req, HttpServletResponse resp) {

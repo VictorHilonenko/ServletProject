@@ -1,4 +1,4 @@
-package beauty.scheduler.web.myspring;
+package beauty.scheduler.web.myspring.enums;
 
 public enum RequestMethod {
     DELETE,
