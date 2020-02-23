@@ -3,7 +3,6 @@ package beauty.scheduler.web.myspring.core;
 import beauty.scheduler.util.ExceptionKind;
 import beauty.scheduler.util.ExtendedException;
 import beauty.scheduler.util.ReflectUtils;
-import beauty.scheduler.web.myspring.Endpoint;
 import beauty.scheduler.web.myspring.annotation.Json;
 import beauty.scheduler.web.myspring.annotation.ParamName;
 import org.slf4j.Logger;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static beauty.scheduler.util.AppConstants.URI_PREFIX;
 
-public class ParamHelper {
+class ParamHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParamHelper.class);
 
     static Object[] getAllParameters(Endpoint endpoint, HttpServletRequest req, HttpServletResponse resp) {

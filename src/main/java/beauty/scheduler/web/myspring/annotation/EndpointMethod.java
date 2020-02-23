@@ -1,7 +1,7 @@
 package beauty.scheduler.web.myspring.annotation;
 
-import beauty.scheduler.web.myspring.ContentType;
-import beauty.scheduler.web.myspring.RequestMethod;
+import beauty.scheduler.web.myspring.enums.ContentType;
+import beauty.scheduler.web.myspring.enums.RequestMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

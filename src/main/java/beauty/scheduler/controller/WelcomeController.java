@@ -2,10 +2,10 @@ package beauty.scheduler.controller;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
-import beauty.scheduler.web.myspring.RequestMethod;
 import beauty.scheduler.web.myspring.annotation.DefaultTemplate;
 import beauty.scheduler.web.myspring.annotation.EndpointMethod;
 import beauty.scheduler.web.myspring.annotation.ServiceComponent;
+import beauty.scheduler.web.myspring.enums.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

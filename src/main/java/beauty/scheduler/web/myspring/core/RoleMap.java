@@ -1,17 +1,17 @@
-package beauty.scheduler.web.myspring;
+package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.enums.Role;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RoleMap<T> {
+class RoleMap<T> {
     private Map<Role, T> roleMap = new HashMap<>();
 
     public RoleMap() {
     }
 
-    public RoleMap addValueForRole(Role roleTag, T value) {
+    RoleMap addValueForRole(Role roleTag, T value) {
         Role.getAllByRoleTag(roleTag).forEach(role -> {
             this.roleMap.put(role, value);
         });

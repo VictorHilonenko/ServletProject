@@ -2,8 +2,7 @@ package beauty.scheduler.web.myspring.core;
 
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.util.StringUtils;
-import beauty.scheduler.web.myspring.Endpoint;
-import beauty.scheduler.web.myspring.RequestMethod;
+import beauty.scheduler.web.myspring.enums.RequestMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public class Router {
         ProcessHelper.process(router, req, resp);
     }
 
-    public Router(BeanFactory beanFactory, Map<String, Endpoint> endpoints, Endpoint notFoundEdnpoint) {
+    Router(BeanFactory beanFactory, Map<String, Endpoint> endpoints, Endpoint notFoundEdnpoint) {
         this.endpoints = endpoints;
         this.beanFactory = beanFactory;
         this.notFoundEdnpoint = notFoundEdnpoint;
