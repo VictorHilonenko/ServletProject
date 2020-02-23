@@ -44,8 +44,7 @@
 ## Установка  
 
 1. Клонувати проект (git clone git://github.com/VictorHilonenko/ServletProject.git BeautyScheduler)
-1. Ви можете залишити налаштування у `/src/main/webapp/META-INF/context.xml` "як є" і почати роботу одразу
-1. Або виконати наступні кроки:
+1. Виконати наступні кроки:
 - В разі потреби встановити MySQL 
 - Встановити базу даних: schema.sql з папки DUMP_DB
 - Наповнити базу даними: populate.sql з папки DUMP_DB

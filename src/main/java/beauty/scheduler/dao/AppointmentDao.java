@@ -38,8 +38,6 @@ public class AppointmentDao extends GenericDao<Appointment> {
         return internEntities(list);
     }
 
-    //NOTE: in this project if we wouldn't intern/flyweight the list of instances
-    //it would not cause any issue, but anyway, it's better to do everything right
     private List<Appointment> internEntities(List<Appointment> list) {
         Map<Integer, User> users = new HashMap<>();
 
@@ -70,28 +68,9 @@ public class AppointmentDao extends GenericDao<Appointment> {
     public boolean create(Appointment entity) throws SQLException {
         LOGGER.info("we don't use this function to create new Appointments");
         throw new SQLException("we don't use this function to create new Appointments");
-        //otherwise it would be:
-        //return create(ps -> {
-        //    ps.setString(1, entity.getAppointmentDate().toString());
-        //    ps.setByte(2, entity.getAppointmentTime());
-        //    ps.setString(3, entity.getServiceType().name());
-        //    ps.setInt(4, entity.getCustomer().getId());
-        //    ps.setInt(5, entity.getMaster().getId());
-        //    ps.setBoolean(6, entity.getServiceProvided());
-        //});
     }
 
     public String reserveTime(int customerId, String strDate, String strTime, String strServiceType, String lang) {
-        //NOTE: this insert statement solves the next task:
-        //it finds an idle Master who can provide the requested ServiceType.
-        //if there is no one, there will be an exception.
-        //this allows us to make "two actions at one time" (select and insert) or "rollback" (do nothing otherwise)
-        //without using transactions at all
-
-        //COMMENT: There is a "wrapper" (outer select for master_id value) in sql-statement.
-        //It solves a sql-syntax problem:
-        //"Error Code: 1093 You can't specify target table 'appointments' for update in FROM clause"
-        //Error occurs when we don't use that "wrapper", but it starts work when we wrap it with that simple select.
 
         String query =
                 "INSERT INTO appointments (\n" +
@@ -138,6 +117,7 @@ public class AppointmentDao extends GenericDao<Appointment> {
             if (e.getMessage().equals(NO_IDLE_MASTER_SQL_MESSAGE)) {
                 return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("warning.noIdleMaster", lang);
             } else {
+                LOGGER.error("during reserve time get: " + e.getMessage());
                 return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", lang);
             }
         }

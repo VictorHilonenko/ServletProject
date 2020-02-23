@@ -5,7 +5,7 @@ public class FeedbackDTO {
 
     private String appointmentDate;
 
-    private Byte appointmentTime;
+    private byte appointmentTime;
 
     private String serviceType;
 
@@ -13,14 +13,14 @@ public class FeedbackDTO {
 
     private String masterName;
 
-    private Byte rating;
+    private byte rating;
 
     private String textMessage;
 
     public FeedbackDTO() {
     }
 
-    public FeedbackDTO(int id, String appointmentDate, Byte appointmentTime, String serviceType, String customerName, String masterName, Byte rating, String textMessage) {
+    public FeedbackDTO(int id, String appointmentDate, byte appointmentTime, String serviceType, String customerName, String masterName, byte rating, String textMessage) {
         this.id = id;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
@@ -47,11 +47,11 @@ public class FeedbackDTO {
         this.appointmentDate = appointmentDate;
     }
 
-    public Byte getAppointmentTime() {
+    public byte getAppointmentTime() {
         return appointmentTime;
     }
 
-    public void setAppointmentTime(Byte appointmentTime) {
+    public void setAppointmentTime(byte appointmentTime) {
         this.appointmentTime = appointmentTime;
     }
 
@@ -79,11 +79,11 @@ public class FeedbackDTO {
         this.masterName = masterName;
     }
 
-    public Byte getRating() {
+    public byte getRating() {
         return rating;
     }
 
-    public void setRating(Byte rating) {
+    public void setRating(byte rating) {
         this.rating = rating;
     }
 

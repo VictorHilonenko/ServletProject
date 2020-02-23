@@ -34,8 +34,7 @@ public class EmailMessageService {
         return emailMessageDao.findByEmail(email);
     }
 
-    //NOTE: it's a "one time get", the next time there will be no such email by the same quickAccessCode found
-    public String getEmailByQuickAccessCode(String quickAccessCode) throws SQLException, ExtendedException {
+    String getEmailByQuickAccessCode(String quickAccessCode) throws SQLException, ExtendedException {
         if (StringUtils.isEmpty(quickAccessCode)) {
             return "";
         }
@@ -56,7 +55,7 @@ public class EmailMessageService {
         return emailMessage.getEmail();
     }
 
-    public void createEmailForProvidedService(Appointment appointment) throws SQLException, ExtendedException {
+    void createEmailForProvidedService(Appointment appointment) throws SQLException, ExtendedException {
         String customerLang = getUsersLang(appointment.getCustomer());
 
         String quickAccessCode = UUID.randomUUID().toString();
@@ -120,12 +119,6 @@ public class EmailMessageService {
             LOGGER.error("email not updated " + emailMessage.toString());
             return;
         }
-    }
-
-    private void deleteOldEmailMessages() {
-        //would be interesting to add
-        // java.util.concurrent.ScheduledExecutorService
-        //for that, but it is "out of scope" now
     }
 
     public void setEmailMessageDao(EmailMessageDao emailMessageDao) {

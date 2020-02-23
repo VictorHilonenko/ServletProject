@@ -12,7 +12,7 @@ public class LocaleUtils {
     private static final Map<Locale, ResourceBundle> messagesBundles = new HashMap<>();
 
     public static final Locale LOCALE_ENGLISH = Locale.ENGLISH;
-    public static final Locale LOCALE_UKRAINIAN = Locale.forLanguageTag("uk"); //there is no Locale for "uk" in java.util.Locale yet
+    public static final Locale LOCALE_UKRAINIAN = Locale.forLanguageTag("uk");
 
     private static final Locale DEFAULT_LOCALE = LOCALE_ENGLISH;
 

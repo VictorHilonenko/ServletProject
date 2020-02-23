@@ -56,7 +56,6 @@ public class UserService {
         user.setRole(Role.DEFAULT_ROLE);
         user.setServiceType(ServiceType.NULL);
 
-        //Hash password for the first time
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
 
@@ -78,7 +77,6 @@ public class UserService {
         return list;
     }
 
-    //it's possible to make this method general/universal, but now it's a first approach:
     public String updateUserByJSON(String jsonData, UserPrincipal userPrincipal) {
         Map<String, String> map = StringUtils.mapFromJSON(jsonData);
         String email = map.getOrDefault("email", "");

@@ -106,24 +106,18 @@ public class ParamHelper {
     }
 
     private static String getRequestValue(HttpServletRequest req, String name) {
-        //try to find in request:
         if (req.getParameterMap().containsKey(name)) {
             return req.getParameter(name);
         }
 
-        //try to find among URI attributes, they are already in req with URI_PREFIX prefix:
         if (hasAttribute(req.getAttributeNames(), URI_PREFIX + name)) {
             return (String) req.getAttribute(URI_PREFIX + name);
         }
 
-        //try to find among session attributes
         HttpSession session = Security.getActualSession(req);
         if (hasAttribute(session.getAttributeNames(), name)) {
             return (String) session.getAttribute(name);
         }
-
-        //there is a "feature" with radio buttons in JSP: if user did not select any, req.getParameterMap() has no such parameter then,
-        //so, if we didn't found a value, we simply return null:
 
         return null;
     }
@@ -152,7 +146,7 @@ public class ParamHelper {
         String[] patternParts = urlPattern.split("/");
         String[] uriParts = req.getRequestURI().split("/");
 
-        if (patternParts.length != uriParts.length) { //it's impossible, but better to check
+        if (patternParts.length != uriParts.length) {
             LOGGER.warn("wrong number of parameters in " + urlPattern);
         }
 

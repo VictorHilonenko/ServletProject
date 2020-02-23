@@ -21,7 +21,6 @@ public class SQLStatementsGenerator {
 
     private Map<String, String> cachedQueriesTexts = new HashMap<>();
 
-    //NOTE: now it's designed only for oneToMany cases, manyToMany is not used in this project
     String getGeneralSelectQueryFor(Class entityClass, String addition) throws ExtendedException {
         String key;
         if (StringUtils.isEmpty(addition)) {
@@ -211,9 +210,7 @@ public class SQLStatementsGenerator {
             }
         }
 
-        //NOTE: in this project is considered, that ID column of any table will have only ID_FIELD name/identifier
-
-        public String getTableName() {
+        String getTableName() {
             return tableName;
         }
 
@@ -272,9 +269,7 @@ public class SQLStatementsGenerator {
             }
         }
 
-        //NOTE: in this project is considered, that ID column of any table will have only ID_FIELD name/identifier
-
-        public String getTableName() {
+        String getTableName() {
             return tableName;
         }
 
@@ -348,7 +343,6 @@ public class SQLStatementsGenerator {
                 }
                 String columnName = field.getAnnotation(DBColumn.class).name();
                 if (columnName.equals(ID_FIELD)) {
-                    //we don't update primary keys
                     continue;
                 }
 
@@ -356,7 +350,7 @@ public class SQLStatementsGenerator {
             }
         }
 
-        public String getTableName() {
+        String getTableName() {
             return tableName;
         }
 
@@ -376,7 +370,7 @@ public class SQLStatementsGenerator {
             this.strDELETE = "DELETE FROM " + this.tableName + " \n";
         }
 
-        public String getTableName() {
+        String getTableName() {
             return tableName;
         }
 

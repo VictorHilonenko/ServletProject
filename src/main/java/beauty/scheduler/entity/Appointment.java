@@ -22,7 +22,7 @@ public class Appointment {
     private LocalDate appointmentDate;
 
     @DBColumn(name = "appointment_time")
-    private Byte appointmentTime; //in this Project logic scope time will be only integer, like 8...20
+    private byte appointmentTime;
 
     @DBColumn(name = "service_type")
     private ServiceType serviceType;
@@ -34,12 +34,12 @@ public class Appointment {
     private User master;
 
     @DBColumn(name = "service_provided")
-    private Boolean serviceProvided;
+    private boolean serviceProvided;
 
     public Appointment() {
     }
 
-    public Appointment(int id, LocalDate appointmentDate, Byte appointmentTime, ServiceType serviceType, User customer, User master, Boolean serviceProvided) {
+    public Appointment(int id, LocalDate appointmentDate, byte appointmentTime, ServiceType serviceType, User customer, User master, boolean serviceProvided) {
         this.id = id;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
@@ -70,11 +70,11 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
     }
 
-    public Byte getAppointmentTime() {
+    public byte getAppointmentTime() {
         return appointmentTime;
     }
 
-    public void setAppointmentTime(Byte appointmentTime) {
+    public void setAppointmentTime(byte appointmentTime) {
         this.appointmentTime = appointmentTime;
     }
 
@@ -102,11 +102,11 @@ public class Appointment {
         this.master = master;
     }
 
-    public Boolean getServiceProvided() {
+    public boolean getServiceProvided() {
         return serviceProvided;
     }
 
-    public void setServiceProvided(Boolean serviceProvided) {
+    public void setServiceProvided(boolean serviceProvided) {
         this.serviceProvided = serviceProvided;
     }
 

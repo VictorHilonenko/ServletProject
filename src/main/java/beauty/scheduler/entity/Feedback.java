@@ -17,7 +17,7 @@ public class Feedback {
     private Appointment appointment;
 
     @DBColumn(name = "rating")
-    private Byte rating;
+    private byte rating;
 
     @DBColumn(name = "text_message")
     private String textMessage;
@@ -25,7 +25,7 @@ public class Feedback {
     public Feedback() {
     }
 
-    public Feedback(int id, Appointment appointment, Byte rating, String textMessage) {
+    public Feedback(int id, Appointment appointment, byte rating, String textMessage) {
         this.id = id;
         this.appointment = appointment;
         this.rating = rating;
@@ -48,11 +48,11 @@ public class Feedback {
         this.appointment = appointment;
     }
 
-    public Byte getRating() {
+    public byte getRating() {
         return rating;
     }
 
-    public void setRating(Byte rating) {
+    public void setRating(byte rating) {
         this.rating = rating;
     }
 

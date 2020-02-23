@@ -8,8 +8,6 @@ import beauty.scheduler.entity.User;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 
-//NOTE: i'm going to remove this class at all by writing automapping class (close to that point)
-//right now extracted most such things to one place
 public interface MappersStorage {
 
     EntityMapper<User> USER_ENTITY_MAPPER = resultSet -> new User(resultSet.getInt("users_id"),

@@ -39,7 +39,7 @@ public class ProcessHelper {
         } else {
 
             processException(req, resp, ExceptionKind.NOT_SUPPORTED);
-            return "exception"; //for debug purposes
+            return "exception";
 
         }
     }
@@ -47,7 +47,7 @@ public class ProcessHelper {
     private static String processController(Router router, HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) {
         Method method = endpoint.getMethod();
 
-        if (method == null) { //it's almost impossible, but for reliability, lets's do this check
+        if (method == null) {
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
             return "exception";
         }
@@ -61,6 +61,7 @@ public class ProcessHelper {
         try {
             return (String) method.invoke(classInstance, args);
         } catch (Exception e) {
+            LOGGER.error("on processing enpoint " + endpoint + " get: " + e.getMessage());
             processException(req, resp, e);
             return "exception";
         }
@@ -69,7 +70,7 @@ public class ProcessHelper {
     private static String processResultHTML(String resultPage, HttpServletRequest req, HttpServletResponse resp, Endpoint endpoint) {
         if (StringUtils.isEmpty(resultPage)) {
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
-            return "exception"; //for debug purposes
+            return "exception";
         }
 
         if (resultPage.equals(DEFAULT_TEMPLATE)) {
@@ -77,7 +78,7 @@ public class ProcessHelper {
 
             if (StringUtils.isEmpty(defaultTemplate)) {
                 processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
-                return "exception"; //for debug purposes
+                return "exception";
             }
 
             resultPage = defaultTemplate;
@@ -85,12 +86,13 @@ public class ProcessHelper {
 
         if (resultPage.contains(REDIRECT)) {
             processRedirect(req, resp, resultPage.replace(REDIRECT, ""));
-            return "redirect"; //for debug purposes
+            return "redirect";
         }
 
         try {
             req.getRequestDispatcher(resultPage).forward(req, resp);
         } catch (Exception e) {
+            LOGGER.error("on processing enpoint " + endpoint + " get: " + e.getMessage());
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
         }
 
@@ -103,6 +105,7 @@ public class ProcessHelper {
         try {
             out = resp.getWriter();
         } catch (IOException e) {
+            LOGGER.error("on getting writer get: " + e.getMessage());
             return REST_ERROR;
         }
 
@@ -116,6 +119,7 @@ public class ProcessHelper {
         try {
             resp.sendRedirect(redirectTo);
         } catch (IOException e) {
+            LOGGER.error("on redirection to  " + redirectTo + " get: " + e.getMessage());
             processException(req, resp, ExceptionKind.PAGE_NOT_FOUND);
         }
     }

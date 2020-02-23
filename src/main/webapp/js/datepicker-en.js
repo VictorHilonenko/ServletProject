@@ -26,7 +26,7 @@ datepicker.regional[ "en" ] = {
 	dayNamesMin: [ "Su","Mo","Tu","We","Th","Fr","Sa" ],
 	weekHeader: "Wk",
 	dateFormat: $("#date_format_long").val().replace("yyyy", "yy"), //compatibility between libs... "yy/mm/dd",
-	firstDay: 1,
+	firstDay: 7,
 	isRTL: false,
 	showMonthAfterYear: false,
 	yearSuffix: "" };

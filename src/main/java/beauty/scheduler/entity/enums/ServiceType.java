@@ -3,8 +3,6 @@ package beauty.scheduler.entity.enums;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 public enum ServiceType {
     NULL("i18n.NULL"),
     HAIRDRESSING("i18n.HAIRDRESSING"),
@@ -23,20 +21,11 @@ public enum ServiceType {
         return i18n;
     }
 
-    //make safer parsing from JSON
     public static ServiceType lookupNotNull(String name) {
         try {
             return ServiceType.valueOf(name);
         } catch (IllegalArgumentException e) {
             return ServiceType.NULL;
-        }
-    }
-
-    public static Optional<ServiceType> lookupOptional(String name) {
-        try {
-            return Optional.of(ServiceType.valueOf(name));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
         }
     }
 

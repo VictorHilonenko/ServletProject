@@ -18,7 +18,7 @@ import static beauty.scheduler.util.AppConstants.*;
 public abstract class GenericDao<T> implements EntityDao<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericDao.class);
 
-    private SQLStatementsGenerator sqlStatementsGenerator = new SQLStatementsGenerator(); //NOTE: no way to inject to an Abstract class except this
+    private SQLStatementsGenerator sqlStatementsGenerator = new SQLStatementsGenerator();
 
     private Optional<T> getById(StatementMapper<T> statementMapper, EntityMapper<T> entityMapper, String query) throws SQLException {
         Optional<T> result = Optional.empty();

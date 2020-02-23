@@ -13,7 +13,7 @@ import java.util.StringJoiner;
 public class FormValidator {
     private static final Logger LOGGER = LoggerFactory.getLogger(FormValidator.class);
 
-    public static void validate(Object form, Map<String, String> errors) { //errors contains pairs <fieldName, messages>
+    public static void validate(Object form, Map<String, String> errors) {
         for (Field field : form.getClass().getDeclaredFields()) {
             validateField(form, field, errors);
         }
