@@ -39,6 +39,7 @@ This annotation is used on **method's parameters** that are described in urlPatt
 The Spring analogs for that is **@PathVariable**.
 
 ## Some examples:
+
 <div align="center">
 	<img src="https://raw.githubusercontent.com/VictorHilonenko/ServletProject/master/src/main/webapp/images/example1.png">
 </div>

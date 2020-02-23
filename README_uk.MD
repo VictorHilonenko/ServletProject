@@ -85,5 +85,3 @@
 		<td>josy@mail.com</td><td>master</td>
 	</tr>
 </table>
-
-
