@@ -29,7 +29,7 @@ public class Pagination<T> {
         this.items = items;
     }
 
-    public void setTotalRecords(int totalRecords) {
+    void setTotalRecords(int totalRecords) {
         this.totalRecords = totalRecords;
 
         totalPages = 0;
@@ -62,7 +62,7 @@ public class Pagination<T> {
         this.pageSize = pageSize;
     }
 
-    public String getQueryCount() {
+    String getQueryCount() {
         return queryCount;
     }
 
@@ -86,7 +86,7 @@ public class Pagination<T> {
         return items;
     }
 
-    public void setItems(List<T> items) {
+    void setItems(List<T> items) {
         this.items = items;
     }
 }

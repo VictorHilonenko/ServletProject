@@ -18,7 +18,7 @@ public enum ExceptionKind {
     private int statusCode;
     private String errorMessage;
 
-    private ExceptionKind(int statusCode, String errorMessage) {
+    ExceptionKind(int statusCode, String errorMessage) {
         this.statusCode = statusCode;
         this.errorMessage = errorMessage;
     }

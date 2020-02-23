@@ -39,8 +39,6 @@
 Ця анотація застосовується до **параметрів** методу, які описані в параметрі **urlPattern** між фігурними дужками {} та забезпечує зручний спосіб отримання значень параметрів, переданих в URI.
 Аналогом Spring для цього є **@PathVariable**.
 
-_**NOTE**: todo - describe **other injecting parameters possibilities** and **forms auto-assembling** features and **form-validation annotations**_
-
 ## Деякі приклади:
 
 <div align="center">

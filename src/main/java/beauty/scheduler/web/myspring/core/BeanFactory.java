@@ -22,7 +22,7 @@ public class BeanFactory {
 
     private Map<String, Object> instancesContainer;
 
-    public BeanFactory(Map<String, Object> instancesContainer) throws ExtendedException {
+    BeanFactory(Map<String, Object> instancesContainer) throws ExtendedException {
         this.instancesContainer = instancesContainer;
 
         makeInstances();
@@ -30,7 +30,7 @@ public class BeanFactory {
         injectDependencies();
     }
 
-    public Object getInstantiatedClass(String className) {
+    Object getInstantiatedClass(String className) {
         //NOTE: in this project we create only Singletons for injections.
         //Besides here we can create chains of Prototypes, if needed
 

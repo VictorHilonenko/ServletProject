@@ -28,7 +28,7 @@ import static beauty.scheduler.util.AppConstants.URI_PREFIX;
 public class ParamHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParamHelper.class);
 
-    public static Object[] getAllParameters(Endpoint endpoint, HttpServletRequest req, HttpServletResponse resp) {
+    static Object[] getAllParameters(Endpoint endpoint, HttpServletRequest req, HttpServletResponse resp) {
         Method method = endpoint.getMethod();
         Parameter[] parameters = method.getParameters();
         Object[] args = new Object[parameters.length];
