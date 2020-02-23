@@ -19,7 +19,7 @@ public class RoleMap<T> {
         return this;
     }
 
-    public T getForRole(Role role) {
+    T getForRole(Role role) {
         return roleMap.get(role);
     }
 }

@@ -38,8 +38,6 @@ However, the default template can be redefined in @EndpointMethod by returning a
 This annotation is used on **method's parameters** that are described in urlPattern with curly braces {} and provides a convenient way of getting parameters passed in URI.
 The Spring analogs for that is **@PathVariable**.
 
-_**NOTE**: todo - describe **other injecting parameters possibilities** and **forms auto-assembling** features and **form-validation annotations**_
-
 ## Some examples:
 <div align="center">
 	<img src="https://raw.githubusercontent.com/VictorHilonenko/ServletProject/master/src/main/webapp/images/example1.png">

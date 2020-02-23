@@ -147,5 +147,4 @@ public class AppointmentDao extends GenericDao<Appointment> {
 
         return delete(ps -> ps.setInt(1, entity.getId()));
     }
-
 }
