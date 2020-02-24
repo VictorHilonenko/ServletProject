@@ -4,6 +4,7 @@ import beauty.scheduler.dao.AppointmentDao;
 import beauty.scheduler.dao.core.TransactionManager;
 import beauty.scheduler.dto.AppointmentDTO;
 import beauty.scheduler.entity.Appointment;
+import beauty.scheduler.entity.EmailMessage;
 import beauty.scheduler.entity.enums.Role;
 import beauty.scheduler.entity.enums.ServiceType;
 import beauty.scheduler.util.ExtendedException;
@@ -19,7 +20,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +45,7 @@ public class AppointmentService {
     }
 
     public List<AppointmentDTO> getAllAppointmentsDTO(LocalDate start, LocalDate end, UserPrincipal userPrincipal) throws SQLException, ExtendedException {
-        return appointmentDao.findByPeriod(start, end)
-                .stream()
+        return appointmentDao.findByPeriod(start, end).stream()
                 .map(a -> appointmentToDTO(a, userPrincipal))
                 .collect(Collectors.toList());
     }
@@ -81,8 +80,8 @@ public class AppointmentService {
         try {
             time = Byte.parseByte(strTime);
             reserveDateTime = LocalDateTime.parse(strDateTime);
-        } catch (DateTimeParseException e) {
-            LOGGER.error("wrong data format of " + strDateTime);
+        } catch (Exception e) {
+            LOGGER.error("wrong data or number format passed to validateAppointmentDataForAdd");
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
         }
 
@@ -106,7 +105,7 @@ public class AppointmentService {
         return "";
     }
 
-    public String setServiceProvidedByJSON(String jsonData, UserPrincipal userPrincipal) {
+    public String setServiceProvidedByJSON(String jsonData, UserPrincipal userPrincipal, boolean useTransaction) throws SQLException, ExtendedException {
         Map<String, String> map = StringUtils.mapFromJSON(jsonData);
         String strId = map.getOrDefault("id", "");
         String strServiceProvided = map.getOrDefault("serviceProvided", "");
@@ -136,25 +135,33 @@ public class AppointmentService {
 
         appointment.setServiceProvided(true);
 
-        return saveWithTransaction(appointment, userPrincipal.getCurrentLang());
+        EmailMessage emailMessage = emailMessageService.createEmailForProvidedService(appointment);
+
+        return saveWithTransaction(appointment, emailMessage, userPrincipal.getCurrentLang(), useTransaction);
     }
 
-    private String saveWithTransaction(Appointment appointment, String lang) {
+    private String saveWithTransaction(Appointment appointment, EmailMessage emailMessage, String lang, boolean useTransaction) {
         boolean updated;
 
         try {
-            TransactionManager.startTransaction();
+            if (useTransaction) {
+                TransactionManager.startTransaction();
+            }
 
             appointmentDao.update(appointment);
-            emailMessageService.createEmailForProvidedService(appointment);
+            emailMessageService.create(emailMessage);
 
-            TransactionManager.commit();
+            if (useTransaction) {
+                TransactionManager.commit();
+            }
 
             updated = true;
         } catch (SQLException | ExtendedException e) {
             LOGGER.error("SQLException updateServiceProvidedByJSON " + e.getMessage());
 
-            TransactionManager.rollback();
+            if (useTransaction) {
+                TransactionManager.rollback();
+            }
 
             updated = false;
         }
@@ -163,7 +170,7 @@ public class AppointmentService {
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.someRepositoryIssueTryAgainLater", lang);
         }
 
-        emailMessageService.pushEmailSending();
+        emailMessageService.pushEmailSending(true);
 
         return REST_SUCCESS;
     }
@@ -171,7 +178,7 @@ public class AppointmentService {
     private String validateIncomingDataForServiceProvided(String strId, String strServiceProvided, UserPrincipal userPrincipal) {
         try {
             int id = Integer.parseInt(strId);
-        } catch (DateTimeParseException e) {
+        } catch (Exception e) {
             LOGGER.error("wrong data format of " + strId);
             return REST_ERROR + ":" + LocaleUtils.getLocalizedMessage("error.wrongDataPassed", userPrincipal.getCurrentLang());
         }

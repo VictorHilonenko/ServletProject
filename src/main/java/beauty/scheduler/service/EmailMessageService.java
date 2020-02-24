@@ -30,10 +30,6 @@ public class EmailMessageService {
     @InjectDependency
     private EmailMessageDao emailMessageDao;
 
-    public Optional<EmailMessage> findByEmail(String email) throws SQLException, ExtendedException {
-        return emailMessageDao.findByEmail(email);
-    }
-
     String getEmailByQuickAccessCode(String quickAccessCode) throws SQLException, ExtendedException {
         if (StringUtils.isEmpty(quickAccessCode)) {
             return "";
@@ -55,7 +51,7 @@ public class EmailMessageService {
         return emailMessage.getEmail();
     }
 
-    void createEmailForProvidedService(Appointment appointment) throws SQLException, ExtendedException {
+    EmailMessage createEmailForProvidedService(Appointment appointment) {
         String customerLang = getUsersLang(appointment.getCustomer());
 
         String quickAccessCode = UUID.randomUUID().toString();
@@ -71,10 +67,14 @@ public class EmailMessageService {
                 false,
                 quickAccessCode);
 
+        return emailMessage;
+    }
+
+    void create(EmailMessage emailMessage) throws SQLException, ExtendedException {
         emailMessageDao.create(emailMessage);
     }
 
-    void pushEmailSending() {
+    void pushEmailSending(boolean runInBackground) {
         Runnable runnable = () -> {
             List<EmailMessage> list;
 
@@ -88,8 +88,12 @@ public class EmailMessageService {
             list.forEach(this::sendAnEmail);
         };
 
-        Thread thread = new Thread(runnable);
-        thread.start();
+        if (runInBackground) {
+            Thread thread = new Thread(runnable);
+            thread.start();
+        } else {
+            runnable.run();
+        }
     }
 
     private void sendAnEmail(EmailMessage emailMessage) {

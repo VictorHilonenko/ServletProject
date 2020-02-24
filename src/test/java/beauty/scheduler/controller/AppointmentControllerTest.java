@@ -22,7 +22,7 @@ import java.util.Optional;
 import static beauty.scheduler.util.AppConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AppointmentControllerTest {
@@ -40,7 +40,7 @@ public class AppointmentControllerTest {
     private UserPrincipal anonymous;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(request.getSession(true)).thenReturn(session);
 
         anonymous = new UserPrincipal(Optional.empty(), "", Role.ROLE_ANONYMOUS, LocaleUtils.getDefaultLocale().getLanguage());
@@ -80,11 +80,9 @@ public class AppointmentControllerTest {
     }
 
     @Test
-    public void shouldReturnSuccessStringWhenServiceProvided() {
-        when(appointmentService.setServiceProvidedByJSON("test", anonymous)).thenReturn(REST_SUCCESS);
+    public void shouldReturnSuccessStringWhenServiceProvided() throws SQLException, ExtendedException {
+        instance.apiSetServiceProvidedAttempt("test", request);
 
-        String message = instance.apiSetServiceProvidedAttempt("test", request);
-
-        assertTrue(message.contains(REST_SUCCESS));
+        verify(appointmentService, times(1)).setServiceProvidedByJSON(anyString(), any(UserPrincipal.class), anyBoolean());
     }
 }

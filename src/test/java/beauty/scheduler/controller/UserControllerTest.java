@@ -47,10 +47,10 @@ public class UserControllerTest {
     private UserPrincipal userPrincipal;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(request.getSession(true)).thenReturn(session);
 
-        userPrincipal = new UserPrincipal(Optional.empty(), "user@mail.com", Role.ROLE_USER, LocaleUtils.getDefaultLocale().getLanguage());
+        userPrincipal = new UserPrincipal(Optional.empty(), MAIL_USERNAME, Role.ROLE_USER, LocaleUtils.getDefaultLocale().getLanguage());
     }
 
     @Test
