@@ -58,10 +58,10 @@ public class AppointmentController {
     @EndpointMethod(requestMethod = RequestMethod.PUT, urlPattern = "/api/appointments", contentType = ContentType.JSON)
     @Restriction(role = Role.nonstaff, exception = ExceptionKind.ACCESS_DENIED)
     @Restriction(role = Role.ROLE_ADMIN, exception = ExceptionKind.ACCESS_DENIED)
-    public String apiSetServiceProvidedAttempt(@Json String jsonData, HttpServletRequest req) {
+    public String apiSetServiceProvidedAttempt(@Json String jsonData, HttpServletRequest req) throws SQLException, ExtendedException {
         UserPrincipal userPrincipal = Security.getUserPrincipal(req);
 
-        String message = appointmentService.setServiceProvidedByJSON(jsonData, userPrincipal);
+        String message = appointmentService.setServiceProvidedByJSON(jsonData, userPrincipal, true);
 
         return StringUtils.toJSON(message);
     }

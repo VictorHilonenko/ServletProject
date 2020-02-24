@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
-import static beauty.scheduler.util.AppConstants.ATTR_ACTIVE_USERS;
-import static beauty.scheduler.util.AppConstants.ATTR_USER_PRINCIPAL;
+import static beauty.scheduler.util.AppConstants.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,8 +49,8 @@ public class FeedbackControllerTest {
     public void setUp() {
         when(request.getSession(true)).thenReturn(session);
 
-        userPrincipal = new UserPrincipal(Optional.empty(), "user@mail.com", Role.ROLE_USER, LocaleUtils.getDefaultLocale().getLanguage());
-        adminPrincipal = new UserPrincipal(Optional.empty(), "admin@mail.com", Role.ROLE_ADMIN, LocaleUtils.getDefaultLocale().getLanguage());
+        userPrincipal = new UserPrincipal(Optional.empty(), MAIL_USERNAME, Role.ROLE_USER, LocaleUtils.getDefaultLocale().getLanguage());
+        adminPrincipal = new UserPrincipal(Optional.empty(), MAIL_USERNAME, Role.ROLE_ADMIN, LocaleUtils.getDefaultLocale().getLanguage());
     }
 
     @Test

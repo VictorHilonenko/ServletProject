@@ -26,12 +26,67 @@ function drawNextWeek() {
 	drawWeek();
 }
 
+function formattedDate(date, format) {
+    if (typeof date === "string") {
+        var pattern = $("#date_format_long").val();
+
+        var yyyy = "";
+        var mm = "";
+        var dd = "";
+        var HH = "";
+
+        for (i=0; i <= date.length-1; i++) {
+            var symb = date[i];
+
+            if (pattern[i] === "y") {
+                yyyy = yyyy + symb;
+            }
+            if (pattern[i] === "m") {
+                mm = mm + symb;
+            }
+            if (pattern[i] === "d") {
+                dd = dd + symb;
+            }
+        }
+    } else {
+        var yyyy = date.getFullYear();
+
+        var dd = date.getDate();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+
+        var mm = date.getMonth() + 1;
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+
+        var HH = date.getHours();
+        if (HH < 10) {
+            HH = '0' + HH;
+        }
+    }
+
+    var res = format;
+
+    res = res.replace("yyyy", yyyy);
+    res = res.replace("yy", yyyy.toString().substring(2));
+
+    res = res.replace("dd", dd);
+
+    res = res.replace("mm", mm);
+
+    res = res.replace("HH", HH);
+
+    return res;
+}
+
 function getISOFormattedLocalDate(date) {
-	return dateFormat(date, "yyyy-mm-dd");
+	return formattedDate(date, "yyyy-mm-dd");
 }
 
 function getShortFormattedLocalDate(date) {
-	return dateFormat(date, $("#date_format_short").val());
+	return formattedDate(date, $("#date_format_short").val());
 }
 
 //NOTE: in our case first day is monday
@@ -157,7 +212,7 @@ function openAppointment(appointmentData) {
 
         var appointmentDate = Date.now();
 
-        var intTimeValue = parseInt(dateFormat(appointmentDate, "HH")) + 1;
+        var intTimeValue = parseInt(formattedDate(new Date(appointmentDate), "HH")) + 1;
         if(intTimeValue > workDayEnds) {
             intTimeValue = workDayStarts;
             appointmentDate += 24*3600*1000;
@@ -213,7 +268,7 @@ function setValueToElement(elementId, value) {
 			$(this).prop('checked', value == "true");
 		} else {
 			if(elementId == "date") {
-			    value = dateFormat(value, $("#date_format_long").val())
+			    value = formattedDate(new Date(value), $("#date_format_long").val())
 			}
 			$(this).val(value);
 		}

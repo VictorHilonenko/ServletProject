@@ -119,7 +119,6 @@
 
 	<script src="/js/datepicker-en.js"></script>
 	<script src="/js/datepicker-uk.js"></script>
-	<script src="/js/date.format.js"></script>
 	<script src="/js/scheduler.js"></script>
 
 <jsp:include page="/WEB-INF/footer.jsp" />
