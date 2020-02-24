@@ -38,6 +38,9 @@ However, the default template can be redefined in @EndpointMethod by returning a
 This annotation is used on **method's parameters** that are described in urlPattern with curly braces {} and provides a convenient way of getting parameters passed in URI.
 The Spring analogs for that is **@PathVariable**.
 
+#### @Json
+This annotation is used on **method's parameters** and provide an easy way to get JSON data in any controller method
+
 ## Some examples:
 
 <div align="center">

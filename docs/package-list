@@ -1,0 +1,15 @@
+beauty.scheduler.controller
+beauty.scheduler.dao
+beauty.scheduler.dao.annotation
+beauty.scheduler.dao.core
+beauty.scheduler.dto
+beauty.scheduler.entity
+beauty.scheduler.entity.enums
+beauty.scheduler.service
+beauty.scheduler.util
+beauty.scheduler.web
+beauty.scheduler.web.myspring
+beauty.scheduler.web.myspring.annotation
+beauty.scheduler.web.myspring.core
+beauty.scheduler.web.myspring.enums
+beauty.scheduler.web.myspring.form
